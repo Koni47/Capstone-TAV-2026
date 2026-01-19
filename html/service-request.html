@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Solicitudes de Servicio | Servicios de Transporte El Loa</title>
+gasd
+  <!-- Meta para responsive (pensando en versdgfhsdgsión mobile) -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- CSS -->
+<link rel="stylesheet" gfsfhref="/styleghdfhgfdhs/tailwind.css" />
+adgsdffhdsfhbs
+  <!-- Nota: esta vista será migrada a React + TypeScript -->
+</head>
+<body>sdfghsdf
+
+  <!-- Header / navegación básica -->
+  <header>
+    <h1>Servicios de Transporte El Loa</h1>
+    <nav>
+      <ul>
+        <li><a href="dashboard.html">Dashboarsdgjndfth dstfghd</a></li>
+        <li><a href="sdgfhervice-requests.html">Solicitudes</a></li>
+        <li><a href="users.html">Usuariosysdfhg</a></li>
+        <li><button type="button">Cerrar sesión</button></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+
+   
+    <!-- Crear Solicitud -->
+    <!-- POST /service-requests -->
+
+    <section id="create-request">
+      <h2>Crear Solicitud de Transporte</h2>
+
+      <form id="createRequestForm">
+        <label>
+          Tipo de Cliente
+          <select name="clientType">
+            <option value="empresa">Empresa</option>
+            <option value="persona">Persona Natural</option>
+          </select>
+        </label>
+
+        <label>
+          Origen
+          <input type="text" name="origin" placeholder="Dirección de origen" />
+        </label>
+
+        <label>
+          Destino
+          <input type="text" name="destination" placeholder="Dirección de destino" />
+        </label>
+
+        <label>
+          Fecha del Servicio
+          <input type="date" name="date" />
+        </label>
+
+        <label>
+          Hora del Servicio
+          <input type="time" name="time" />
+        </label>
+
+        <label>
+          Observaciones
+          <textarea name="notes"></textarea>
+        </label>
+
+        <button type="submit">Crear Solicitud</button>
+      </form>
+    </section>
+
+    <hr />
+
+
+    <!-- Listar Solicitudes -->
+    <!-- GET /service-requests -->
+ 
+    <section id="request-list">
+      <h2>Listado de Solicitudes</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Cliente</th>
+            <th>Origen</th>
+            <th>Destino</th>
+            <th>Fecha</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Render dinámico desde API -->
+          <tr>
+            <td>1</td>
+            <td>Empresa</td>
+            <td>Calama</td>
+            <td>Antofagasta</td>
+            <td>20/01/2026</td>
+            <td>Pendiente</td>
+            <td>
+              <button type="button">Ver</button>
+              <button type="button">Asignar</button>
+              <button type="button">Cancelar</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <hr />
+
+ 
+    <!-- Detalle Solicitud -->
+    <!-- GET /service-requests/:id -->
+ 
+    <section id="request-detail">
+      <h2>Detalle de Solicitud</h2>
+
+      <div>
+        <p><strong>ID:</strong> <span id="detail-id"></span></p>
+        <p><strong>Cliente:</strong> <span id="detail-client"></span></p>
+        <p><strong>Origen:</strong> <span id="detail-origin"></span></p>
+        <p><strong>Destino:</strong> <span id="detail-destination"></span></p>
+        <p><strong>Fecha:</strong> <span id="detail-date"></span></p>
+        <p><strong>Estado:</strong> <span id="detail-status"></span></p>
+      </div>
+    </section>
+
+    <hr />
+
+  
+    <!-- Asignar Recurso -->
+    <!-- PATCH /service-requests/:id/assign -->
+   
+    <section id="assign-resource">
+      <h2>Asignar Chofer y Vehículo</h2>
+
+      <form id="assignForm">
+        <label>
+          Chofer
+          <select name="driverId">
+            <!-- Opciones dinámicas -->
+            <option value="">Seleccionar chofer</option>
+          </select>
+        </label>
+
+        <label>
+          Vehículo
+          <select name="vehicleId">
+            <!-- Opciones dinámicas -->
+            <option value="">Seleccionar vehículo</option>
+          </select>
+        </label>
+
+        <button type="submit">Asignar</button>
+      </form>
+    </section>
+
+    <hr />
+
+   
+    <!-- Cancelar Solicitud -->
+    <!-- PATCH /service-requests/:id/cancel -->
+    
+    <section id="cancel-request">
+      <h2>Cancelar Solicitud</h2>
+
+      <button type="button">
+        Cancelar Solicitud Seleccionada
+      </button>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>© 2026 Servicios de Transporte El Loa</p>
+  </footer>
+
+  <!-- Scripts (luego será React / TS) -->
+  <script src="./service-requests.js"></script>
+
+</body>
+</html>
