@@ -5,6 +5,7 @@ import * as bcrypt from 'bcrypt';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { ConfigService } from '@nestjs/config';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
 
 @Injectable()
 export class AuthService {
@@ -72,8 +73,25 @@ export class AuthService {
     };
   }
 
-  async refreshToken() {
-    return { message: 'Implementar lógica de refresh token validation' };
+  async refreshToken(refreshTokenDto: RefreshTokenDto) {
+    try {
+      const { refreshToken } = refreshTokenDto;
+      const payload = await this.jwtService.verifyAsync(refreshToken, {
+        secret: this.configService.get('JWT_REFRESH_SECRET'),
+      });
+
+      const user = await this.usersService.findOne(payload.sub);
+      if (!user) {
+        throw new UnauthorizedException('Usuario no encontrado');
+      }
+
+      const newPayload = { email: user.email, sub: user.id, role: user.role };
+      return {
+        accessToken: this.jwtService.sign(newPayload),
+      };
+    } catch (error) {
+      throw new UnauthorizedException('Token de refresco inválido o expirado');
+    }
   }
 
   getProfile() {

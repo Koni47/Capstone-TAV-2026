@@ -7,6 +7,8 @@ import { CompaniesModule } from './companies/companies.module';
 import { ServiceRequestsModule } from './service-requests/service-requests.module';
 import { TripsModule } from './trips/trips.module';
 import { ReportsModule } from './reports/reports.module';
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -16,6 +18,8 @@ import { ReportsModule } from './reports/reports.module';
     }),
     PrismaModule,
     RedisModule,
+    AuthModule,
+    UsersModule,
     VehiclesModule,
     CompaniesModule,
     ServiceRequestsModule,

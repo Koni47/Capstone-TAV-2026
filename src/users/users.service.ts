@@ -43,11 +43,26 @@ export class UsersService {
     return this.prisma.user.findMany({ where });
   }
 
-  // Métodos placeholder para compatibilidad
-  findAvailableDrivers() {
-    return [];
+  async findAvailableDrivers(): Promise<User[]> {
+    return this.prisma.user.findMany({
+      where: {
+        role: 'CHOFER',
+      },
+    });
   }
-  update(id: string, data: any) {
-    return { id, ...data };
+
+  async update(id: string, data: Partial<CreateUserDto>): Promise<User> {
+    const user = await this.findOne(id);
+
+    // No permitir cambiar email, rol o contraseña desde este método genérico.
+    const { fullName, phone } = data;
+    const updateData: any = {};
+    if (fullName) updateData.fullName = fullName;
+    if (phone) updateData.phone = phone;
+
+    return this.prisma.user.update({
+      where: { id: user.id },
+      data: updateData,
+    });
   }
 }
