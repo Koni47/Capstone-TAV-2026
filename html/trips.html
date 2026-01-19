@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Mis Viajes | Servicios de Transporte El Loa</title>
+
+  <!-- Responsive -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- CSS -->
+<link rel="stylesheet" href="/styles/tailwind.css" />
+
+
+  <!-- Vista base para migrar a React + TypeScript -->
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <h1>Servicios de Transporte El Loa</h1>
+    <nav>
+      <ul>
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="service-requests.html">Solicitudes</a></li>
+        <li><a href="trips.html">Mis Viajes</a></li>
+        <li><button type="button">Cerrar sesión</button></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+
+ 
+    <!-- Mis Viajes -->
+    <!-- GET /trips/my-trips -->
+
+    <section id="my-trips">
+      <h2>Mis Viajes Asignados</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>ID Viaje</th>
+            <th>Origen</th>
+            <th>Destino</th>
+            <th>Fecha</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Render dinámico desde API -->
+          <tr>
+            <td>101</td>
+            <td>Calama</td>
+            <td>Antofagasta</td>
+            <td>22/01/2026</td>
+            <td>Asignado</td>
+            <td>
+              <button type="button">Ver Detalle</button>
+              <button type="button">Iniciar</button>
+              <button type="button">Finalizar</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <hr />
+
+
+    <!-- Detalle del Viaje -->
+
+    <section id="trip-detail">
+      <h2>Detalle del Viaje</h2>
+
+      <div>
+        <p><strong>ID Viaje:</strong> <span id="trip-id"></span></p>
+        <p><strong>Origen:</strong> <span id="trip-origin"></span></p>
+        <p><strong>Destino:</strong> <span id="trip-destination"></span></p>
+        <p><strong>Fecha:</strong> <span id="trip-date"></span></p>
+        <p><strong>Estado:</strong> <span id="trip-status"></span></p>
+      </div>
+    </section>
+
+    <hr />
+
+ 
+    <!-- Iniciar Ruta -->
+    <!-- PATCH /trips/:id/start -->
+
+    <section id="start-trip">
+      <h2>Iniciar Ruta</h2>
+
+      <button type="button">
+        Iniciar Viaje
+      </button>
+    </section>
+
+    <hr />
+
+
+    <!-- Finalizar Ruta -->
+    <!-- PATCH /trips/:id/finish -->
+
+    <section id="finish-trip">
+      <h2>Finalizar Ruta</h2>
+
+      <button type="button">
+        Finalizar Viaje
+      </button>
+    </section>
+
+    <hr />
+
+
+    <!-- Subir Evidencia -->
+    <!-- POST /trips/:id/evidence -->
+
+    <section id="upload-evidence">
+      <h2>Subir Evidencia del Viaje</h2>
+
+      <form id="evidenceForm">
+        <label>
+          Descripción
+          <textarea name="description"></textarea>
+        </label>
+
+        <label>
+          Archivo de Evidencia
+          <input type="file" name="file" />
+        </label>
+
+        <button type="submit">
+          Subir Evidencia
+        </button>
+      </form>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>© 2026 Servicios de Transporte El Loa</p>
+  </footer>
+
+  <!-- Script base (luego React / TS) -->
+  <script src="./trips.js"></script>
+
+</body>
+</html>

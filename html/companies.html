@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Clientes | Servicios de Transporte El Loa</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Tailwind (CSS compartido del proyecto) -->
+  <link rel="stylesheet" href="/styles/tailwind.css" />
+
+
+</head>
+
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="navbar-container">
+      <span class="text-primary font-bold">Servicios de Transporte El Loa</span>
+      <div class="flex gap-6">
+        <a href="service-requests.html" class="nav-link">Solicitudes</a>
+        <a href="trips.html" class="nav-link">Viajes</a>
+        <a href="vehicles.html" class="nav-link">Vehículos</a>
+        <a href="users.html" class="nav-link">Usuarios</a>
+        <a href="companies.html" class="nav-link font-bold text-secondary">Clientes</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main -->
+  <main class="max-w-7xl mx-auto px-6 pt-32">
+
+    <!-- Header -->
+    <section class="mb-10">
+      <h1 class="text-3xl font-bold text-primary mb-2">Clientes</h1>
+      <p class="text-slate-600">
+        Gestión de clientes empresa registrados en la plataforma.
+      </p>
+    </section>
+
+    <!-- Crear Cliente -->
+    <section class="card mb-12">
+      <div class="card-header">
+        Crear Cliente
+      </div>
+
+      <div class="card-body">
+        <form id="create-company-form">
+          
+          <div class="grid md:grid-cols-2 gap-6">
+            <div>
+              <label class="form-label">Nombre de la empresa</label>
+              <input type="text" name="name" class="form-input" />
+            </div>
+
+            <div>
+              <label class="form-label">RUT</label>
+              <input type="text" name="rut" class="form-input" />
+            </div>
+
+            <div>
+              <label class="form-label">Correo de contacto</label>
+              <input type="email" name="email" class="form-input" />
+            </div>
+
+            <div>
+              <label class="form-label">Teléfono</label>
+              <input type="text" name="phone" class="form-input" />
+            </div>
+          </div>
+
+          <div class="mt-6">
+            <button type="submit" class="btn btn-primary">
+              Crear Cliente
+            </button>
+          </div>
+
+        </form>
+      </div>
+    </section>
+
+    <!-- Listado de Clientes -->
+    <section class="card mb-12">
+      <div class="card-header">
+        Clientes Registrados
+      </div>
+
+      <div class="card-body">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Empresa</th>
+              <th>RUT</th>
+              <th>Contacto</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="companies-table-body">
+            <!-- GET /companies -->
+            <!-- Render dinámico -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Estadísticas Cliente -->
+    <section class="card">
+      <div class="card-header">
+        Estadísticas del Cliente
+      </div>
+
+      <div class="card-body">
+        <form id="company-stats-form" class="flex gap-4 mb-6">
+          <input
+            type="text"
+            name="companyId"
+            placeholder="ID del cliente"
+            class="form-input w-64"
+          />
+          <button type="submit" class="btn btn-primary">
+            Ver estadísticas
+          </button>
+        </form>
+
+        <div id="company-stats-result">
+          <!-- GET /companies/:id/stats -->
+          <!-- Total servicios, activos, cancelados, etc -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-container">
+      <div>
+        <h4 class="font-bold mb-2">Servicios de Transporte El Loa</h4>
+        <p class="text-sm">
+          Plataforma de gestión de transporte corporativo y particular.
+        </p>
+      </div>
+
+      <div>
+        <h4 class="font-bold mb-2">Sistema</h4>
+        <ul class="text-sm space-y-1">
+          <li>Solicitudes</li>
+          <li>Viajes</li>
+          <li>Clientes</li>
+          <li>Flota</li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="font-bold mb-2">Soporte</h4>
+        <p class="text-sm">Contacto administrativo</p>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

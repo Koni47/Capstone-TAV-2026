@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Servicios de Transporte El Loa</title>
+
+  <!-- Tailwind CSS (se conecta aquí) -->
+  <link rel="stylesheet" href="./tailwind.css" />
+
+  <!-- Futuro React + TS -->
+  <!-- <script type="module" src="/src/main.tsx"></script> -->
+</head>
+
+<body class="min-h-screen flex flex-col">
+
+  <!-- NAVBAR -->
+  <header>
+    <nav>
+      <h1>Servicios de Transporte El Loa</h1>
+      <ul>
+        <li><a href="index.html">Inicio</a></li>
+        <li><a href="service-requests.html">Solicitudes</a></li>
+        <li><a href="trips.html">Viajes</a></li>
+        <li><a href="payments.html">Pagos</a></li>
+      </ul>
+
+      <!-- Acciones de usuario -->
+      <div>
+        <a href="#login">Iniciar sesión</a>
+        <a href="#register">Registrarse</a>
+      </div>
+    </nav>
+  </header>
+
+  <!-- CONTENIDO -->
+  <main class="flex-grow">
+
+    <!-- HERO -->
+    <section>
+      <h2>Transporte confiable para personas y empresas</h2>
+      <p>
+        Gestiona servicios de transporte, viajes y pagos de forma segura
+        y eficiente.
+      </p>
+    </section>
+
+    <!-- LOGIN -->
+    <section id="login">
+      <h3>Iniciar sesión</h3>
+
+      <form>
+        <label>
+          Correo electrónico
+          <input type="email" name="email" placeholder="usuario@correo.cl" />
+        </label>
+
+        <label>
+          Contraseña
+          <input type="password" name="password" />
+        </label>
+
+        <button type="submit">Ingresar</button>
+      </form>
+    </section>
+
+    <!-- REGISTRO -->
+    <section id="register">
+      <h3>Registro de usuario</h3>
+
+      <form>
+        <label>
+          Nombre completo
+          <input type="text" name="name" />
+        </label>
+
+        <label>
+          Correo electrónico
+          <input type="email" name="email" />
+        </label>
+
+        <label>
+          Contraseña
+          <input type="password" name="password" />
+        </label>
+
+        <label>
+          Rol
+          <select name="role">
+            <option value="CLIENT">Cliente</option>
+            <option value="DRIVER">Chofer</option>
+          </select>
+        </label>
+
+        <button type="submit">Crear cuenta</button>
+      </form>
+    </section>
+
+    <!-- SERVICIOS -->
+    <section>
+      <h3>Nuestros servicios</h3>
+
+      <div>
+
+        <!-- CARD 1 -->
+        <article>
+          <h4>Transporte de Personal</h4>
+          <p>
+            Traslado seguro y puntual para trabajadores y colaboradores.
+          </p>
+          <a href="service-requests.html">Solicitar servicio</a>
+        </article>
+
+        <!-- CARD 2 -->
+        <article>
+          <h4>Servicios Corporativos</h4>
+          <p>
+            Soluciones de transporte para empresas y contratos mensuales.
+          </p>
+          <a href="companies.html">Ver clientes empresa</a>
+        </article>
+
+        <!-- CARD 3 -->
+        <article>
+          <h4>Viajes Programados</h4>
+          <p>
+            Reserva y seguimiento de viajes en tiempo real.
+          </p>
+          <a href="trips.html">Ver viajes</a>
+        </article>
+
+        <!-- CARD 4 -->
+        <article>
+          <h4>Pago de Servicios</h4>
+          <p>
+            Paga tus servicios de forma segura mediante pasarela de pago.
+          </p>
+          <a href="payments.html">Ir a pagos</a>
+        </article>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>© 2026 Servicios de Transporte El Loa</p>
+    <p>Proyecto académico — Arquitectura moderna</p>
+  </footer>
+
+</body>
+</html>
