@@ -1,0 +1,113 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String           @id @default(uuid())
+  email           String           @unique
+  password        String
+  fullName        String
+  role            Role             @default(CLIENTE)
+  phone           String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  companyId       String?
+  serviceRequests ServiceRequest[] @relation("ClientRequests")
+  tripsAsDriver   Trip[]           @relation("DriverTrips")
+  company         Company?         @relation(fields: [companyId], references: [id])
+
+  @@map("users")
+}
+
+model Company {
+  id              String           @id @default(uuid())
+  rut             String           @unique
+  name            String
+  costCenter      String
+  address         String?
+  contactEmail    String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  serviceRequests ServiceRequest[]
+  users           User[]
+
+  @@map("companies")
+}
+
+model Vehicle {
+  id                  String        @id @default(uuid())
+  licensePlate        String        @unique
+  model               String
+  year                Int
+  status              VehicleStatus @default(DISPONIBLE)
+  technicalReviewDate DateTime?
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+  trips               Trip[]
+
+  @@map("vehicles")
+}
+
+model ServiceRequest {
+  id             String   @id @default(uuid())
+  origin         String
+  destination    String
+  passengerCount Int
+  requestedAt    DateTime @default(now())
+  notes          String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  clientId       String
+  companyId      String?
+  client         User     @relation("ClientRequests", fields: [clientId], references: [id])
+  company        Company? @relation(fields: [companyId], references: [id])
+  trip           Trip?
+
+  @@map("service_requests")
+}
+
+model Trip {
+  id               String         @id @default(uuid())
+  status           TripStatus     @default(PENDIENTE)
+  startTime        DateTime?
+  endTime          DateTime?
+  rating           Int?
+  comment          String?
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  serviceRequestId String         @unique
+  driverId         String?
+  vehicleId        String?
+  driver           User?          @relation("DriverTrips", fields: [driverId], references: [id])
+  serviceRequest   ServiceRequest @relation(fields: [serviceRequestId], references: [id])
+  vehicle          Vehicle?       @relation(fields: [vehicleId], references: [id])
+
+  @@map("trips")
+}
+
+enum Role {
+  ADMIN
+  CHOFER
+  CLIENTE
+}
+
+enum VehicleStatus {
+  DISPONIBLE
+  EN_RUTA
+  MANTENCION
+  FUERA_DE_SERVICIO
+}
+
+enum TripStatus {
+  PENDIENTE
+  ASIGNADO
+  EN_RUTA
+  FINALIZADO
+  CANCELADO
+}

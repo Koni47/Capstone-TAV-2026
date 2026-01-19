@@ -1,0 +1,13 @@
+{
+    "Servers": {
+        "1": {
+            "Name": "Servicios El Loa",
+            "Group": "Servers",
+            "Port": 5432,
+            "Username": "postgres",
+            "Host": "el_loa_postgres",
+            "SSLMode": "prefer",
+            "MaintenanceDB": "servicios_el_loa"
+        }
+    }
+}

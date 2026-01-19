@@ -1,0 +1,28 @@
+import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { RedisModule } from './redis/redis.module';
+import { PrismaModule } from './prisma/prisma.module';
+import { VehiclesModule } from './vehicles/vehicles.module';
+import { CompaniesModule } from './companies/companies.module';
+import { ServiceRequestsModule } from './service-requests/service-requests.module';
+import { TripsModule } from './trips/trips.module';
+import { ReportsModule } from './reports/reports.module';
+
+@Module({
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env',
+    }),
+    PrismaModule,
+    RedisModule,
+    VehiclesModule,
+    CompaniesModule,
+    ServiceRequestsModule,
+    TripsModule,
+    ReportsModule,
+  ],
+  controllers: [],
+  providers: [],
+})
+export class AppModule {}

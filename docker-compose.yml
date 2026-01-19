@@ -1,0 +1,77 @@
+version: '3.8'
+
+services:
+  postgres_db:
+    image: postgres:16
+    container_name: el_loa_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      POSTGRES_DB: ${DB_NAME:-servicios_el_loa}
+    ports:
+      - '${DB_PORT_EXTERNAL:-5432}:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./BD/bbdd.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - el_loa_network
+
+  redis_cache:
+    image: redis:alpine
+    container_name: el_loa_redis
+    restart: always
+    ports:
+      - '${REDIS_PORT_EXTERNAL:-6379}:6379'
+    volumes:
+      - redis_data:/data
+    networks:
+      - el_loa_network
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: el_loa_pgadmin
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@admin.com}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-admin}
+    ports:
+      - '${PGADMIN_PORT:-5050}:80'
+    depends_on:
+      - postgres_db
+    volumes:
+      - ./pgadmin/servers.json:/pgadmin4/servers.json
+    networks:
+      - el_loa_network
+
+  backend_app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development # Usar 'production' para despliegue final
+    container_name: el_loa_backend
+    restart: always
+    ports:
+      - '${APP_PORT:-3000}:3000'
+    environment:
+      DATABASE_URL: postgresql://${DB_USER:-postgres}:${DB_PASSWORD:-postgres}@postgres_db:5432/${DB_NAME:-servicios_el_loa}?schema=public
+      REDIS_HOST: redis_cache
+      REDIS_PORT: 6379
+      NODE_ENV: ${NODE_ENV:-development}
+    depends_on:
+      - postgres_db
+      - redis_cache
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    networks:
+      - el_loa_network
+    command: npm run start:dev
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  el_loa_network:
+    driver: bridge
