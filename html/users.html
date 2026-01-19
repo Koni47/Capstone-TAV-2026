@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Gestión de Usuarios | Servicios de Transporte El Loa</title>
+
+  <!-- Responsive -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- CSS (se agregará después) -->
+<link rel="stylesheet" href="/styles/tailwind.css" />
+
+  <!-- Vista base para migrar a React + TypeScript -->
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <h1>Servicios de Transporte El Loa</h1>
+    <nav>
+      <ul>
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="service-requests.html">Solicitudes</a></li>
+        <li><a href="trips.html">Viajes</a></li>
+        <li><a href="users.html">Usuarios</a></li>
+        <li><button type="button">Cerrar sesión</button></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+
+
+    <!-- Listar Usuarios -->
+    <!-- GET /users?role= -->
+
+    <section id="users-list">
+      <h2>Listado de Usuarios</h2>
+
+      <form id="filterUsersForm">
+        <label>
+          Filtrar por rol:
+          <select name="role">
+            <option value="">Todos</option>
+            <option value="ADMIN">Administrador</option>
+            <option value="CLIENT">Cliente</option>
+            <option value="DRIVER">Chofer</option>
+          </select>
+        </label>
+
+        <button type="submit">Filtrar</button>
+      </form>
+
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Correo</th>
+            <th>Rol</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Render dinámico desde API -->
+          <tr>
+            <td>12</td>
+            <td>Juan Pérez</td>
+            <td>juan@correo.cl</td>
+            <td>DRIVER</td>
+            <td>Activo</td>
+            <td>
+              <button type="button">Editar</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <hr />
+
+
+    <!-- Crear Usuario (Registro) -->
+    <!-- POST /users -->
+
+    <section id="create-user">
+      <h2>Registrar Usuario</h2>
+
+      <form id="createUserForm">
+        <label>
+          Nombre
+          <input type="text" name="name" />
+        </label>
+
+        <label>
+          Correo
+          <input type="email" name="email" />
+        </label>
+
+        <label>
+          Contraseña
+          <input type="password" name="password" />
+        </label>
+
+        <label>
+          Rol
+          <select name="role">
+            <option value="CLIENT">Cliente</option>
+            <option value="DRIVER">Chofer</option>
+            <option value="ADMIN">Administrador</option>
+          </select>
+        </label>
+
+        <button type="submit">Crear Usuario</button>
+      </form>
+    </section>
+
+    <hr />
+
+
+    <!-- Choferes Disponibles -->
+    <!-- GET /users/drivers/available -->
+
+    <section id="available-drivers">
+      <h2>Choferes Disponibles</h2>
+
+      <button type="button">
+        Cargar Choferes Disponibles
+      </button>
+
+      <ul>
+        <!-- Render dinámico -->
+        <li>Pedro González - Licencia A3</li>
+      </ul>
+    </section>
+
+    <hr />
+
+
+    <!-- Editar Usuario -->
+    <!-- PATCH /users/:id -->
+
+    <section id="edit-user">
+      <h2>Editar Usuario</h2>
+
+      <form id="editUserForm">
+        <input type="hidden" name="userId" />
+
+        <label>
+          Nombre
+          <input type="text" name="name" />
+        </label>
+
+        <label>
+          Correo
+          <input type="email" name="email" />
+        </label>
+
+        <label>
+          Rol
+          <select name="role">
+            <option value="CLIENT">Cliente</option>
+            <option value="DRIVER">Chofer</option>
+            <option value="ADMIN">Administrador</option>
+          </select>
+        </label>
+
+        <label>
+          Estado
+          <select name="status">
+            <option value="ACTIVE">Activo</option>
+            <option value="INACTIVE">Inactivo</option>
+          </select>
+        </label>
+
+        <button type="submit">Guardar Cambios</button>
+      </form>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>© 2026 Servicios de Transporte El Loa</p>
+  </footer>
+
+  <!-- Script base (luego React / TS) -->
+  <script src="./users.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Pago de Servicio | Servicios de Transporte El Loa</title>
+
+  <!-- Tailwind (ya lo tienes linkeado en el proyecto) -->
+  <link rel="stylesheet" href="tailwind.css" />
+
+  <!-- Metadata para pasarela -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+</head>
+
+<body>
+
+  <!-- NAVBAR (misma estructura que los otros HTML) -->
+  <nav>
+    <h1>Servicios de Transporte El Loa</h1>
+    <ul>
+      <li><a href="service-requests.html">Solicitudes</a></li>
+      <li><a href="trips.html">Viajes</a></li>
+      <li><a href="users.html">Usuarios</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <h2>Pago de Servicio de Transporte</h2>
+
+    <!-- 
+      ESTE FORMULARIO PUEDE:
+      1) Ir directo a una pasarela externa
+      2) O pasar primero por tu backend NestJS
+    -->
+
+    <form 
+      method="POST"
+      action="https://TU-PASARELA-DE-PAGO-O-BACKEND/pago"
+    >
+
+      <!-- Identificadores del sistema -->
+      <input type="hidden" name="serviceRequestId" value="12345" />
+      <input type="hidden" name="clientId" value="67890" />
+      <input type="hidden" name="currency" value="CLP" />
+
+      <!-- Resumen del servicio -->
+      <div>
+        <label>Servicio</label>
+        <input type="text" name="serviceName" value="Traslado Corporativo" readonly />
+      </div>
+
+      <div>
+        <label>Origen</label>
+        <input type="text" name="origin" value="Calama" readonly />
+      </div>
+
+      <div>
+        <label>Destino</label>
+        <input type="text" name="destination" value="Antofagasta" readonly />
+      </div>
+
+      <div>
+        <label>Monto a pagar</label>
+        <input type="number" name="amount" value="45000" readonly />
+      </div>
+
+      <!-- Datos del pagador -->
+      <div>
+        <label>Nombre del Pagador</label>
+        <input type="text" name="payerName" required />
+      </div>
+
+      <div>
+        <label>Email</label>
+        <input type="email" name="payerEmail" required />
+      </div>
+
+      <!-- BOTÓN DE PAGO -->
+      <button type="submit">
+        Pagar Servicio
+      </button>
+
+    </form>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>© 2026 Servicios de Transporte El Loa</p>
+  </footer>
+
+</body>
+</html>
