@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Gestión de Vehículos | Servicios de Transporte El Loa</title>
+
+  <!-- Responsive -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- CSS -->
+<link rel="stylesheet" href="/styles/tailwind.css" />
+
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <h1>Servicios de Transporte El Loa</h1>
+    <nav>
+      <ul>
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="service-requests.html">Solicitudes</a></li>
+        <li><a href="trips.html">Viajes</a></li>
+        <li><a href="users.html">Usuarios</a></li>
+        <li><a href="vehicles.html">Vehículos</a></li>
+        <li><button type="button">Cerrar sesión</button></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+
+
+    <!-- Listar Flota -->
+    <!-- GET /vehicles -->
+
+    <section id="vehicles-list">
+      <h2>Flota de Vehículos</h2>
+
+      <button type="button">
+        Cargar Flota
+      </button>
+
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Patente</th>
+            <th>Tipo</th>
+            <th>Capacidad</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Render dinámico desde API -->
+          <tr>
+            <td>1</td>
+            <td>AB-CD-12</td>
+            <td>Van</td>
+            <td>12 pasajeros</td>
+            <td>Disponible</td>
+            <td>
+              <button type="button">Ver</button>
+              <button type="button">Editar</button>
+              <button type="button">Eliminar</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <hr />
+
+
+    <!-- Crear Vehículo -->
+    <!-- POST /vehicles -->
+
+    <section id="create-vehicle">
+      <h2>Registrar Vehículo</h2>
+
+      <form id="createVehicleForm">
+        <label>
+          Patente
+          <input type="text" name="plate" />
+        </label>
+
+        <label>
+          Tipo de Vehículo
+          <select name="type">
+            <option value="VAN">Van</option>
+            <option value="MINIBUS">Minibús</option>
+            <option value="BUS">Bus</option>
+          </select>
+        </label>
+
+        <label>
+          Capacidad de Pasajeros
+          <input type="number" name="capacity" />
+        </label>
+
+        <button type="submit">Crear Vehículo</button>
+      </form>
+    </section>
+
+    <hr />
+
+
+    <!-- Vehículos Disponibles -->
+    <!-- GET /vehicles/available -->
+
+    <section id="available-vehicles">
+      <h2>Vehículos Disponibles</h2>
+
+      <form id="filterAvailableVehiclesForm">
+        <label>
+          Capacidad mínima
+          <input type="number" name="minCapacity" />
+        </label>
+
+        <button type="submit">Buscar</button>
+      </form>
+
+      <ul>
+        <!-- Render dinámico -->
+        <li>Van - Patente XY-ZW-98 (12 pasajeros)</li>
+      </ul>
+    </section>
+
+    <hr />
+
+
+    <!-- Detalle Vehículo -->
+    <!-- GET /vehicles/:id -->
+
+    <section id="vehicle-detail">
+      <h2>Detalle del Vehículo</h2>
+
+      <p><strong>Patente:</strong> AB-CD-12</p>
+      <p><strong>Tipo:</strong> Van</p>
+      <p><strong>Capacidad:</strong> 12 pasajeros</p>
+      <p><strong>Estado:</strong> Disponible</p>
+    </section>
+
+    <hr />
+
+
+    <!-- Editar Vehículo -->
+    <!-- PATCH /vehicles/:id -->
+
+    <section id="edit-vehicle">
+      <h2>Editar Vehículo</h2>
+
+      <form id="editVehicleForm">
+        <input type="hidden" name="vehicleId" />
+
+        <label>
+          Tipo de Vehículo
+          <select name="type">
+            <option value="VAN">Van</option>
+            <option value="MINIBUS">Minibús</option>
+            <option value="BUS">Bus</option>
+          </select>
+        </label>
+
+        <label>
+          Capacidad
+          <input type="number" name="capacity" />
+        </label>
+
+        <label>
+          Estado
+          <select name="status">
+            <option value="AVAILABLE">Disponible</option>
+            <option value="IN_SERVICE">En servicio</option>
+            <option value="INACTIVE">Inactivo</option>
+          </select>
+        </label>
+
+        <button type="submit">Guardar Cambios</button>
+      </form>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>© 2026 Servicios de Transporte El Loa</p>
+  </footer>
+
+  <!-- Script base (luego React / TypeScript) -->
+  <script src="./vehicles.js"></script>
+
+</body>
+</html>
