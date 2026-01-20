@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Login | Servicios El Loa</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { theme: { extend: { colors: { primary: '#003366', secondary: '#FF6600' }, fontFamily: { sans: ['Inter','sans-serif'] } } } }</script>
+    <link rel="stylesheet" href="assets/css/tailwind.css" />
+    <link rel="stylesheet" href="assets/css/custom.css" />
+</head>
+<body class="bg-gray-50 font-sans flex items-center justify-center min-h-screen">
+
+    <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-8">
+        <div class="text-center mb-6">
+            <div class="w-24 h-24 bg-primary rounded-full mx-auto flex items-center justify-center text-white text-3xl font-bold mb-4 border-4 border-white shadow-md"><span class="material-icons text-white" style="font-size: 60px;">person</span></div>
+            <h1 class="text-2xl font-bold text-gray-800">Inicio de Sesión</h1>
+            <p class="text-sm text-gray-500">Servicios de Transporte El Loa</p>
+        </div>
+
+        <form id="loginForm" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Correo Electrónico</label>
+                        <div class="relative">
+                            <span class="material-icons absolute left-3 top-2 text-gray-400 text-sm">email</span>
+                            <input type="email" id="email" name="email" placeholder="Ej: juanito.perez@correo.cl" class="w-full pl-9 border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none" required>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Contraseña</label>
+                        <div class="relative">
+                            <span class="material-icons absolute left-3 top-2 text-gray-400 text-sm">lock</span>
+                            <input type="password" id="password" name="password" placeholder="Ingresa tu contraseña" class="w-full pl-9 border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none" required>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Rol de Usuario</label>
+                        <select id="userRole" name="userRole" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none" required>
+                            <option value="">Selecciona un rol</option>
+                            <option value="admin">Administrador</option>
+                            <option value="cliente">Cliente</option>
+                            <option value="chofer">Chofer</option>
+                        </select>
+                    </div>
+            
+            <hr class="my-4">
+             <a href="recover-password.html" class="block text-center text-sm text-gray-500 mt-4 hover:text-gray-700">Recuperar contraseña</a>
+              <a href="register.html" class="block text-center text-sm text-gray-500 mt-4 hover:text-gray-700">Regístrate aquí</a>
+
+
+            <button type="submit" class="w-full bg-primary hover:bg-blue-900 text-white font-bold py-2 rounded shadow transition mt-4">
+                Iniciar Sesión
+            </button>
+            <a href="index.html" class="block text-center text-sm text-gray-500 mt-4 hover:text-gray-700">Volver al Inicio</a>
+        </form>
+    </div>
+
+    <script>
+        // Manejar el envío del formulario de login
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            // Obtener los valores del formulario
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const userRole = document.getElementById('userRole').value;
+            
+            // Validar que todos los campos estén completos
+            if (!email || !password || !userRole) {
+                alert('Por favor completa todos los campos');
+                return;
+            }
+            
+            // Guardar el rol del usuario en localStorage
+            localStorage.setItem('userRole', userRole);
+            localStorage.setItem('userEmail', email);
+            localStorage.setItem('loginTime', new Date().toISOString());
+            
+            // Aquí iría la validación real del backend
+            // Por ahora, redirigimos según el rol seleccionado
+            
+            let redirectUrl = 'index.html'; // URL por defecto
+            
+            switch(userRole.toLowerCase()) {
+                case 'admin':
+                    redirectUrl = 'dashboard_adm.html';
+                    break;
+                case 'cliente':
+                    redirectUrl = 'dashboard-cli.html';
+                    break;
+                case 'chofer':
+                    redirectUrl = 'dashboard-chof.html';
+                    break;
+                default:
+                    redirectUrl = 'index.html';
+            }
+            
+            // Mostrar mensaje de éxito y redirigir
+            alert('¡Bienvenido! Redirigiendo al dashboard...');
+            window.location.href = redirectUrl;
+        });
+    </script>
+</body>
+</html>

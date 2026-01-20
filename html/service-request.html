@@ -29,8 +29,20 @@
         }
     </script>
     <link rel="stylesheet" href="assets/css/custom.css" />
+    <script src="assets/js/auth-helper.js"></script>
+    
+    <!-- Leaflet CSS para mapa -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+    <!-- OpenStreetMap Geocoding -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-control-geocoder/1.14.0/Control.Geocoder.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-control-geocoder/1.14.0/Control.Geocoder.css" />
 </head>
 <body class="bg-surface font-sans text-gray-800">
+    <script>
+        // Proteger esta página - redirigir al login si no está autenticado
+        protectPage();
+    </script>
 
    <nav class="bg-primary text-white shadow-lg w-full sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -41,10 +53,10 @@
                     </a>
                     <div class="hidden md:block">
                         <div class="ml-10 flex items-baseline space-x-4">
-                            <a href="index.html" class="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Dashboard</a>
-                            <a href="service-request.html" class="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Solicitudes</a>
+                            <a id="dashboardLink" href="#" onclick="redirectToDashboard(event)" class="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Dashboard</a>
+                            <a href="service-request.html" class="bg-blue-900 text-white px-3 py-2 rounded-md text-sm font-medium border-b-4 border-secondary h-16 flex items-center pt-1">Solicitudes</a>
                             
-                            <a href="users.html" class="bg-blue-900 text-white px-3 py-2 rounded-md text-sm font-medium border-b-4 border-secondary h-16 flex items-center pt-1">
+                            <a href="users.html" class="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">
                                 Usuarios
                             </a>
                             
@@ -59,10 +71,11 @@
                     </button>
                     <div class="flex items-center gap-3 pl-4 border-l border-blue-800">
                         <div class="text-right hidden sm:block">
-                            <p class="text-sm font-bold leading-none">Zaida K.</p>
-                            <p class="text-xs text-blue-300">Admin</p>
+                            <p class="text-sm font-bold leading-none user-name">Usuario</p>
+                            <p class="text-xs text-blue-300 user-role">Admin</p>
                         </div>
-                        <div class="h-8 w-8 rounded-full bg-secondary flex items-center justify-center text-white text-xs font-bold ring-2 ring-blue-900">ZK</div>
+                        <div class="h-8 w-8 rounded-full bg-secondary flex items-center justify-center text-white text-xs font-bold ring-2 ring-blue-900 user-initials">US</div>
+                        <a href="logout.html" class="ml-2 text-sm font-semibold hover:text-gray-300">Salir</a>
                     </div>
                 </div>
             </div>
@@ -107,6 +120,10 @@
                             </div>
                         </div>
 
+                        <button type="button" id="viewMapBtn" onclick="openMapModal()" class="w-full bg-primary hover:bg-blue-900 text-white font-bold py-2 px-4 rounded shadow-md transition flex justify-center items-center gap-2">
+                            <span class="material-icons text-sm">map</span> Ver Mapa de Ruta
+                        </button>
+
                         <div class="grid grid-cols-2 gap-3">
                             <div>
                                 <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Fecha</label>
@@ -120,7 +137,7 @@
 
                         <div>
                             <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Notas / Pasajeros</label>
-                            <textarea name="notes" rows="3" placeholder="Nombres de pax, centro de costo, etc." class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none"></textarea>
+                            <textarea name="notes" rows="3" placeholder="Nombres de pasajeros, notas adicionales, etc." class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none"></textarea>
                         </div>
 
                         <button type="submit" class="w-full bg-secondary hover:bg-orange-700 text-white font-bold py-2 px-4 rounded shadow-md transition flex justify-center items-center gap-2">
@@ -349,7 +366,178 @@
                 panel.classList.add('hidden');
             }
         }
+
+        // Redirección dinámica al Dashboard según el rol del usuario
+        function redirectToDashboard(event) {
+            event.preventDefault();
+            
+            // Obtener el rol del usuario del localStorage o sessionStorage
+            const userRole = localStorage.getItem('userRole') || sessionStorage.getItem('userRole') || 'cliente';
+            
+            let dashboardUrl = 'dashboard.html'; // URL por defecto
+            
+            switch(userRole.toLowerCase()) {
+                case 'admin':
+                case 'administrador':
+                    dashboardUrl = 'dashboard_adm.html';
+                    break;
+                case 'cliente':
+                    dashboardUrl = 'dashboard-cli.html';
+                    break;
+                case 'chofer':
+                    dashboardUrl = 'dashboard-chof.html';
+                    break;
+                default:
+                    dashboardUrl = 'dashboard.html';
+            }
+            
+            // Redirigir a la URL correspondiente
+            window.location.href = dashboardUrl;
+        }
+
+        // Modal del Mapa
+        let map;
+        let originMarker, destinationMarker;
+
+        // Crear ícono de nubecita roja personalizado
+        const cloudIcon = L.icon({
+            iconUrl: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgdmlld0JveD0iMCAwIDQwIDQwIj48cGF0aCBkPSJNMzAgMTBjMi4yIDAgNC4xLTEuNCA1LTMuNEMzNyA4IDE5IDE5IDE5IDE5SDdjLTMuMyAwLTYgMi43LTYgNnMyLjcgNiA2IDZoMjNjMi43IDAgNS0yLjIgNS01cy0yLjItNS01LTV6IiBmaWxsPSIjRUY0NDQ0Ii8+PC9zdmc+',
+            iconSize: [40, 40],
+            iconAnchor: [20, 40],
+            popupAnchor: [0, -40]
+        });
+
+        function openMapModal() {
+            const origin = document.querySelector('input[name="origin"]').value.trim();
+            const destination = document.querySelector('input[name="destination"]').value.trim();
+
+            if (!origin || !destination) {
+                alert('Por favor ingresa origen y destino');
+                return;
+            }
+
+            const modal = document.getElementById('mapModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+
+            // Inicializar mapa en la modal
+            setTimeout(() => {
+                initializeMap(origin, destination);
+            }, 100);
+        }
+
+        function closeMapModal() {
+            const modal = document.getElementById('mapModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            if (map) {
+                map.remove();
+                map = null;
+            }
+        }
+
+        function initializeMap(origin, destination) {
+            // Si el mapa ya existe, eliminarlo
+            if (map) {
+                map.remove();
+            }
+
+            // Centro por defecto (Santiago, Chile)
+            const defaultCenter = [-33.8688, -151.2093];
+            map = L.map('routeMap').setView(defaultCenter, 12);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors',
+                maxZoom: 19
+            }).addTo(map);
+
+            // Geocodificar origen y destino
+            geocodeAddress(origin, (originCoords) => {
+                if (originCoords) {
+                    if (originMarker) originMarker.remove();
+                    originMarker = L.marker([originCoords[0], originCoords[1]], {
+                        icon: cloudIcon
+                    }).addTo(map).bindPopup(`<strong>🟢 ORIGEN</strong><br>${origin}`).openPopup();
+                }
+
+                geocodeAddress(destination, (destinationCoords) => {
+                    if (destinationCoords) {
+                        if (destinationMarker) destinationMarker.remove();
+                        destinationMarker = L.marker([destinationCoords[0], destinationCoords[1]], {
+                            icon: cloudIcon
+                        }).addTo(map).bindPopup(`<strong>🔴 DESTINO</strong><br>${destination}`).openPopup();
+
+                        // Ajustar vista para ver ambos marcadores
+                        if (originCoords && destinationCoords) {
+                            const bounds = L.latLngBounds([
+                                [originCoords[0], originCoords[1]],
+                                [destinationCoords[0], destinationCoords[1]]
+                            ]);
+                            map.fitBounds(bounds, { padding: [50, 50] });
+                        }
+                    }
+                });
+            });
+        }
+
+        function geocodeAddress(address, callback) {
+            // Usar OpenStreetMap Nominatim para geocodificación
+            const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}, Chile`;
+            
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.length > 0) {
+                        const coords = [parseFloat(data[0].lat), parseFloat(data[0].lon)];
+                        callback(coords);
+                    } else {
+                        callback(null);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error geocodificando:', error);
+                    callback(null);
+                });
+        }
+
+        function acceptRoute() {
+            const origin = document.querySelector('input[name="origin"]').value;
+            const destination = document.querySelector('input[name="destination"]').value;
+            
+            alert(`Ruta aceptada:\nOrigen: ${origin}\nDestino: ${destination}`);
+            closeMapModal();
+        }
     </script>
+
+    <!-- Modal del Mapa -->
+    <div id="mapModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+        <div class="bg-white rounded-lg shadow-2xl max-w-4xl w-full mx-4 max-h-[90vh] flex flex-col">
+            <!-- Header -->
+            <div class="bg-primary text-white px-6 py-4 flex justify-between items-center border-b">
+                <h3 class="text-xl font-bold flex items-center gap-2">
+                    <span class="material-icons">map</span> Visualizar Ruta
+                </h3>
+                <button onclick="closeMapModal()" class="text-white hover:bg-blue-800 rounded-full p-2 transition">
+                    <span class="material-icons">close</span>
+                </button>
+            </div>
+
+            <!-- Mapa -->
+            <div class="flex-1 overflow-hidden">
+                <div id="routeMap" style="width: 100%; height: 500px;"></div>
+            </div>
+
+            <!-- Footer con Botones -->
+            <div class="bg-gray-50 px-6 py-4 border-t flex justify-end gap-3">
+                <button onclick="closeMapModal()" class="px-4 py-2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded font-semibold transition">
+                    Cancelar
+                </button>
+                <button onclick="acceptRoute()" class="px-4 py-2 bg-secondary hover:bg-orange-700 text-white rounded font-semibold transition flex items-center gap-2">
+                    <span class="material-icons text-sm">check</span> Aceptar
+                </button>
+            </div>
+        </div>
+    </div>
 
 </body>
 </html>
