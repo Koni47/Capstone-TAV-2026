@@ -8,8 +8,8 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 COPY prisma ./prisma/
 
-# Instalar dependencias
-RUN npm ci
+# Instalar dependencias en builder (usar install para evitar errores por lockfile desactualizado)
+RUN npm install --legacy-peer-deps
 
 COPY . .
 
