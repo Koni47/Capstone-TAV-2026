@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Chofer - Servicios El Loa</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="assets/js/auth-helper.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#003366',
+                        secondary: '#FF6600',
+                        surface: '#F3F4F6',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="assets/css/custom.css" />
+</head>
+<body class="font-sans bg-gray-50 text-gray-800 flex flex-col min-h-screen">
+
+    <!-- Navbar -->
+    <nav class="bg-primary text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center">
+                <div class="flex items-center gap-3 cursor-pointer">
+                    <div class="w-10 h-10 bg-white rounded-md flex items-center justify-center text-primary font-bold text-xl">EL</div>
+                    <span class="font-bold text-xl tracking-wide">Mi Dashboard Chofer</span>
+                </div>
+
+                <div class="hidden md:flex space-x-6">
+                    <a href="#" onclick="redirectToDashboard(event)" class="text-secondary font-bold border-b-2 border-secondary px-1 pb-1">Mis Viajes</a>
+                    <a href="#" class="hover:text-gray-300 transition px-1 pb-1">Mi Desempeño</a>
+                    <a href="#" class="hover:text-gray-300 transition px-1 pb-1">Mi Vehículo</a>
+                    <a href="#" class="hover:text-gray-300 transition px-1 pb-1">Ganancias</a>
+                </div>
+
+                <div class="hidden md:flex items-center gap-3">
+                    <button class="bg-primary p-1 rounded-full text-gray-400 hover:text-white transition">
+                        <span class="material-icons">notifications</span>
+                    </button>
+                    <div class="flex items-center gap-3 pl-4 border-l border-blue-800">
+                        <div class="text-right hidden sm:block">
+                            <p class="text-sm font-bold leading-none user-name">Usuario</p>
+                            <p class="text-xs text-blue-300 user-role">Chofer</p>
+                        </div>
+                        <div class="h-8 w-8 rounded-full bg-secondary flex items-center justify-center text-white text-xs font-bold ring-2 ring-blue-900 user-initials">US</div>
+                        <a href="logout.html" class="ml-2 text-sm font-semibold hover:text-gray-300">Salir</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="flex-1 py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto">
+
+            <!-- Header -->
+            <div class="mb-8">
+                <h1 class="text-4xl font-bold text-primary mb-2">Mi Panel Chofer</h1>
+                <p class="text-gray-600">Gestiona tus viajes y controla tus ganancias</p>
+            </div>
+
+            <!-- KPI Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                
+                <!-- Viajes Hoy -->
+                <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-primary hover:shadow-lg transition">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-600 text-sm font-semibold mb-2">Viajes Hoy</p>
+                            <p class="text-3xl font-bold text-primary">5</p>
+                            <p class="text-xs text-green-600 mt-2 flex items-center gap-1">
+                                <span class="material-icons text-sm">trending_up</span> 2 pendientes
+                            </p>
+                        </div>
+                        <div class="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center">
+                            <span class="material-icons text-2xl text-primary">route</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ganancias Hoy -->
+                <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-secondary hover:shadow-lg transition">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-600 text-sm font-semibold mb-2">Ganancias Hoy</p>
+                            <p class="text-3xl font-bold text-secondary">$245.000</p>
+                            <p class="text-xs text-gray-500 mt-2">Neto</p>
+                        </div>
+                        <div class="w-14 h-14 bg-orange-100 rounded-full flex items-center justify-center">
+                            <span class="material-icons text-2xl text-secondary">attach_money</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Calificación -->
+                <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-yellow-500 hover:shadow-lg transition">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-600 text-sm font-semibold mb-2">Mi Calificación</p>
+                            <p class="text-3xl font-bold text-yellow-600">4.9 ⭐</p>
+                            <p class="text-xs text-gray-500 mt-2">De 5 estrellas</p>
+                        </div>
+                        <div class="w-14 h-14 bg-yellow-100 rounded-full flex items-center justify-center">
+                            <span class="material-icons text-2xl text-yellow-600">star</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Estado del Vehículo -->
+                <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-green-500 hover:shadow-lg transition">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-600 text-sm font-semibold mb-2">Vehículo</p>
+                            <p class="text-lg font-bold text-green-600">Toyota Hiace</p>
+                            <p class="text-xs text-gray-500 mt-2 flex items-center gap-1">
+                                <span class="material-icons text-sm text-green-600">check_circle</span> Operativo
+                            </p>
+                        </div>
+                        <div class="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center">
+                            <span class="material-icons text-2xl text-green-600">directions_bus</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Charts Row -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+
+                <!-- Ganancias Semanal -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-lg font-bold text-primary mb-4 flex items-center gap-2">
+                        <span class="material-icons">trending_up</span> Ganancias Semanal
+                    </h3>
+                    <canvas id="chartGanancias"></canvas>
+                </div>
+
+                <!-- Viajes por Tipo -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-lg font-bold text-primary mb-4 flex items-center gap-2">
+                        <span class="material-icons">pie_chart</span> Distribución de Viajes
+                    </h3>
+                    <canvas id="chartViajes"></canvas>
+                </div>
+
+            </div>
+
+            <!-- Next Trips -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+                <h3 class="text-lg font-bold text-primary mb-4 flex items-center gap-2">
+                    <span class="material-icons">schedule</span> Mis Próximos Viajes
+                </h3>
+                
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between p-4 border-l-4 border-green-500 bg-green-50 rounded-lg">
+                        <div>
+                            <p class="font-bold text-primary">Viaje #VJ-2601</p>
+                            <p class="text-sm text-gray-600">Juan Pérez → Cliente | 08:30 AM</p>
+                            <p class="text-xs text-gray-500 mt-1">Aeropuerto → Faena Atacama | 45 km aprox</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-bold text-secondary">$85.000</p>
+                            <span class="inline-block mt-2 px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">En Ruta</span>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between p-4 border-l-4 border-yellow-500 bg-yellow-50 rounded-lg">
+                        <div>
+                            <p class="font-bold text-primary">Viaje #VJ-2602</p>
+                            <p class="text-sm text-gray-600">Carlos López → Cliente | 10:45 AM</p>
+                            <p class="text-xs text-gray-500 mt-1">Centro Calama → Complejo Turístico | 12 km</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-bold text-secondary">$42.000</p>
+                            <span class="inline-block mt-2 px-3 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800">Confirmado</span>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between p-4 border-l-4 border-blue-500 bg-blue-50 rounded-lg">
+                        <div>
+                            <p class="font-bold text-primary">Viaje #VJ-2603</p>
+                            <p class="text-sm text-gray-600">María García → Cliente | 14:00 PM</p>
+                            <p class="text-xs text-gray-500 mt-1">Hotel Atacama → Aeropuerto | 25 km</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-bold text-secondary">$60.000</p>
+                            <span class="inline-block mt-2 px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">Pendiente</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Completed Trips -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-lg font-bold text-primary mb-4 flex items-center gap-2">
+                    <span class="material-icons">history</span> Viajes Completados Hoy
+                </h3>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="border-b-2 border-gray-200">
+                                <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Hora</th>
+                                <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Cliente</th>
+                                <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Ruta</th>
+                                <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Km</th>
+                                <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Tarifa</th>
+                                <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Calificación</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b hover:bg-gray-50 transition">
+                                <td class="py-3 px-4 text-sm text-gray-700">06:30</td>
+                                <td class="py-3 px-4 text-sm text-gray-700">Juan Pérez</td>
+                                <td class="py-3 px-4 text-sm text-gray-700">Hotel → Faena</td>
+                                <td class="py-3 px-4 text-sm text-gray-700">35 km</td>
+                                <td class="py-3 px-4 text-sm font-bold text-secondary">$65.000</td>
+                                <td class="py-3 px-4 text-sm">
+                                    <span class="flex items-center gap-1">⭐⭐⭐⭐⭐ <span class="text-xs text-gray-500">(5.0)</span></span>
+                                </td>
+                            </tr>
+                            <tr class="border-b hover:bg-gray-50 transition">
+                                <td class="py-3 px-4 text-sm text-gray-700">08:00</td>
+                                <td class="py-3 px-4 text-sm text-gray-700">Ana García</td>
+                                <td class="py-3 px-4 text-sm text-gray-700">Aeropuerto → Centro</td>
+                                <td class="py-3 px-4 text-sm text-gray-700">18 km</td>
+                                <td class="py-3 px-4 text-sm font-bold text-secondary">$42.000</td>
+                                <td class="py-3 px-4 text-sm">
+                                    <span class="flex items-center gap-1">⭐⭐⭐⭐⭐ <span class="text-xs text-gray-500">(5.0)</span></span>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-gray-50 transition">
+                                <td class="py-3 px-4 text-sm text-gray-700">09:30</td>
+                                <td class="py-3 px-4 text-sm text-gray-700">Roberto Sáez</td>
+                                <td class="py-3 px-4 text-sm text-gray-700">Centro → Complejo</td>
+                                <td class="py-3 px-4 text-sm text-gray-700">12 km</td>
+                                <td class="py-3 px-4 text-sm font-bold text-secondary">$28.000</td>
+                                <td class="py-3 px-4 text-sm">
+                                    <span class="flex items-center gap-1">⭐⭐⭐⭐ <span class="text-xs text-gray-500">(4.8)</span></span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-[#002244] text-gray-300 border-t-4 border-secondary mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="text-center text-sm text-gray-500">
+                &copy; 2026 Servicios de Transporte El Loa SpA. Panel del Chofer.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Proteger página
+        protectPage();
+
+        // Chart: Ganancias Semanal
+        const ctxGanancias = document.getElementById('chartGanancias').getContext('2d');
+        new Chart(ctxGanancias, {
+            type: 'bar',
+            data: {
+                labels: ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'],
+                datasets: [{
+                    label: 'Ganancias ($)',
+                    data: [185000, 210000, 195000, 225000, 240000, 260000, 0],
+                    backgroundColor: ['#FF6600', '#FF8533', '#FF6600', '#FF8533', '#FF6600', '#FF8533', '#E0E0E0'],
+                    borderRadius: 8,
+                    borderSkipped: false,
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return '$' + value.toLocaleString();
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Chart: Distribución de Viajes
+        const ctxViajes = document.getElementById('chartViajes').getContext('2d');
+        new Chart(ctxViajes, {
+            type: 'doughnut',
+            data: {
+                labels: ['Corta Distancia', 'Media Distancia', 'Larga Distancia'],
+                datasets: [{
+                    data: [35, 45, 20],
+                    backgroundColor: ['#66BB6A', '#FFA726', '#EF5350'],
+                    borderColor: '#fff',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>
