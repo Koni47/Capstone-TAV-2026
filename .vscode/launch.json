@@ -30,7 +30,10 @@
       "sourceMaps": true,
       "sourceMapPathOverrides": {
         "webpack:///src/*": "${webRoot}/*"
-      }
+      },
+      "runtimeArgs": [
+        "--disable-web-security"
+      ]
     },
     {
       "name": "Backend: Jest Tests",

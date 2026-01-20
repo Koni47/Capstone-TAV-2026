@@ -53,9 +53,10 @@ Cuando abras el proyecto, VS Code te mostrará una notificación para instalar l
 Para usar GitHub Copilot necesitas:
 
 1. **Tener una cuenta de GitHub**
-2. **Suscripción a GitHub Copilot** (prueba gratuita disponible)
-   - Visita: https://github.com/features/copilot
+2. **Suscripción a GitHub Copilot**
+   - Visita: https://github.com/features/copilot para información actualizada sobre precios y disponibilidad
    - Para estudiantes: https://education.github.com/pack (incluye Copilot gratis)
+   - Generalmente hay prueba gratuita disponible
 
 3. **Iniciar sesión en VS Code**:
    - Haz clic en el ícono de cuenta en la esquina inferior izquierda
@@ -163,10 +164,12 @@ VS Code está configurado para depurar tu código:
 1. Ve a la vista de **Debug** (icono de play con bicho en la barra lateral)
 2. Selecciona una configuración:
    - **Backend: Debug** - Depurar el backend
-   - **Frontend: Chrome Debug** - Depurar el frontend en Chrome
+   - **Frontend: Chrome Debug** - Depurar el frontend en Chrome (requiere que el servidor de desarrollo esté corriendo en el puerto 5173)
    - **Full Stack: Debug** - Depurar ambos simultáneamente
 
 3. Presiona **F5** o haz clic en el botón verde de play
+
+**Nota:** Asegúrate de que el frontend esté corriendo en el puerto 5173 (puerto por defecto de Vite) antes de usar la configuración de depuración del frontend.
 
 **Puntos de interrupción:**
 - Haz clic en el margen izquierdo del editor (junto a los números de línea)

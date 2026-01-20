@@ -42,8 +42,8 @@ Las extensiones más importantes que se instalarán:
 - Incluye GitHub Copilot sin costo
 
 **Si no eres estudiante:**
-- Prueba gratuita: https://github.com/features/copilot
-- Después: $10/mes o $100/año
+- Visita: https://github.com/features/copilot para precios actualizados
+- Generalmente hay prueba gratuita disponible
 
 #### Activar Copilot en VS Code
 
