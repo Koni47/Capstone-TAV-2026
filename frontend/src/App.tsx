@@ -22,6 +22,8 @@ import VehicleEdit from './pages/VehicleEdit'
 import VehicleDetail from './pages/VehicleDetail'
 import TripDetail from './pages/TripDetail'
 import Reports from './pages/Reports'
+import Login from './pages/Login'
+import Logout from './pages/Logout'  
 
 export default function App() {
   return (
@@ -45,6 +47,8 @@ export default function App() {
       <Route path="/vehicle-detail" element={<VehicleDetail />} />
       <Route path="/trip-detail" element={<TripDetail />} />
       <Route path="/reports" element={<Reports />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/logout" element={<Logout />} />
       <Route path="/privacy" element={<Privacy />} />
       <Route path="/recover-password" element={<RecoverPassword />} />
       <Route path="/terms" element={<Terms />} />
