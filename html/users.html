@@ -1,33 +1,20 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Gestión de Usuarios | Servicios de Transporte El Loa</title>
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#003366',    /* Azul Corporativo */
-                        secondary: '#FF6600',  /* Naranja Acción */
-                        surface: '#F3F4F6',
-                        success: '#10B981',
-                        warning: '#F59E0B',
-                        danger: '#EF4444',
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    }
-                }
-            }
-        }
+        tailwind.config = { theme: { extend: { colors: { primary: '#003366', secondary: '#FF6600' }, fontFamily: { sans: ['Inter','sans-serif'] } } } }
     </script>
+    <link rel="stylesheet" href="assets/css/tailwind.css" />
+    <link rel="stylesheet" href="assets/css/custom.css" />
+
+    <!-- Vista base para migrar a React + TypeScript -->
 </head>
 <body class="bg-surface font-sans text-gray-800">
 
@@ -35,15 +22,15 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <div class="flex items-center">
-                    <a href="admin-dashboard.html" class="flex-shrink-0 text-white flex items-center gap-2 font-bold text-xl cursor-pointer">
+                    <a href="index.html" class="flex-shrink-0 text-white flex items-center gap-2 font-bold text-xl cursor-pointer">
                         <span class="material-icons text-secondary">local_shipping</span> EL LOA
                     </a>
                     <div class="hidden md:block">
                         <div class="ml-10 flex items-baseline space-x-4">
-                            <a href="admin-dashboard.html" class="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Dashboard</a>
-                            <a href="service-requests.html" class="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Solicitudes</a>
+                            <a href="index.html" class="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Dashboard</a>
+                            <a href="service-request.html" class="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Solicitudes</a>
                             
-                            <a href="#" class="bg-blue-900 text-white px-3 py-2 rounded-md text-sm font-medium border-b-4 border-secondary h-16 flex items-center pt-1">
+                            <a href="users.html" class="bg-blue-900 text-white px-3 py-2 rounded-md text-sm font-medium border-b-4 border-secondary h-16 flex items-center pt-1">
                                 Usuarios
                             </a>
                             
@@ -182,7 +169,7 @@
                             Hace 5 mins
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            <a href="#" class="text-primary hover:text-blue-900">Editar</a>
+                            <a href="user-detail.html" class="text-primary hover:text-blue-900">Editar</a>
                         </td>
                     </tr>
 
@@ -213,7 +200,7 @@
                             Ayer
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            <a href="#" class="text-primary hover:text-blue-900">Editar</a>
+                            <a href="user-detail.html" class="text-primary hover:text-blue-900">Editar</a>
                         </td>
                     </tr>
 
@@ -244,7 +231,7 @@
                             Hace 1 semana
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            <a href="#" class="text-primary hover:text-blue-900">Editar</a>
+                            <a href="user-detail.html" class="text-primary hover:text-blue-900">Editar</a>
                         </td>
                     </tr>
 
@@ -261,12 +248,12 @@
                 </div>
                 <div>
                     <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
-                        <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                        <a href="users.html" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
                             <span class="material-icons text-sm">chevron_left</span>
                         </a>
-                        <a href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">1</a>
-                        <a href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">2</a>
-                        <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                        <a href="users.html" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">1</a>
+                        <a href="users-page-2.html" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">2</a>
+                        <a href="users-page-2.html" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
                             <span class="material-icons text-sm">chevron_right</span>
                         </a>
                     </nav>
