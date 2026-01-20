@@ -1,91 +1,350 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <title>Pago de Servicio | Servicios de Transporte El Loa</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solicitudes | Servicios de Transporte El Loa</title>
 
-  <!-- Tailwind (ya lo tienes linkeado en el proyecto) -->
-  <link rel="stylesheet" href="tailwind.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-  <!-- Metadata para pasarela -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#003366',    /* Azul Corporativo */
+                        secondary: '#FF6600',  /* Naranja Acción */
+                        surface: '#F3F4F6',
+                        success: '#10B981',
+                        warning: '#F59E0B',
+                        danger: '#EF4444',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
 </head>
+<body class="bg-surface font-sans text-gray-800">
 
-<body>
+    <nav class="bg-primary text-white shadow-lg w-full sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <a href="admin-dashboard.html" class="flex-shrink-0 text-white flex items-center gap-2 font-bold text-xl cursor-pointer">
+                        <span class="material-icons text-secondary">local_shipping</span> EL LOA
+                    </a>
+                    <div class="hidden md:block">
+                        <div class="ml-10 flex items-baseline space-x-4">
+                            <a href="admin-dashboard.html" class="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Dashboard</a>
+                            
+                            <a href="#" class="bg-blue-900 text-white px-3 py-2 rounded-md text-sm font-medium border-b-4 border-secondary h-16 flex items-center pt-1">
+                                Solicitudes
+                            </a>
+                            
+                            <a href="companies.html" class="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Clientes</a>
+                            <a href="#" class="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Flota</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <button class="bg-primary p-1 rounded-full text-gray-400 hover:text-white transition">
+                        <span class="material-icons">notifications</span>
+                    </button>
+                    <div class="flex items-center gap-3 pl-4 border-l border-blue-800">
+                        <div class="text-right hidden sm:block">
+                            <p class="text-sm font-bold leading-none">Zaida K.</p>
+                            <p class="text-xs text-blue-300">Dispatcher</p>
+                        </div>
+                        <div class="h-8 w-8 rounded-full bg-secondary flex items-center justify-center text-white text-xs font-bold ring-2 ring-blue-900">ZK</div>
+                        <a href="index.html" class="text-gray-400 hover:text-white ml-2"><span class="material-icons text-sm">logout</span></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
 
-  <!-- NAVBAR (misma estructura que los otros HTML) -->
-  <nav>
-    <h1>Servicios de Transporte El Loa</h1>
-    <ul>
-      <li><a href="service-requests.html">Solicitudes</a></li>
-      <li><a href="trips.html">Viajes</a></li>
-      <li><a href="users.html">Usuarios</a></li>
-    </ul>
-  </nav>
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <div class="flex flex-col lg:flex-row gap-8">
 
-  <main>
-    <h2>Pago de Servicio de Transporte</h2>
+            <div class="w-full lg:w-1/3">
+                <div class="bg-white rounded-lg shadow-lg border border-gray-200 sticky top-24">
+                    <div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
+                        <h2 class="text-lg font-bold text-primary flex items-center gap-2">
+                            <span class="material-icons text-secondary">add_circle</span> Nueva Solicitud
+                        </h2>
+                    </div>
+                    
+                    <form id="createRequestForm" class="p-6 space-y-4">
+                        
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Tipo de Cliente</label>
+                            <select name="clientType" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none">
+                                <option value="empresa">Empresa / Convenio</option>
+                                <option value="persona">Persona Natural</option>
+                            </select>
+                        </div>
 
-    <!-- 
-      ESTE FORMULARIO PUEDE:
-      1) Ir directo a una pasarela externa
-      2) O pasar primero por tu backend NestJS
-    -->
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Origen</label>
+                            <div class="relative">
+                                <span class="material-icons absolute left-3 top-2 text-gray-400 text-sm">trip_origin</span>
+                                <input type="text" name="origin" placeholder="Dirección de retiro" class="w-full pl-9 border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none">
+                            </div>
+                        </div>
 
-    <form 
-      method="POST"
-      action="https://TU-PASARELA-DE-PAGO-O-BACKEND/pago"
-    >
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Destino</label>
+                            <div class="relative">
+                                <span class="material-icons absolute left-3 top-2 text-gray-400 text-sm">location_on</span>
+                                <input type="text" name="destination" placeholder="Dirección de destino" class="w-full pl-9 border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none">
+                            </div>
+                        </div>
 
-      <!-- Identificadores del sistema -->
-      <input type="hidden" name="serviceRequestId" value="12345" />
-      <input type="hidden" name="clientId" value="67890" />
-      <input type="hidden" name="currency" value="CLP" />
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Fecha</label>
+                                <input type="date" name="date" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Hora</label>
+                                <input type="time" name="time" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none">
+                            </div>
+                        </div>
 
-      <!-- Resumen del servicio -->
-      <div>
-        <label>Servicio</label>
-        <input type="text" name="serviceName" value="Traslado Corporativo" readonly />
-      </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Notas / Pasajeros</label>
+                            <textarea name="notes" rows="3" placeholder="Nombres de pax, centro de costo, etc." class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none"></textarea>
+                        </div>
 
-      <div>
-        <label>Origen</label>
-        <input type="text" name="origin" value="Calama" readonly />
-      </div>
+                        <button type="submit" class="w-full bg-secondary hover:bg-orange-700 text-white font-bold py-2 px-4 rounded shadow-md transition flex justify-center items-center gap-2">
+                            <span class="material-icons text-sm">save</span> Crear Solicitud
+                        </button>
+                    </form>
+                </div>
+            </div>
 
-      <div>
-        <label>Destino</label>
-        <input type="text" name="destination" value="Antofagasta" readonly />
-      </div>
+            <div class="w-full lg:w-2/3 space-y-8">
+                
+                <div class="flex justify-between items-center">
+                    <h2 class="text-2xl font-bold text-primary">Listado de Solicitudes</h2>
+                    <div class="flex gap-2">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                            5 Pendientes
+                        </span>
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            3 En Ruta
+                        </span>
+                    </div>
+                </div>
 
-      <div>
-        <label>Monto a pagar</label>
-        <input type="number" name="amount" value="45000" readonly />
-      </div>
+                <div class="bg-white shadow overflow-hidden sm:rounded-lg border border-gray-200">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID / Cliente</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ruta</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200 text-sm">
+                            
+                            <tr class="hover:bg-blue-50 transition border-l-4 border-yellow-400">
+                                <td class="px-6 py-4">
+                                    <div class="font-bold text-gray-900">#REQ-101</div>
+                                    <div class="text-xs text-gray-500">Minera Gaby</div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center gap-1 text-xs text-gray-500"><span class="material-icons text-[10px] text-green-600">circle</span> Aeropuerto</div>
+                                    <div class="flex items-center gap-1 text-xs text-gray-500 mt-1"><span class="material-icons text-[10px] text-red-600">location_on</span> Faena</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-gray-500">
+                                    20/01 - 08:30
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                        Pendiente
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                    <button onclick="toggleAssignPanel()" class="text-secondary hover:text-orange-900 font-bold bg-orange-50 px-3 py-1 rounded border border-orange-200">
+                                        ASIGNAR
+                                    </button>
+                                </td>
+                            </tr>
 
-      <!-- Datos del pagador -->
-      <div>
-        <label>Nombre del Pagador</label>
-        <input type="text" name="payerName" required />
-      </div>
+                            <tr class="hover:bg-gray-50 transition border-l-4 border-green-500">
+                                <td class="px-6 py-4">
+                                    <div class="font-bold text-gray-900">#REQ-099</div>
+                                    <div class="text-xs text-gray-500">Part: Juan Perez</div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center gap-1 text-xs text-gray-500"><span class="material-icons text-[10px] text-green-600">circle</span> Hotel Diego</div>
+                                    <div class="flex items-center gap-1 text-xs text-gray-500 mt-1"><span class="material-icons text-[10px] text-red-600">location_on</span> Aeropuerto</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-gray-500">
+                                    20/01 - 14:00
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                        Agendado
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                    <button class="text-primary hover:text-blue-900 mr-2">Ver</button>
+                                    <button class="text-gray-400 hover:text-red-600"><span class="material-icons text-sm">cancel</span></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
 
-      <div>
-        <label>Email</label>
-        <input type="email" name="payerEmail" required />
-      </div>
+                <div id="assignPanel" class="bg-blue-50 border border-blue-200 rounded-lg p-6 shadow-inner">
+                    <div class="flex justify-between items-start mb-4">
+                        <h3 class="text-lg font-bold text-primary">Asignando Recurso: <span class="text-gray-600">#REQ-101</span></h3>
+                        <button class="text-gray-400 hover:text-gray-600"><span class="material-icons">close</span></button>
+                    </div>
 
-      <!-- BOTÓN DE PAGO -->
-      <button type="submit">
-        Pagar Servicio
-      </button>
+                    <form id="assignForm" class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Chofer Disponible</label>
+                            <select name="driverId" class="w-full border border-gray-300 rounded px-3 py-2 text-sm bg-white">
+                                <option value="">Seleccionar...</option>
+                                <option value="1">Juan Pérez (Disponible)</option>
+                                <option value="2">Pedro Soto (En Ruta - Termina 10min)</option>
+                            </select>
+                        </div>
 
-    </form>
-  </main>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Vehículo</label>
+                            <select name="vehicleId" class="w-full border border-gray-300 rounded px-3 py-2 text-sm bg-white">
+                                <option value="">Seleccionar...</option>
+                                <option value="1">Toyota Hilux (LHYT-88)</option>
+                                <option value="2">Van Mercedes (KJSD-22)</option>
+                            </select>
+                        </div>
 
-  <!-- FOOTER -->
-  <footer>
-    <p>© 2026 Servicios de Transporte El Loa</p>
-  </footer>
+                        <button type="submit" class="bg-success hover:bg-green-600 text-white font-bold py-2 px-4 rounded shadow transition flex justify-center items-center gap-2">
+                            <span class="material-icons text-sm">check_circle</span> Confirmar Asignación
+                        </button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+<footer class="bg-[#002244] text-gray-300 border-t-4 border-secondary mt-auto">
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                
+                <div class="space-y-4">
+                    <div class="flex items-center gap-2 text-white">
+                        <span class="material-icons text-secondary text-3xl">local_shipping</span>
+                        <span class="font-bold text-xl tracking-wide">Servicios El Loa</span>
+                    </div>
+                    <p class="text-sm leading-relaxed text-gray-400">
+                        Líderes en transporte corporativo y privado en la región de Antofagasta. Seguridad, puntualidad y tecnología al servicio de la minería.
+                    </p>
+                    <div class="flex gap-4 pt-2">
+                        <a href="#" class="w-8 h-8 rounded-full bg-blue-900 flex items-center justify-center hover:bg-secondary transition text-white">
+                            <span class="material-icons text-sm">facebook</span>
+                        </a>
+                        <a href="#" class="w-8 h-8 rounded-full bg-blue-900 flex items-center justify-center hover:bg-secondary transition text-white">
+                            <span class="material-icons text-sm">public</span> </a>
+                        <a href="#" class="w-8 h-8 rounded-full bg-blue-900 flex items-center justify-center hover:bg-secondary transition text-white">
+                            <span class="material-icons text-sm">photo_camera</span> </a>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-white font-bold uppercase tracking-wider text-sm mb-4 border-b border-blue-800 pb-2 inline-block">Navegación</h3>
+                    <ul class="space-y-3 text-sm">
+                        <li><a href="index.html" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Inicio</a></li>
+                        <li><a href="service-requests.html" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Solicitudes</a></li>
+                        <li><a href="companies.html" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Clientes</a></li>
+                        <li><a href="#" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Portal Choferes</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-white font-bold uppercase tracking-wider text-sm mb-4 border-b border-blue-800 pb-2 inline-block">Contacto Central</h3>
+                    <ul class="space-y-4 text-sm">
+                        <li class="flex items-start gap-3">
+                            <span class="material-icons text-secondary text-sm mt-1">location_on</span>
+                            <span>Av. Granaderos 2550, Of. 304<br>Calama, Región de Antofagasta</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <span class="material-icons text-secondary text-sm">phone</span>
+                            <span>+56 55 234 5678</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <span class="material-icons text-secondary text-sm">email</span>
+                            <span>operaciones@elloa.cl</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <span class="material-icons text-secondary text-sm">access_time</span>
+                            <span>24/7 Soporte en Ruta</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-white font-bold uppercase tracking-wider text-sm mb-4 border-b border-blue-800 pb-2 inline-block">Descarga la App</h3>
+                    <p class="text-xs text-gray-400 mb-4">Gestiona tus viajes y monitorea la ruta en tiempo real.</p>
+                    
+                    <div class="space-y-3">
+                        <button class="w-full bg-gray-800 hover:bg-gray-700 border border-gray-600 rounded-lg p-2 flex items-center gap-3 transition">
+                            <span class="material-icons text-3xl">apple</span>
+                            <div class="text-left">
+                                <div class="text-[10px] uppercase">Disponible en</div>
+                                <div class="font-bold text-sm text-white">App Store</div>
+                            </div>
+                        </button>
+                        <button class="w-full bg-gray-800 hover:bg-gray-700 border border-gray-600 rounded-lg p-2 flex items-center gap-3 transition">
+                            <span class="material-icons text-3xl">android</span>
+                            <div class="text-left">
+                                <div class="text-[10px] uppercase">Disponible en</div>
+                                <div class="font-bold text-sm text-white">Google Play</div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="bg-[#001a33] py-6 border-t border-blue-900/50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="text-xs text-gray-500 text-center md:text-left">
+                    &copy; 2026 Servicios de Transporte El Loa SpA. Todos los derechos reservados.
+                </div>
+                <div class="flex gap-6 text-xs text-gray-400 font-medium">
+                    <a href="#" class="hover:text-white transition">Términos y Condiciones</a>
+                    <a href="#" class="hover:text-white transition">Política de Privacidad</a>
+                    <a href="#" class="hover:text-white transition">Portal de Denuncias</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function toggleAssignPanel() {
+            const panel = document.getElementById('assignPanel');
+            panel.classList.toggle('hidden');
+            // Scroll suave hacia el panel
+            panel.scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
 
 </body>
 </html>
