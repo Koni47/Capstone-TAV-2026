@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Login | Servicios El Loa</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { theme: { extend: { colors: { primary: '#003366', secondary: '#FF6600' }, fontFamily: { sans: ['Inter','sans-serif'] } } } }</script>
+    <link rel="stylesheet" href="assets/css/tailwind.css" />
+    <link rel="stylesheet" href="assets/css/custom.css" />
+</head>
+<body class="bg-gray-50 font-sans flex items-center justify-center min-h-screen">
+
+    <div class="bg-white rounded-lg shadow-lg w-full max-w-2xl p-8">
+        <div class="text-center mb-6">
+            <div class="w-24 h-24 bg-primary rounded-full mx-auto flex items-center justify-center text-white text-3xl font-bold mb-4 border-4 border-white shadow-md"><span class="material-icons text-white" style="font-size: 60px;">person_add</span></div>
+            <h1 class="text-2xl font-bold text-gray-800">Registro</h1>
+            <p class="text-sm text-gray-500">Servicios de Transporte El Loa</p>
+        </div>
+
+        <form class="space-y-4">
+            <!-- Tipo de Usuario -->
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Tipo de Usuario</label>
+                    <select name="userType" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none">
+                        <option value="">Selecciona una opción</option>
+                        <option value="natural">Persona Natural</option>
+                        <option value="empresa">Empresa</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Rol</label>
+                    <select id="roleSelect" name="role" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none">
+                        <option value="">Selecciona una opción</option>
+                        <option value="cliente">Cliente</option>
+                        <option value="chofer">Chofer</option>
+                        <option value="admin">Administrador</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Nombre/Razón Social -->
+            <div>
+                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Nombre Completo / Razón Social</label>
+                <div class="relative">
+                    <span class="material-icons absolute left-3 top-2 text-gray-400 text-sm">person</span>
+                    <input type="text" name="fullname" placeholder="Ej: Juan Pérez García" class="w-full pl-9 border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none">
+                </div>
+            </div>
+
+            <!-- Rut/Número de Identificación -->
+            <div>
+                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">RUT / Número de Identificación</label>
+                <div class="relative">
+                    <span class="material-icons absolute left-3 top-2 text-gray-400 text-sm">badge</span>
+                    <input type="text" name="rut" placeholder="Ej: 12.345.678-9" class="w-full pl-9 border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none">
+                </div>
+            </div>
+
+            <!-- Correo Electrónico -->
+            <div>
+                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Correo Electrónico</label>
+                <div class="relative">
+                    <span class="material-icons absolute left-3 top-2 text-gray-400 text-sm">email</span>
+                    <input type="email" name="email" placeholder="Ej: juanito.perez@correo.cl" class="w-full pl-9 border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none">
+                </div>
+            </div>
+
+            <!-- Teléfono -->
+            <div>
+                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Teléfono</label>
+                <div class="relative">
+                    <span class="material-icons absolute left-3 top-2 text-gray-400 text-sm">phone</span>
+                    <input type="tel" name="phone" placeholder="Ej: +56 9 1234 5678" class="w-full pl-9 border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none">
+                </div>
+            </div>
+
+            <!-- Dirección -->
+            <div>
+                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Dirección</label>
+                <div class="relative">
+                    <span class="material-icons absolute left-3 top-2 text-gray-400 text-sm">location_on</span>
+                    <input type="text" name="address" placeholder="Ej: Calle Principal 123, Apt 4B" class="w-full pl-9 border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none">
+                </div>
+            </div>
+
+            <!-- Contraseña -->
+            <div>
+                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Contraseña</label>
+                <div class="relative">
+                    <span class="material-icons absolute left-3 top-2 text-gray-400 text-sm">lock</span>
+                    <input type="password" name="password" placeholder="Ingresa una contraseña segura" class="w-full pl-9 border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none">
+                </div>
+            </div>
+
+            <!-- Confirmar Contraseña -->
+            <div>
+                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Confirmar Contraseña</label>
+                <div class="relative">
+                    <span class="material-icons absolute left-3 top-2 text-gray-400 text-sm">lock_outline</span>
+                    <input type="password" name="confirmPassword" placeholder="Confirma tu contraseña" class="w-full pl-9 border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none">
+                </div>
+            </div>
+
+            <!-- Sección Administrador (oculta por defecto) -->
+            <div id="adminSection" class="hidden bg-yellow-50 border-2 border-yellow-300 rounded p-4">
+                <div class="flex items-center mb-3">
+                    <span class="material-icons text-yellow-600 mr-2">admin_panel_settings</span>
+                    <label class="block text-sm font-bold text-yellow-800">Credencial de Administrador</label>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Contraseña de Administrador</label>
+                    <div class="relative">
+                        <span class="material-icons absolute left-3 top-2 text-gray-400 text-sm">security</span>
+                        <input type="password" name="adminPassword" placeholder="Ingresa la contraseña de administrador" class="w-full pl-9 border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none">
+                    </div>
+                    <p class="text-xs text-gray-600 mt-2">Se requiere una contraseña especial para registrar un nuevo administrador</p>
+                </div>
+            </div>
+
+            <!-- Términos y condiciones -->
+            <div class="flex items-center mt-4">
+                <input type="checkbox" id="terms" name="terms" class="w-4 h-4 text-primary rounded focus:ring-2 focus:ring-primary">
+                <label for="terms" class="ml-2 text-sm text-gray-600">Acepto los <a href="terms.html" class="text-primary hover:underline">términos y condiciones</a></label>
+            </div>
+            
+            <hr class="my-4">
+
+            <!-- Botones -->
+            <button type="submit" class="w-full bg-primary hover:bg-blue-900 text-white font-bold py-2 rounded shadow transition">
+                Registrarse
+            </button>
+            <a href="login.html" class="block text-center text-sm text-gray-500 mt-4 hover:text-gray-700">¿Ya tienes cuenta? Inicia sesión</a>
+            <a href="index.html" class="block text-center text-sm text-gray-500 mt-2 hover:text-gray-700">Volver al Inicio</a>
+        </form>
+
+        <script>
+            const roleSelect = document.getElementById('roleSelect');
+            const adminSection = document.getElementById('adminSection');
+
+            roleSelect.addEventListener('change', function() {
+                if (this.value === 'admin') {
+                    adminSection.classList.remove('hidden');
+                } else {
+                    adminSection.classList.add('hidden');
+                }
+            });
+        </script>
+    </div>
+</body>
+</html>
