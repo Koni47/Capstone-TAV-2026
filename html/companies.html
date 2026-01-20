@@ -1,162 +1,371 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <title>Clientes | Servicios de Transporte El Loa</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <!-- Tailwind (CSS compartido del proyecto) -->
-  <link rel="stylesheet" href="/styles/tailwind.css" />
-
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Clientes - Servicios El Loa</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#003366',    /* Azul Corporativo */
+                        secondary: '#FF6600',  /* Naranja Acción */
+                        surface: '#F3F4F6',
+                        success: '#10B981',
+                        warning: '#F59E0B',
+                        danger: '#EF4444',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
 </head>
+<body class="bg-surface font-sans text-gray-800">
 
-<body>
-
-  <!-- Navbar -->
-  <nav class="navbar">
-    <div class="navbar-container">
-      <span class="text-primary font-bold">Servicios de Transporte El Loa</span>
-      <div class="flex gap-6">
-        <a href="service-requests.html" class="nav-link">Solicitudes</a>
-        <a href="trips.html" class="nav-link">Viajes</a>
-        <a href="vehicles.html" class="nav-link">Vehículos</a>
-        <a href="users.html" class="nav-link">Usuarios</a>
-        <a href="companies.html" class="nav-link font-bold text-secondary">Clientes</a>
-      </div>
-    </div>
-  </nav>
-
-  <!-- Main -->
-  <main class="max-w-7xl mx-auto px-6 pt-32">
-
-    <!-- Header -->
-    <section class="mb-10">
-      <h1 class="text-3xl font-bold text-primary mb-2">Clientes</h1>
-      <p class="text-slate-600">
-        Gestión de clientes empresa registrados en la plataforma.
-      </p>
-    </section>
-
-    <!-- Crear Cliente -->
-    <section class="card mb-12">
-      <div class="card-header">
-        Crear Cliente
-      </div>
-
-      <div class="card-body">
-        <form id="create-company-form">
-          
-          <div class="grid md:grid-cols-2 gap-6">
-            <div>
-              <label class="form-label">Nombre de la empresa</label>
-              <input type="text" name="name" class="form-input" />
+    <nav class="bg-primary text-white shadow-lg w-full sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 text-white flex items-center gap-2 font-bold text-xl cursor-pointer">
+                        <span class="material-icons text-secondary">local_shipping</span> EL LOA
+                    </div>
+                    <div class="hidden md:block">
+                        <div class="ml-10 flex items-baseline space-x-4">
+                            <a href="admin-dashboard.html" class="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Dashboard</a>
+                            <a href="#" class="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Solicitudes</a>
+                            
+                            <a href="#" class="bg-blue-900 text-white px-3 py-2 rounded-md text-sm font-medium border-b-4 border-secondary h-16 flex items-center pt-1">
+                                Clientes
+                            </a>
+                            
+                            <a href="#" class="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Flota</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <button class="bg-primary p-1 rounded-full text-gray-400 hover:text-white transition">
+                        <span class="material-icons">notifications</span>
+                    </button>
+                    <div class="flex items-center gap-3 pl-4 border-l border-blue-800">
+                        <div class="text-right hidden sm:block">
+                            <p class="text-sm font-bold leading-none">Zaida K.</p>
+                            <p class="text-xs text-blue-300">Admin</p>
+                        </div>
+                        <div class="h-8 w-8 rounded-full bg-secondary flex items-center justify-center text-white text-xs font-bold ring-2 ring-blue-900">ZK</div>
+                    </div>
+                </div>
             </div>
-
-            <div>
-              <label class="form-label">RUT</label>
-              <input type="text" name="rut" class="form-input" />
-            </div>
-
-            <div>
-              <label class="form-label">Correo de contacto</label>
-              <input type="email" name="email" class="form-input" />
-            </div>
-
-            <div>
-              <label class="form-label">Teléfono</label>
-              <input type="text" name="phone" class="form-input" />
-            </div>
-          </div>
-
-          <div class="mt-6">
-            <button type="submit" class="btn btn-primary">
-              Crear Cliente
-            </button>
-          </div>
-
-        </form>
-      </div>
-    </section>
-
-    <!-- Listado de Clientes -->
-    <section class="card mb-12">
-      <div class="card-header">
-        Clientes Registrados
-      </div>
-
-      <div class="card-body">
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Empresa</th>
-              <th>RUT</th>
-              <th>Contacto</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody id="companies-table-body">
-            <!-- GET /companies -->
-            <!-- Render dinámico -->
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <!-- Estadísticas Cliente -->
-    <section class="card">
-      <div class="card-header">
-        Estadísticas del Cliente
-      </div>
-
-      <div class="card-body">
-        <form id="company-stats-form" class="flex gap-4 mb-6">
-          <input
-            type="text"
-            name="companyId"
-            placeholder="ID del cliente"
-            class="form-input w-64"
-          />
-          <button type="submit" class="btn btn-primary">
-            Ver estadísticas
-          </button>
-        </form>
-
-        <div id="company-stats-result">
-          <!-- GET /companies/:id/stats -->
-          <!-- Total servicios, activos, cancelados, etc -->
         </div>
-      </div>
-    </section>
+    </nav>
 
-  </main>
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <div class="md:flex md:items-center md:justify-between mb-8">
+            <div class="flex-1 min-w-0">
+                <h2 class="text-2xl font-bold leading-7 text-primary sm:text-3xl sm:truncate">
+                    Clientes Corporativos
+                </h2>
+                <p class="mt-1 text-sm text-gray-500">Gestión de empresas mineras y centros de costo.</p>
+            </div>
+            <div class="mt-4 flex md:mt-0 md:ml-4">
+                <button type="button" class="ml-3 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-secondary hover:bg-orange-700 focus:outline-none transition">
+                    <span class="material-icons text-sm mr-2">add</span> Nueva Empresa
+                </button>
+            </div>
+        </div>
 
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="footer-container">
-      <div>
-        <h4 class="font-bold mb-2">Servicios de Transporte El Loa</h4>
-        <p class="text-sm">
-          Plataforma de gestión de transporte corporativo y particular.
-        </p>
-      </div>
+        <div class="grid grid-cols-1 gap-5 sm:grid-cols-3 mb-8">
+            <div class="bg-white overflow-hidden shadow rounded-lg border-l-4 border-secondary">
+                <div class="px-4 py-5 sm:p-6">
+                    <dt class="text-sm font-medium text-gray-500 truncate">Total Empresas Activas</dt>
+                    <dd class="mt-1 text-3xl font-bold text-gray-900">8</dd>
+                </div>
+            </div>
+            <div class="bg-white overflow-hidden shadow rounded-lg border-l-4 border-blue-400">
+                <div class="px-4 py-5 sm:p-6">
+                    <dt class="text-sm font-medium text-gray-500 truncate">Contratos por Vencer</dt>
+                    <dd class="mt-1 text-3xl font-bold text-gray-900">2</dd>
+                </div>
+            </div>
+            <div class="bg-white overflow-hidden shadow rounded-lg border-l-4 border-green-400">
+                <div class="px-4 py-5 sm:p-6">
+                    <dt class="text-sm font-medium text-gray-500 truncate">Viajes Facturados (Mes)</dt>
+                    <dd class="mt-1 text-3xl font-bold text-gray-900">142</dd>
+                </div>
+            </div>
+        </div>
 
-      <div>
-        <h4 class="font-bold mb-2">Sistema</h4>
-        <ul class="text-sm space-y-1">
-          <li>Solicitudes</li>
-          <li>Viajes</li>
-          <li>Clientes</li>
-          <li>Flota</li>
-        </ul>
-      </div>
+        <div class="bg-white p-4 rounded-lg shadow mb-6 flex flex-col sm:flex-row gap-4 items-center justify-between">
+            <div class="relative w-full sm:w-96">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <span class="material-icons text-gray-400">search</span>
+                </div>
+                <input type="text" class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary sm:text-sm" placeholder="Buscar por RUT o Razón Social...">
+            </div>
+            <div class="flex gap-2 w-full sm:w-auto">
+                <select class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm rounded-md border">
+                    <option>Todos los estados</option>
+                    <option>Activos</option>
+                    <option>Inactivos</option>
+                </select>
+                <button class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none">
+                    <span class="material-icons text-sm mr-2">file_download</span> Exportar
+                </button>
+            </div>
+        </div>
 
-      <div>
-        <h4 class="font-bold mb-2">Soporte</h4>
-        <p class="text-sm">Contacto administrativo</p>
-      </div>
-    </div>
-  </footer>
+        <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Empresa / RUT
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Centro de Costo
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
+                            Contacto
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Estado
+                        </th>
+                        <th scope="col" class="relative px-6 py-3">
+                            <span class="sr-only">Acciones</span>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 h-10 w-10 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 font-bold">
+                                    ME
+                                </div>
+                                <div class="ml-4">
+                                    <div class="text-sm font-bold text-gray-900">Minera Escondida Ltda.</div>
+                                    <div class="text-sm text-gray-500">76.123.456-K</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900 font-medium">CC-2025-OPS</div>
+                            <div class="text-xs text-gray-500">Operaciones Mina</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap hidden md:table-cell">
+                            <div class="text-sm text-gray-900">Roberto Díaz</div>
+                            <div class="text-xs text-gray-500">rdiaz@escondida.cl</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 border border-green-200">
+                                Activo
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <a href="#" class="text-primary hover:text-blue-900 mr-3">Editar</a>
+                            <a href="#" class="text-gray-400 hover:text-gray-600"><span class="material-icons text-sm">more_vert</span></a>
+                        </td>
+                    </tr>
 
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 h-10 w-10 bg-orange-100 rounded-full flex items-center justify-center text-secondary font-bold">
+                                    CO
+                                </div>
+                                <div class="ml-4">
+                                    <div class="text-sm font-bold text-gray-900">Codelco División Norte</div>
+                                    <div class="text-sm text-gray-500">90.111.222-3</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900 font-medium">CC-EXT-GABY</div>
+                            <div class="text-xs text-gray-500">Extracción Gaby</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap hidden md:table-cell">
+                            <div class="text-sm text-gray-900">Ana María Silva</div>
+                            <div class="text-xs text-gray-500">asilva@codelco.cl</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 border border-green-200">
+                                Activo
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <a href="#" class="text-primary hover:text-blue-900 mr-3">Editar</a>
+                            <a href="#" class="text-gray-400 hover:text-gray-600"><span class="material-icons text-sm">more_vert</span></a>
+                        </td>
+                    </tr>
+
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 h-10 w-10 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 font-bold">
+                                    SQ
+                                </div>
+                                <div class="ml-4">
+                                    <div class="text-sm font-bold text-gray-900">SQM Salar</div>
+                                    <div class="text-sm text-gray-500">88.999.000-1</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900 font-medium">CC-LITIO-01</div>
+                            <div class="text-xs text-gray-500">Planta Litio</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap hidden md:table-cell">
+                            <div class="text-sm text-gray-900">Juan Torres</div>
+                            <div class="text-xs text-gray-500">jtorres@sqm.com</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800 border border-red-200">
+                                Suspendido
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <a href="#" class="text-primary hover:text-blue-900 mr-3">Editar</a>
+                            <a href="#" class="text-gray-400 hover:text-gray-600"><span class="material-icons text-sm">more_vert</span></a>
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+            
+            <div class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+                <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                    <div>
+                        <p class="text-sm text-gray-700">
+                            Mostrando <span class="font-medium">1</span> a <span class="font-medium">3</span> de <span class="font-medium">8</span> resultados
+                        </p>
+                    </div>
+                    <div>
+                        <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                            <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                <span class="material-icons text-sm">chevron_left</span>
+                            </a>
+                            <a href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-blue-50 text-sm font-medium text-primary hover:bg-gray-50">
+                                1
+                            </a>
+                            <a href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+                                2
+                            </a>
+                            <a href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+                                3
+                            </a>
+                            <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                <span class="material-icons text-sm">chevron_right</span>
+                            </a>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+<footer class="bg-[#002244] text-gray-300 border-t-4 border-secondary mt-auto">
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                
+                <div class="space-y-4">
+                    <div class="flex items-center gap-2 text-white">
+                        <span class="material-icons text-secondary text-3xl">local_shipping</span>
+                        <span class="font-bold text-xl tracking-wide">Servicios El Loa</span>
+                    </div>
+                    <p class="text-sm leading-relaxed text-gray-400">
+                        Líderes en transporte corporativo y privado en la región de Antofagasta. Seguridad, puntualidad y tecnología al servicio de la minería.
+                    </p>
+                    <div class="flex gap-4 pt-2">
+                        <a href="#" class="w-8 h-8 rounded-full bg-blue-900 flex items-center justify-center hover:bg-secondary transition text-white">
+                            <span class="material-icons text-sm">facebook</span>
+                        </a>
+                        <a href="#" class="w-8 h-8 rounded-full bg-blue-900 flex items-center justify-center hover:bg-secondary transition text-white">
+                            <span class="material-icons text-sm">public</span> </a>
+                        <a href="#" class="w-8 h-8 rounded-full bg-blue-900 flex items-center justify-center hover:bg-secondary transition text-white">
+                            <span class="material-icons text-sm">photo_camera</span> </a>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-white font-bold uppercase tracking-wider text-sm mb-4 border-b border-blue-800 pb-2 inline-block">Navegación</h3>
+                    <ul class="space-y-3 text-sm">
+                        <li><a href="index.html" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Inicio</a></li>
+                        <li><a href="service-requests.html" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Solicitudes</a></li>
+                        <li><a href="companies.html" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Clientes</a></li>
+                        <li><a href="#" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Portal Choferes</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-white font-bold uppercase tracking-wider text-sm mb-4 border-b border-blue-800 pb-2 inline-block">Contacto Central</h3>
+                    <ul class="space-y-4 text-sm">
+                        <li class="flex items-start gap-3">
+                            <span class="material-icons text-secondary text-sm mt-1">location_on</span>
+                            <span>Av. Granaderos 2550, Of. 304<br>Calama, Región de Antofagasta</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <span class="material-icons text-secondary text-sm">phone</span>
+                            <span>+56 55 234 5678</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <span class="material-icons text-secondary text-sm">email</span>
+                            <span>operaciones@elloa.cl</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <span class="material-icons text-secondary text-sm">access_time</span>
+                            <span>24/7 Soporte en Ruta</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-white font-bold uppercase tracking-wider text-sm mb-4 border-b border-blue-800 pb-2 inline-block">Descarga la App</h3>
+                    <p class="text-xs text-gray-400 mb-4">Gestiona tus viajes y monitorea la ruta en tiempo real.</p>
+                    
+                    <div class="space-y-3">
+                        <button class="w-full bg-gray-800 hover:bg-gray-700 border border-gray-600 rounded-lg p-2 flex items-center gap-3 transition">
+                            <span class="material-icons text-3xl">apple</span>
+                            <div class="text-left">
+                                <div class="text-[10px] uppercase">Disponible en</div>
+                                <div class="font-bold text-sm text-white">App Store</div>
+                            </div>
+                        </button>
+                        <button class="w-full bg-gray-800 hover:bg-gray-700 border border-gray-600 rounded-lg p-2 flex items-center gap-3 transition">
+                            <span class="material-icons text-3xl">android</span>
+                            <div class="text-left">
+                                <div class="text-[10px] uppercase">Disponible en</div>
+                                <div class="font-bold text-sm text-white">Google Play</div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="bg-[#001a33] py-6 border-t border-blue-900/50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="text-xs text-gray-500 text-center md:text-left">
+                    &copy; 2026 Servicios de Transporte El Loa SpA. Todos los derechos reservados.
+                </div>
+                <div class="flex gap-6 text-xs text-gray-400 font-medium">
+                    <a href="#" class="hover:text-white transition">Términos y Condiciones</a>
+                    <a href="#" class="hover:text-white transition">Política de Privacidad</a>
+                    <a href="#" class="hover:text-white transition">Portal de Denuncias</a>
+                </div>
+            </div>
+        </div>
+    </footer>
 </body>
 </html>

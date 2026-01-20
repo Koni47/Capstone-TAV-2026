@@ -1,150 +1,255 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <title>Mis Viajes | Servicios de Transporte El Loa</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mis Viajes (Chofer) | Servicios El Loa</title>
 
-  <!-- Responsive -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-  <!-- CSS -->
-<link rel="stylesheet" href="/styles/tailwind.css" />
-
-
-  <!-- Vista base para migrar a React + TypeScript -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#003366',    /* Azul Corporativo */
+                        secondary: '#FF6600',  /* Naranja Acción */
+                        surface: '#F3F4F6',
+                        success: '#10B981',
+                        danger: '#EF4444',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Evitar rebote en iOS */
+        body { overscroll-behavior-y: none; }
+    </style>
 </head>
-<body>
+<body class="bg-gray-100 font-sans text-gray-800 pb-24 md:pb-0">
 
-  <!-- Header -->
-  <header>
-    <h1>Servicios de Transporte El Loa</h1>
-    <nav>
-      <ul>
-        <li><a href="dashboard.html">Dashboard</a></li>
-        <li><a href="service-requests.html">Solicitudes</a></li>
-        <li><a href="trips.html">Mis Viajes</a></li>
-        <li><button type="button">Cerrar sesión</button></li>
-      </ul>
+    <header class="bg-primary text-white sticky top-0 z-40 shadow-md">
+        <div class="max-w-6xl mx-auto px-4 h-16 flex justify-between items-center">
+            
+            <div class="flex items-center gap-3">
+                <div class="md:hidden">
+                    <h1 class="text-lg font-bold">Mis Viajes</h1>
+                    <p class="text-xs text-blue-200">Hola, Juan Pérez</p>
+                </div>
+                <div class="hidden md:flex items-center gap-2">
+                    <span class="material-icons text-secondary text-2xl">local_shipping</span>
+                    <span class="font-bold text-xl tracking-wide">EL LOA</span>
+                    <span class="ml-4 px-3 py-1 bg-blue-800 rounded text-xs font-medium text-blue-200">Portal Conductor</span>
+                </div>
+            </div>
+
+            <nav class="hidden md:flex gap-6 text-sm font-medium">
+                <a href="#" class="text-white border-b-2 border-secondary pb-4 pt-4">Mis Viajes</a>
+                <a href="#" class="text-blue-200 hover:text-white transition pb-4 pt-4">Historial</a>
+                <a href="#" class="text-blue-200 hover:text-white transition pb-4 pt-4">Perfil</a>
+            </nav>
+
+            <div class="flex items-center gap-4">
+                <div class="bg-blue-800 px-3 py-1 rounded-full text-xs font-mono border border-blue-600 shadow-sm">
+                    LHYT-88
+                </div>
+                <div class="hidden md:flex h-8 w-8 rounded-full bg-secondary items-center justify-center text-xs font-bold ring-2 ring-white">JP</div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto p-4 md:p-8">
+
+        <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+            <h2 class="hidden md:block text-2xl font-bold text-gray-800">Panel de Ruta</h2>
+            
+            <div class="flex justify-between items-center bg-white p-2 rounded-lg shadow-sm w-full md:w-64">
+                <button class="p-1 text-gray-400 hover:text-primary"><span class="material-icons">chevron_left</span></button>
+                <span class="font-bold text-sm text-gray-700">Hoy, 22 Ene</span>
+                <button class="p-1 text-gray-400 hover:text-primary"><span class="material-icons">chevron_right</span></button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 items-start">
+
+            <section id="active-trip" class="lg:col-span-2">
+                <h2 class="text-xs font-bold text-gray-500 uppercase mb-2 ml-1 md:mb-4">En Curso Ahora</h2>
+                
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden border-2 border-green-500 relative transition hover:shadow-xl">
+                    <div class="absolute top-4 right-4 flex items-center gap-1 bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold">
+                        <span class="relative flex h-2 w-2 mr-1">
+                          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                          <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                        </span>
+                        EN RUTA
+                    </div>
+
+                    <div class="p-6 md:p-8">
+                        <div class="text-xs text-gray-400 mb-1 font-mono">ID: #TRIP-101</div>
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="p-2 bg-blue-50 rounded-lg text-primary">
+                                <span class="material-icons text-2xl">groups</span>
+                            </div>
+                            <div>
+                                <span class="font-bold text-xl md:text-2xl text-gray-900 block">Traslado Turno B</span>
+                                <span class="text-sm text-gray-500">Minera Gaby &bull; 4 Pax</span>
+                            </div>
+                        </div>
+
+                        <div class="relative pl-4 mb-8 border-l-2 border-gray-100 ml-2">
+                            <div class="flex gap-4 mb-8 relative">
+                                <div class="absolute -left-[21px] top-1 w-3 h-3 rounded-full bg-gray-300 border-2 border-white shadow"></div>
+                                <div>
+                                    <p class="text-xs text-gray-400 font-bold uppercase tracking-wider">08:30 • Origen</p>
+                                    <p class="font-bold text-gray-800 text-base md:text-lg">Aeropuerto El Loa</p>
+                                    <p class="text-sm text-gray-500">Sector Llegadas Nacionales</p>
+                                </div>
+                            </div>
+
+                            <div class="flex gap-4 relative">
+                                <div class="absolute -left-[21px] top-1 w-3 h-3 rounded-full bg-secondary border-2 border-white shadow ring-2 ring-orange-100"></div>
+                                <div>
+                                    <p class="text-xs text-gray-400 font-bold uppercase tracking-wider">Estimado 10:00 • Destino</p>
+                                    <p class="font-bold text-gray-800 text-base md:text-lg">Faena Minera Gaby</p>
+                                    <p class="text-sm text-gray-500">Garita Principal de Acceso</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col md:flex-row gap-3">
+                             <button class="flex-1 bg-white border border-gray-200 text-gray-700 font-bold py-3 rounded-lg shadow-sm hover:bg-gray-50 flex justify-center items-center gap-2">
+                                <span class="material-icons text-gray-500">map</span> Ver Mapa
+                            </button>
+                            <button onclick="toggleModal('evidenceModal')" class="flex-[2] bg-danger hover:bg-red-700 text-white font-bold py-3 rounded-lg shadow-md flex justify-center items-center gap-2 transition active:scale-95">
+                                <span class="material-icons">stop_circle</span> FINALIZAR VIAJE
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+            <section id="upcoming-trips" class="lg:col-span-1">
+                <h2 class="text-xs font-bold text-gray-500 uppercase mb-2 ml-1 md:mb-4">Próximos Viajes</h2>
+
+                <div class="space-y-4">
+                    <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100 hover:border-secondary transition group">
+                        <div class="p-4">
+                            <div class="flex justify-between items-start mb-3">
+                                <div class="text-xs text-gray-400 font-mono">#TRIP-102</div>
+                                <span class="bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide">Asignado</span>
+                            </div>
+                            
+                            <div class="flex items-center gap-2 mb-3">
+                                <span class="text-xl font-bold text-primary">14:00</span>
+                                <span class="h-4 w-px bg-gray-300"></span>
+                                <span class="text-sm font-medium text-gray-700 truncate">Minera Escondida</span>
+                            </div>
+
+                            <div class="text-sm text-gray-600 mb-4 flex items-center gap-2 bg-gray-50 p-2 rounded">
+                                <span class="material-icons text-xs text-gray-400">route</span>
+                                <span class="truncate">Hotel Diego &rarr; Aeropuerto</span>
+                            </div>
+
+                            <button class="w-full bg-secondary hover:bg-orange-600 text-white font-bold py-2 rounded-lg shadow-sm flex justify-center items-center gap-2 text-sm transition group-hover:shadow-md">
+                                <span class="material-icons text-sm">play_arrow</span> INICIAR RUTA
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-xl border border-gray-200 overflow-hidden opacity-75 hover:opacity-100 transition">
+                        <div class="p-4">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="bg-gray-200 text-gray-600 px-2 py-0.5 rounded text-[10px] font-bold uppercase">Finalizado</span>
+                                <span class="text-xs text-gray-400">Ayer</span>
+                            </div>
+                            <div class="text-sm font-bold text-gray-700">Traslado Ejecutivo</div>
+                            <div class="text-xs text-gray-500">Centro &rarr; Aeropuerto</div>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+        </div>
+    </main>
+
+
+    <div id="evidenceModal" class="fixed inset-0 z-50 hidden" role="dialog" aria-modal="true">
+        <div class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm transition-opacity" onclick="toggleModal('evidenceModal')"></div>
+
+        <div class="fixed inset-0 flex items-end md:items-center justify-center pointer-events-none">
+            
+            <div class="bg-white w-full md:w-auto md:max-w-lg md:mx-4 rounded-t-2xl md:rounded-2xl p-6 shadow-2xl transform transition-transform duration-300 ease-out pointer-events-auto">
+                
+                <div class="md:hidden w-12 h-1 bg-gray-300 rounded-full mx-auto mb-6"></div>
+                
+                <div class="flex justify-between items-start mb-4">
+                    <h3 class="text-lg font-bold text-gray-900">Finalizar Viaje #TRIP-101</h3>
+                    <button onclick="toggleModal('evidenceModal')" class="hidden md:block text-gray-400 hover:text-gray-600"><span class="material-icons">close</span></button>
+                </div>
+                
+                <form id="evidenceForm" class="space-y-4">
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Observaciones</label>
+                        <textarea name="description" rows="3" class="w-full border border-gray-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary focus:outline-none" placeholder="¿Hubo algún retraso, desvío o novedad?"></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Evidencia (Foto/Firma)</label>
+                        <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition">
+                            <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                <span class="material-icons text-gray-400 text-3xl">add_a_photo</span>
+                                <p class="mb-1 text-sm text-gray-500 font-medium">Subir foto del pasajero/vale</p>
+                                <p class="text-xs text-gray-400">JPG, PNG (Max 5MB)</p>
+                            </div>
+                            <input type="file" name="file" class="hidden" />
+                        </label>
+                    </div>
+
+                    <div class="flex gap-3 pt-4 border-t border-gray-100 mt-4">
+                        <button type="button" onclick="toggleModal('evidenceModal')" class="flex-1 bg-white border border-gray-300 text-gray-700 font-bold py-3 rounded-lg hover:bg-gray-50 transition">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="flex-1 bg-primary hover:bg-blue-900 text-white font-bold py-3 rounded-lg shadow-lg transition transform active:scale-95">
+                            Confirmar Fin
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <nav class="md:hidden fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 flex justify-around items-center h-16 shadow-[0_-2px_10px_rgba(0,0,0,0.05)] z-40">
+        <a href="dashboard.html" class="flex flex-col items-center justify-center w-full h-full text-gray-400 active:text-primary">
+            <span class="material-icons">home</span>
+            <span class="text-[10px] mt-1 font-medium">Inicio</span>
+        </a>
+        <a href="#" class="flex flex-col items-center justify-center w-full h-full text-primary relative">
+            <span class="material-icons">commute</span>
+            <span class="text-[10px] mt-1 font-bold">Mis Viajes</span>
+            <span class="absolute top-0 w-12 h-1 bg-secondary rounded-b-full"></span>
+        </a>
+        <a href="#" class="flex flex-col items-center justify-center w-full h-full text-gray-400 active:text-primary">
+            <span class="material-icons">person</span>
+            <span class="text-[10px] mt-1 font-medium">Perfil</span>
+        </a>
     </nav>
-  </header>
 
-  <main>
-
- 
-    <!-- Mis Viajes -->
-    <!-- GET /trips/my-trips -->
-
-    <section id="my-trips">
-      <h2>Mis Viajes Asignados</h2>
-
-      <table>
-        <thead>
-          <tr>
-            <th>ID Viaje</th>
-            <th>Origen</th>
-            <th>Destino</th>
-            <th>Fecha</th>
-            <th>Estado</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- Render dinámico desde API -->
-          <tr>
-            <td>101</td>
-            <td>Calama</td>
-            <td>Antofagasta</td>
-            <td>22/01/2026</td>
-            <td>Asignado</td>
-            <td>
-              <button type="button">Ver Detalle</button>
-              <button type="button">Iniciar</button>
-              <button type="button">Finalizar</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
-
-    <hr />
-
-
-    <!-- Detalle del Viaje -->
-
-    <section id="trip-detail">
-      <h2>Detalle del Viaje</h2>
-
-      <div>
-        <p><strong>ID Viaje:</strong> <span id="trip-id"></span></p>
-        <p><strong>Origen:</strong> <span id="trip-origin"></span></p>
-        <p><strong>Destino:</strong> <span id="trip-destination"></span></p>
-        <p><strong>Fecha:</strong> <span id="trip-date"></span></p>
-        <p><strong>Estado:</strong> <span id="trip-status"></span></p>
-      </div>
-    </section>
-
-    <hr />
-
- 
-    <!-- Iniciar Ruta -->
-    <!-- PATCH /trips/:id/start -->
-
-    <section id="start-trip">
-      <h2>Iniciar Ruta</h2>
-
-      <button type="button">
-        Iniciar Viaje
-      </button>
-    </section>
-
-    <hr />
-
-
-    <!-- Finalizar Ruta -->
-    <!-- PATCH /trips/:id/finish -->
-
-    <section id="finish-trip">
-      <h2>Finalizar Ruta</h2>
-
-      <button type="button">
-        Finalizar Viaje
-      </button>
-    </section>
-
-    <hr />
-
-
-    <!-- Subir Evidencia -->
-    <!-- POST /trips/:id/evidence -->
-
-    <section id="upload-evidence">
-      <h2>Subir Evidencia del Viaje</h2>
-
-      <form id="evidenceForm">
-        <label>
-          Descripción
-          <textarea name="description"></textarea>
-        </label>
-
-        <label>
-          Archivo de Evidencia
-          <input type="file" name="file" />
-        </label>
-
-        <button type="submit">
-          Subir Evidencia
-        </button>
-      </form>
-    </section>
-
-  </main>
-
-  <footer>
-    <p>© 2026 Servicios de Transporte El Loa</p>
-  </footer>
-
-  <!-- Script base (luego React / TS) -->
-  <script src="./trips.js"></script>
+    <script>
+        function toggleModal(modalID) {
+            const modal = document.getElementById(modalID);
+            modal.classList.toggle('hidden');
+        }
+    </script>
 
 </body>
 </html>
