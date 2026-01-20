@@ -31,6 +31,7 @@
         /* Evitar rebote en iOS */
         body { overscroll-behavior-y: none; }
     </style>
+    <link rel="stylesheet" href="assets/css/custom.css" />
 </head>
 <body class="bg-gray-100 font-sans text-gray-800 pb-24 md:pb-0">
 
@@ -50,9 +51,9 @@
             </div>
 
             <nav class="hidden md:flex gap-6 text-sm font-medium">
-                <a href="#" class="text-white border-b-2 border-secondary pb-4 pt-4">Mis Viajes</a>
-                <a href="#" class="text-blue-200 hover:text-white transition pb-4 pt-4">Historial</a>
-                <a href="#" class="text-blue-200 hover:text-white transition pb-4 pt-4">Perfil</a>
+                <a href="trips.html" class="text-white border-b-2 border-secondary pb-4 pt-4">Mis Viajes</a>
+                <a href="trips.html#history" class="text-blue-200 hover:text-white transition pb-4 pt-4">Historial</a>
+                <a href="profile.html" class="text-blue-200 hover:text-white transition pb-4 pt-4">Perfil</a>
             </nav>
 
             <div class="flex items-center gap-4">
@@ -229,16 +230,16 @@
 
 
     <nav class="md:hidden fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 flex justify-around items-center h-16 shadow-[0_-2px_10px_rgba(0,0,0,0.05)] z-40">
-        <a href="dashboard.html" class="flex flex-col items-center justify-center w-full h-full text-gray-400 active:text-primary">
+        <a href="index.html" class="flex flex-col items-center justify-center w-full h-full text-gray-400 active:text-primary">
             <span class="material-icons">home</span>
             <span class="text-[10px] mt-1 font-medium">Inicio</span>
         </a>
-        <a href="#" class="flex flex-col items-center justify-center w-full h-full text-primary relative">
+        <a href="trips.html" class="flex flex-col items-center justify-center w-full h-full text-primary relative">
             <span class="material-icons">commute</span>
             <span class="text-[10px] mt-1 font-bold">Mis Viajes</span>
             <span class="absolute top-0 w-12 h-1 bg-secondary rounded-b-full"></span>
         </a>
-        <a href="#" class="flex flex-col items-center justify-center w-full h-full text-gray-400 active:text-primary">
+        <a href="profile.html" class="flex flex-col items-center justify-center w-full h-full text-gray-400 active:text-primary">
             <span class="material-icons">person</span>
             <span class="text-[10px] mt-1 font-medium">Perfil</span>
         </a>
