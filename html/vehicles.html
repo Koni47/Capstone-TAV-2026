@@ -37,6 +37,10 @@
     <script src="assets/js/auth-helper.js"></script>
 </head>
 <body class="bg-surface font-sans text-gray-800">
+    <script>
+        // Proteger esta página - redirigir al login si no está autenticado
+        protectPage();
+    </script>
 
    <nav class="bg-primary text-white shadow-lg w-full sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
