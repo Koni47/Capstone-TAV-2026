@@ -13,10 +13,15 @@
     </script>
     <link rel="stylesheet" href="assets/css/tailwind.css" />
     <link rel="stylesheet" href="assets/css/custom.css" />
+    <script src="assets/js/auth-helper.js"></script>
 
     <!-- Vista base para migrar a React + TypeScript -->
 </head>
 <body class="bg-surface font-sans text-gray-800">
+    <script>
+        // Proteger esta página - redirigir al login si no está autenticado
+        protectPage();
+    </script>
 
    <nav class="bg-primary text-white shadow-lg w-full sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -27,7 +32,7 @@
                     </a>
                     <div class="hidden md:block">
                         <div class="ml-10 flex items-baseline space-x-4">
-                            <a href="index.html" class="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Dashboard</a>
+                            <a id="dashboardLink" href="#" onclick="redirectToDashboard(event)" class="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Dashboard</a>
                             <a href="service-request.html" class="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Solicitudes</a>
                             
                             <a href="users.html" class="bg-blue-900 text-white px-3 py-2 rounded-md text-sm font-medium border-b-4 border-secondary h-16 flex items-center pt-1">
@@ -45,10 +50,11 @@
                     </button>
                     <div class="flex items-center gap-3 pl-4 border-l border-blue-800">
                         <div class="text-right hidden sm:block">
-                            <p class="text-sm font-bold leading-none">Zaida K.</p>
-                            <p class="text-xs text-blue-300">Admin</p>
+                            <p class="text-sm font-bold leading-none user-name">Usuario</p>
+                            <p class="text-xs text-blue-300 user-role">Admin</p>
                         </div>
-                        <div class="h-8 w-8 rounded-full bg-secondary flex items-center justify-center text-white text-xs font-bold ring-2 ring-blue-900">ZK</div>
+                        <div class="h-8 w-8 rounded-full bg-secondary flex items-center justify-center text-white text-xs font-bold ring-2 ring-blue-900 user-initials">US</div>
+                        <a href="logout.html" class="ml-2 text-sm font-semibold hover:text-gray-300">Salir</a>
                     </div>
                 </div>
             </div>
@@ -324,6 +330,34 @@
     <script>
         function toggleModal(modalID) {
             document.getElementById(modalID).classList.toggle("hidden");
+        }
+
+        // Redirección dinámica al Dashboard según el rol del usuario
+        function redirectToDashboard(event) {
+            event.preventDefault();
+            
+            // Obtener el rol del usuario del localStorage o sessionStorage
+            const userRole = localStorage.getItem('userRole') || sessionStorage.getItem('userRole') || 'cliente';
+            
+            let dashboardUrl = 'dashboard.html'; // URL por defecto
+            
+            switch(userRole.toLowerCase()) {
+                case 'admin':
+                case 'administrador':
+                    dashboardUrl = 'dashboard_adm.html';
+                    break;
+                case 'cliente':
+                    dashboardUrl = 'dashboard-cli.html';
+                    break;
+                case 'chofer':
+                    dashboardUrl = 'dashboard-chof.html';
+                    break;
+                default:
+                    dashboardUrl = 'dashboard.html';
+            }
+            
+            // Redirigir a la URL correspondiente
+            window.location.href = dashboardUrl;
         }
     </script>
 <footer class="bg-[#002244] text-gray-300 border-t-4 border-secondary mt-auto">

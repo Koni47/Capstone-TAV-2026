@@ -10,9 +10,12 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script>tailwind.config = { theme: { extend: { colors: { primary: '#003366', secondary: '#FF6600' }, fontFamily: { sans: ['Inter','sans-serif'] } } } }</script>
   <link rel="stylesheet" href="assets/css/tailwind.css" />
-  <link rel="stylesheet" href="assets/css/custom.css" />
-</head>
+  <link rel="stylesheet" href="assets/css/custom.css" />    <script src="assets/js/auth-helper.js"></script></head>
 <body class="bg-surface font-sans text-gray-800">
+    <script>
+        // Proteger esta página - redirigir al login si no está autenticado
+        protectPage();
+    </script>
 
     <nav class="bg-primary text-white shadow-lg w-full sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -41,10 +44,11 @@
                     </button>
                     <div class="flex items-center gap-3 pl-4 border-l border-blue-800">
                         <div class="text-right hidden sm:block">
-                            <p class="text-sm font-bold leading-none">Zaida K.</p>
-                            <p class="text-xs text-blue-300">Admin</p>
+                            <p class="text-sm font-bold leading-none user-name">Usuario</p>
+                            <p class="text-xs text-blue-300 user-role">Admin</p>
                         </div>
-                        <div class="h-8 w-8 rounded-full bg-secondary flex items-center justify-center text-white text-xs font-bold ring-2 ring-blue-900">ZK</div>
+                        <div class="h-8 w-8 rounded-full bg-secondary flex items-center justify-center text-white text-xs font-bold ring-2 ring-blue-900 user-initials">US</div>
+                        <a href="logout.html" class="ml-2 text-sm font-semibold hover:text-gray-300">Salir</a>
                     </div>
                 </div>
             </div>
