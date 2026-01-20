@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentación Técnica API REST - Servicios El Loa</title>
+    <style>
+        :root {
+            --primary: #2E74B5;
+            --bg: #f4f7f6;
+            --text: #333;
+            --get: #007bff;
+            --post: #28a745;
+            --patch: #ffc107;
+            --delete: #dc3545;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 40px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: white;
+            padding: 50px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        header {
+            border-bottom: 3px solid var(--primary);
+            padding-bottom: 20px;
+            margin-bottom: 40px;
+        }
+
+        h1 { margin: 0; color: var(--primary); font-size: 28px; }
+        .subtitle { color: #666; margin-top: 5px; }
+
+        .module-section {
+            margin-bottom: 50px;
+        }
+
+        .module-title {
+            font-size: 20px;
+            color: #2c3e50;
+            border-left: 5px solid var(--primary);
+            padding-left: 15px;
+            margin-bottom: 20px;
+            background: #eef4fa;
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
+
+        /* Tabla de Endpoints */
+        .endpoint-card {
+            border: 1px solid #e1e4e8;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            background: white;
+        }
+
+        .card-header {
+            padding: 12px 20px;
+            background: #fff;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .method {
+            font-weight: bold;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 13px;
+            width: 60px;
+            text-align: center;
+            margin-right: 15px;
+            display: inline-block;
+        }
+
+        .get { background-color: var(--get); }
+        .post { background-color: var(--post); }
+        .patch { background-color: var(--patch); color: #333; }
+        .delete { background-color: var(--delete); }
+
+        .path {
+            font-family: 'Consolas', monospace;
+            font-weight: 600;
+            font-size: 15px;
+            color: #333;
+        }
+
+        .desc { font-size: 14px; color: #666; font-style: italic; }
+
+        .card-body {
+            padding: 15px 20px;
+            background: #fcfcfc;
+            border-top: 1px solid #eee;
+            font-size: 14px;
+            display: none; /* Oculto por defecto, se puede hacer JS para toggle, aquí lo mostramos todo para imprimir */
+            display: block; 
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: bold;
+            margin-right: 5px;
+            background: #e2e6ea;
+            color: #555;
+        }
+
+        pre {
+            background: #272822;
+            color: #f8f8f2;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Especificación de Endpoints API (v1.0)</h1>
+        <div class="subtitle">
+            <strong>Proyecto:</strong> Servicios El Loa - Fleet Management<br>
+            <strong>Stack:</strong> NestJS + PostgreSQL + Redis<br>
+            <strong>Total Endpoints:</strong> 28
+        </div>
+    </header>
+
+    <div class="module-section">
+        <div class="module-title">1. Módulo de Autenticación (Auth)</div>
+        
+        <div class="endpoint-card">
+            <div class="card-header">
+                <div><span class="method post">POST</span> <span class="path">/auth/login</span></div>
+                <span class="desc">Inicio de sesión</span>
+            </div>
+            <div class="card-body">
+                <span class="badge">Público</span>
+                <p>Retorna Access Token (JWT) y Refresh Token.</p>
+                <pre>{ "email": "admin@elloa.cl", "password": "Secret123!" }</pre>
+            </div>
+        </div>
+
+        <div class="endpoint-card">
+            <div class="card-header">
+                <div><span class="method post">POST</span> <span class="path">/auth/refresh</span></div>
+                <span class="desc">Refrescar Token</span>
+            </div>
+            <div class="card-body">
+                <span class="badge">Público</span>
+                <p>Genera un nuevo JWT cuando el anterior expira.</p>
+            </div>
+        </div>
+
+        <div class="endpoint-card">
+            <div class="card-header">
+                <div><span class="method get">GET</span> <span class="path">/auth/profile</span></div>
+                <span class="desc">Perfil de Usuario</span>
+            </div>
+            <div class="card-body">
+                <span class="badge">Autenticado</span>
+                <p>Obtiene datos del usuario actual (Rol, ID).</p>
+            </div>
+        </div>
+
+        <div class="endpoint-card">
+            <div class="card-header">
+                <div><span class="method post">POST</span> <span class="path">/auth/recover-password</span></div>
+                <span class="desc">Recuperar Clave</span>
+            </div>
+            <div class="card-body">
+                <span class="badge">Público</span>
+                <p>Envía correo con token de recuperación.</p>
+            </div>
+        </div>
+
+        <div class="endpoint-card">
+            <div class="card-header">
+                <div><span class="method patch">PATCH</span> <span class="path">/auth/reset-password</span></div>
+                <span class="desc">Restablecer Clave</span>
+            </div>
+            <div class="card-body">
+                <span class="badge">Público</span>
+                <p>Cambia la contraseña usando el token del correo.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="module-section">
+        <div class="module-title">2. Gestión de Flota (Vehículos)</div>
+
+        <div class="endpoint-card">
+            <div class="card-header">
+                <div><span class="method get">GET</span> <span class="path">/vehicles</span></div>
+                <span class="desc">Listar Flota</span>
+            </div>
+        </div>
+
+        <div class="endpoint-card">
+            <div class="card-header">
+                <div><span class="method post">POST</span> <span class="path">/vehicles</span></div>
+                <span class="desc">Crear Vehículo</span>
+            </div>
+            <div class="card-body">
+                <span class="badge">Admin</span>
+                <pre>{ "patente": "LHYT-88", "marca": "Toyota", "modelo": "Hilux", "anio": 2024 }</pre>
+            </div>
+        </div>
+
+        <div class="endpoint-card">
+            <div class="card-header">
+                <div><span class="method get">GET</span> <span class="path">/vehicles/:id</span></div>
+                <span class="desc">Detalle Vehículo</span>
+            </div>
+        </div>
+
+        <div class="endpoint-card">
+            <div class="card-header">
+                <div><span class="method patch">PATCH</span> <span class="path">/vehicles/:id</span></div>
+                <span class="desc">Editar Vehículo</span>
+            </div>
+            <div class="card-body">
+                <span class="badge">Admin</span>
+                <p>Actualizar kilometraje o estado (MANTENCION).</p>
+            </div>
+        </div>
+
+        <div class="endpoint-card">
+            <div class="card-header">
+                <div><span class="method delete">DEL</span> <span class="path">/vehicles/:id</span></div>
+                <span class="desc">Eliminar (Soft Delete)</span>
+            </div>
+        </div>
+
+        <div class="endpoint-card">
+            <div class="card-header">
+                <div><span class="method get">GET</span> <span class="path">/vehicles/available</span></div>
+                <span class="desc">Vehículos Disponibles</span>
+            </div>
+            <div class="card-body">
+                <span class="badge">Crítico</span>
+                <p>Filtra vehículos sin asignación en un rango de fecha/hora.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="module-section">
+        <div class="module-title">3. Usuarios y Choferes</div>
+
+        <div class="endpoint-card">
+            <div class="card-header">
+                <div><span class="method get">GET</span> <span class="path">/users</span></div>
+                <span class="desc">Listar Usuarios</span>
+            </div>
+            <div class="card-body"><p>Query Params: ?role=CHOFER</p></div>
+        </div>
+
+        <div class="endpoint-card">
+            <div class="card-header">
+                <div><span class="method post">POST</span> <span class="path">/users</span></div>
+                <span class="desc">Crear Usuario</span>
+            </div>
+            <div class="card-body">
+                <span class="badge">Admin</span>
+                <pre>{ "nombre": "Juan Perez", "email": "juan@elloa.cl", "rol": "CHOFER" }</pre>
+            </div>
+        </div>
+
+        <div class="endpoint-card">
+            <div class="card-header">
+                <div><span class="method patch">PATCH</span> <span class="path">/users/:id</span></div>
+                <span class="desc">Editar Usuario</span>
+            </div>
+        </div>
+
+        <div class="endpoint-card">
+            <div class="card-header">
+                <div><span class="method get">GET</span> <span class="path">/users/drivers/available</span></div>
+                <span class="desc">Choferes Disponibles</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="module-section">
+        <div class="module-title">4. Clientes Corporativos (Companies)</div>
+
+        <div class="endpoint-card">
+            <div class="card-header">
+                <div><span class="method get">GET</span> <span class="path">/companies</span></div>
+                <span class="desc">Listar Clientes</span>
+            </div>
+        </div>
+
+        <div class="endpoint-card">
+            <div class="card-header">
+                <div><span class="method post">POST</span> <span class="path">/companies</span></div>
+                <span class="desc">Crear Cliente</span>
+            </div>
+            <div class="card-body">
+                <span class="badge">Admin</span>
+                <pre>{ "razon_social": "Minera Gaby", "rut": "76.xxx.xxx-k", "centro_costo": "CC-001" }</pre>
+            </div>
+        </div>
+
+        <div class="endpoint-card">
+            <div class="card-header">
+                <div><span class="method get">GET</span> <span class="path">/companies/:id/stats</span></div>
+                <span class="desc">Estadísticas Cliente</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="module-section">
+        <div class="module-title">5. Solicitudes y Agendamiento (Core)</div>
+
+        <div class="endpoint-card">
+            <div class="card-header">
+                <div><span class="method post">POST</span> <span class="path">/service-requests</span></div>
+                <span class="desc">Crear Solicitud</span>
+            </div>
+            <div class="card-body">
+                <span class="badge">Cliente</span>
+                <pre>{ "origen": "Aeropuerto", "destino": "Faena", "fecha": "2025-01-20T10:00:00Z", "pax": 4 }</pre>
+            </div>
+        </div>
+
+        <div class="endpoint-card">
+            <div class="card-header">
+                <div><span class="method get">GET</span> <span class="path">/service-requests</span></div>
+                <span class="desc">Listar Solicitudes</span>
+            </div>
+        </div>
+
+        <div class="endpoint-card">
+            <div class="card-header">
+                <div><span class="method get">GET</span> <span class="path">/service-requests/:id</span></div>
+                <span class="desc">Detalle Solicitud</span>
+            </div>
+        </div>
+
+        <div class="endpoint-card">
+            <div class="card-header">
+                <div><span class="method patch">PATCH</span> <span class="path">/service-requests/:id/assign</span></div>
+                <span class="desc">Asignar Recurso</span>
+            </div>
+            <div class="card-body">
+                <span class="badge">Admin</span> <span class="badge">Crítico</span>
+                <p>Cambia estado de PENDIENTE a AGENDADO.</p>
+                <pre>{ "vehiculo_id": "uuid-vehiculo", "chofer_id": "uuid-chofer" }</pre>
+            </div>
+        </div>
+
+        <div class="endpoint-card">
+            <div class="card-header">
+                <div><span class="method patch">PATCH</span> <span class="path">/service-requests/:id/cancel</span></div>
+                <span class="desc">Cancelar Solicitud</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="module-section">
+        <div class="module-title">6. Operación Móvil (Trips)</div>
+
+        <div class="endpoint-card">
+            <div class="card-header">
+                <div><span class="method get">GET</span> <span class="path">/trips/my-trips</span></div>
+                <span class="desc">Mis Viajes</span>
+            </div>
+            <div class="card-body">
+                <span class="badge">Chofer</span>
+                <p>Muestra solo los viajes asignados al chofer autenticado para el día.</p>
+            </div>
+        </div>
+
+        <div class="endpoint-card">
+            <div class="card-header">
+                <div><span class="method patch">PATCH</span> <span class="path">/trips/:id/start</span></div>
+                <span class="desc">Iniciar Ruta</span>
+            </div>
+            <div class="card-body">
+                <span class="badge">Chofer</span>
+                <p>Marca estado EN_RUTA y guarda Timestamp de inicio.</p>
+            </div>
+        </div>
+
+        <div class="endpoint-card">
+            <div class="card-header">
+                <div><span class="method patch">PATCH</span> <span class="path">/trips/:id/finish</span></div>
+                <span class="desc">Finalizar Ruta</span>
+            </div>
+            <div class="card-body">
+                <span class="badge">Chofer</span>
+                <p>Marca estado FINALIZADO y libera recursos.</p>
+            </div>
+        </div>
+
+        <div class="endpoint-card">
+            <div class="card-header">
+                <div><span class="method post">POST</span> <span class="path">/trips/:id/evidence</span></div>
+                <span class="desc">Subir Evidencia</span>
+            </div>
+            <div class="card-body">
+                <span class="badge">Chofer</span>
+                <p>Sube foto o firma del pasajero al finalizar.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="module-section">
+        <div class="module-title">7. Reportes y Dashboard</div>
+
+        <div class="endpoint-card">
+            <div class="card-header">
+                <div><span class="method get">GET</span> <span class="path">/reports/billing</span></div>
+                <span class="desc">Reporte Facturación</span>
+            </div>
+            <div class="card-body">
+                <span class="badge">Admin</span>
+                <p>Descarga Excel con detalle de viajes finalizados por Centro de Costo.</p>
+            </div>
+        </div>
+
+        <div class="endpoint-card">
+            <div class="card-header">
+                <div><span class="method get">GET</span> <span class="path">/reports/dashboard</span></div>
+                <span class="desc">KPIs Operativos</span>
+            </div>
+            <div class="card-body">
+                <span class="badge">Admin</span>
+                <p>Retorna contadores: Pendientes, En Ruta, Finalizados hoy.</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>
