@@ -30,6 +30,7 @@
     </script>
     <link rel="stylesheet" href="assets/css/custom.css" />
     <script src="assets/js/auth-helper.js"></script>
+    <script src="assets/js/api-service.js"></script>
     
     <!-- Leaflet CSS para mapa -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
@@ -451,32 +452,56 @@
                 maxZoom: 19
             }).addTo(map);
 
-            // Geocodificar origen y destino
-            geocodeAddress(origin, (originCoords) => {
-                if (originCoords) {
-                    if (originMarker) originMarker.remove();
-                    originMarker = L.marker([originCoords[0], originCoords[1]], {
-                        icon: cloudIcon
-                    }).addTo(map).bindPopup(`<strong>🟢 ORIGEN</strong><br>${origin}`).openPopup();
+            // Geocodificar origen y destino en paralelo
+            Promise.all([
+                new Promise(resolve => geocodeAddress(origin, resolve)),
+                new Promise(resolve => geocodeAddress(destination, resolve))
+            ]).then(([originResult, destinationResult]) => {
+                const originCoords = originResult?.coords;
+                const destinationCoords = destinationResult?.coords;
+                const originInput = document.querySelector('input[name="origin"]');
+                const destinationInput = document.querySelector('input[name="destination"]');
+                
+                // Limpiar estilos anteriores
+                originInput.style.borderColor = '';
+                destinationInput.style.borderColor = '';
+
+                // Validar origen
+                if (!originCoords) {
+                    originInput.style.borderColor = '#EF4444';
+                    originInput.style.borderWidth = '2px';
+                    alert('❌ No se encontró la dirección de ORIGEN.\n\nPor favor, especifica mejor la dirección. Ejemplo:\n- "Santiago, Chile"\n- "Calle principal 123, Antofagasta"\n- "Aeropuerto Arturo Merino Benítez"');
+                    return;
                 }
 
-                geocodeAddress(destination, (destinationCoords) => {
-                    if (destinationCoords) {
-                        if (destinationMarker) destinationMarker.remove();
-                        destinationMarker = L.marker([destinationCoords[0], destinationCoords[1]], {
-                            icon: cloudIcon
-                        }).addTo(map).bindPopup(`<strong>🔴 DESTINO</strong><br>${destination}`).openPopup();
+                // Validar destino
+                if (!destinationCoords) {
+                    destinationInput.style.borderColor = '#EF4444';
+                    destinationInput.style.borderWidth = '2px';
+                    alert('❌ No se encontró la dirección de DESTINO.\n\nPor favor, especifica mejor la dirección. Ejemplo:\n- "Santiago, Chile"\n- "Calle principal 123, Antofagasta"\n- "Aeropuerto Arturo Merino Benítez"');
+                    return;
+                }
 
-                        // Ajustar vista para ver ambos marcadores
-                        if (originCoords && destinationCoords) {
-                            const bounds = L.latLngBounds([
-                                [originCoords[0], originCoords[1]],
-                                [destinationCoords[0], destinationCoords[1]]
-                            ]);
-                            map.fitBounds(bounds, { padding: [50, 50] });
-                        }
-                    }
-                });
+                // Agregar marcador de origen
+                if (originMarker) originMarker.remove();
+                originMarker = L.marker([originCoords[0], originCoords[1]], {
+                    icon: cloudIcon
+                }).addTo(map).bindPopup(`<strong>🟢 ORIGEN</strong><br>${origin}`);
+                originMarker.openPopup();
+
+                // Agregar marcador de destino
+                if (destinationMarker) destinationMarker.remove();
+                destinationMarker = L.marker([destinationCoords[0], destinationCoords[1]], {
+                    icon: cloudIcon
+                }).addTo(map).bindPopup(`<strong>🔴 DESTINO</strong><br>${destination}`);
+                destinationMarker.openPopup();
+
+                // Ajustar vista para ver ambos marcadores
+                const bounds = L.latLngBounds([
+                    [originCoords[0], originCoords[1]],
+                    [destinationCoords[0], destinationCoords[1]]
+                ]);
+                map.fitBounds(bounds, { padding: [50, 50] });
             });
         }
 
@@ -489,14 +514,14 @@
                 .then(data => {
                     if (data.length > 0) {
                         const coords = [parseFloat(data[0].lat), parseFloat(data[0].lon)];
-                        callback(coords);
+                        callback({ coords: coords, success: true });
                     } else {
-                        callback(null);
+                        callback({ coords: null, success: false });
                     }
                 })
                 .catch(error => {
                     console.error('Error geocodificando:', error);
-                    callback(null);
+                    callback({ coords: null, success: false });
                 });
         }
 
@@ -507,6 +532,160 @@
             alert(`Ruta aceptada:\nOrigen: ${origin}\nDestino: ${destination}`);
             closeMapModal();
         }
+
+        // Manejador del formulario de solicitud
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('createRequestForm');
+            if (form) {
+                form.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+
+                    // Obtener datos del formulario
+                    const clientType = document.querySelector('select[name="clientType"]').value || 'persona';
+                    const origin = document.querySelector('input[name="origin"]').value;
+                    const destination = document.querySelector('input[name="destination"]').value;
+                    const date = document.querySelector('input[name="date"]').value;
+                    const time = document.querySelector('input[name="time"]').value;
+                    const notes = document.querySelector('textarea[name="notes"]').value;
+
+                    // Validar campos requeridos
+                    if (!origin || !destination || !date || !time) {
+                        alert('Por favor completa todos los campos requeridos');
+                        return;
+                    }
+
+                    // Obtener datos del usuario autenticado
+                    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+                    const clientId = currentUser.id;
+
+                    if (!clientId) {
+                        alert('Error: usuario no autenticado');
+                        return;
+                    }
+
+                    // Contar pasajeros desde las notas (si es un número al inicio)
+                    let passengerCount = 1;
+                    const passengerMatch = notes.match(/^(\d+)\s/);
+                    if (passengerMatch) {
+                        passengerCount = parseInt(passengerMatch[1]);
+                    }
+
+                    // Preparar datos - nombres de campos coinciden con schema.prisma
+                    const requestData = {
+                        origin: origin,
+                        destination: destination,
+                        passengerCount: passengerCount,
+                        notes: notes,
+                        clientId: clientId,
+                        companyId: currentUser.companyId || null
+                    };
+
+                    try {
+                        // Enviar a la API
+                        const response = await createServiceRequest(requestData);
+                        
+                        alert('✅ Solicitud creada exitosamente');
+                        
+                        // Limpiar formulario
+                        form.reset();
+                        
+                        // Recargar lista de solicitudes
+                        loadServiceRequests();
+                        
+                        // Cerrar modal si está abierto
+                        closeMapModal();
+                    } catch (error) {
+                        alert(`❌ Error al crear solicitud: ${error.message}`);
+                    }
+                });
+            }
+        });
+
+        // Función para cargar y mostrar solicitudes
+        async function loadServiceRequests() {
+            try {
+                const requests = await getServiceRequests();
+                const tbody = document.querySelector('table tbody');
+                
+                if (!tbody) return;
+
+                // Limpiar tabla
+                tbody.innerHTML = '';
+
+                // Si no hay solicitudes
+                if (!requests || requests.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="5" class="px-6 py-4 text-center text-gray-500">
+                                No hay solicitudes registradas
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                // Mapear estado a color
+                const statusColors = {
+                    'PENDIENTE': { bg: 'bg-yellow-100', text: 'text-yellow-800', border: 'border-yellow-400' },
+                    'ASIGNADO': { bg: 'bg-blue-100', text: 'text-blue-800', border: 'border-blue-400' },
+                    'EN_RUTA': { bg: 'bg-green-100', text: 'text-green-800', border: 'border-green-400' },
+                    'FINALIZADO': { bg: 'bg-green-100', text: 'text-green-800', border: 'border-green-400' },
+                    'CANCELADO': { bg: 'bg-red-100', text: 'text-red-800', border: 'border-red-400' }
+                };
+
+                // Agregar filas de solicitudes
+                requests.forEach(req => {
+                    // Obtener el estado del viaje si existe
+                    const tripStatus = req.trip?.status || 'PENDIENTE';
+                    const statusConfig = statusColors[tripStatus] || statusColors['PENDIENTE'];
+                    
+                    // Formatear fecha
+                    const fechaFormato = new Date(req.createdAt).toLocaleDateString('es-CL', { 
+                        year: 'numeric', 
+                        month: '2-digit', 
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+
+                    const row = `
+                        <tr class="hover:bg-blue-50 transition border-l-4 ${statusConfig.border}">
+                            <td class="px-6 py-4">
+                                <div class="font-bold text-gray-900">#${req.id?.substring(0, 8).toUpperCase() || 'SIN-ID'}</div>
+                                <div class="text-xs text-gray-500">${req.client?.fullName || 'Cliente'}</div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-1 text-xs text-gray-500"><span class="material-icons text-[10px] text-green-600">circle</span> ${req.origin}</div>
+                                <div class="flex items-center gap-1 text-xs text-gray-500 mt-1"><span class="material-icons text-[10px] text-red-600">location_on</span> ${req.destination}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500">
+                                ${fechaFormato}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${statusConfig.bg} ${statusConfig.text}">
+                                    ${tripStatus}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <button onclick="toggleAssignPanel('${req.id}')" class="text-secondary hover:text-orange-900 font-bold bg-orange-50 px-3 py-1 rounded border border-orange-200">
+                                    ASIGNAR
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                    tbody.insertAdjacentHTML('beforeend', row);
+                });
+            } catch (error) {
+                console.error('Error cargando solicitudes:', error);
+            }
+        }
+
+        // Cargar solicitudes al iniciar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            loadServiceRequests();
+            // Recargar cada 30 segundos
+            setInterval(loadServiceRequests, 30000);
+        });
     </script>
 
     <!-- Modal del Mapa -->
