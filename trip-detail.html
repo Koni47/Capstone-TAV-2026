@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle de Viaje #REQ-890</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script>tailwind.config = { theme: { extend: { colors: { primary: '#003366', secondary: '#FF6600' } } } }</script>
+</head>
+<body class="bg-gray-100">
+
+    <div class="max-w-4xl mx-auto my-8 bg-white shadow-lg rounded-lg overflow-hidden">
+        
+        <div class="bg-primary px-6 py-4 flex justify-between items-center">
+            <div>
+                <h1 class="text-white font-bold text-xl">Detalle de Servicio</h1>
+                <p class="text-blue-200 text-sm">ID: #REQ-890</p>
+            </div>
+            <span class="bg-green-500 text-white px-3 py-1 rounded text-sm font-bold shadow">FINALIZADO</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2">
+            
+            <div class="p-6 border-r border-gray-200">
+                <h3 class="font-bold text-gray-700 mb-4 border-b pb-2">Información del Traslado</h3>
+                
+                <div class="space-y-4">
+                    <div class="flex gap-3">
+                        <div class="flex flex-col items-center">
+                            <div class="w-3 h-3 bg-gray-400 rounded-full"></div>
+                            <div class="w-0.5 h-8 bg-gray-200"></div>
+                            <div class="w-3 h-3 bg-secondary rounded-full"></div>
+                        </div>
+                        <div>
+                            <div class="mb-4">
+                                <p class="text-xs text-gray-500">Origen • 08:30 AM</p>
+                                <p class="font-bold text-gray-800">Aeropuerto El Loa</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500">Destino • 09:45 AM</p>
+                                <p class="font-bold text-gray-800">Minera Escondida (Garita)</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4 pt-4">
+                        <div>
+                            <p class="text-xs text-gray-500">Chofer</p>
+                            <p class="font-medium">Juan Pérez</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500">Vehículo</p>
+                            <p class="font-medium">Toyota Hilux (LHYT-88)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-6 bg-gray-50">
+                <h3 class="font-bold text-gray-700 mb-4 border-b pb-2">Evidencia del Servicio</h3>
+                
+                <div class="bg-gray-200 border-2 border-dashed border-gray-300 rounded-lg h-48 flex items-center justify-center mb-4 relative overflow-hidden group">
+                    <img src="https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&q=80&w=1000" class="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:scale-105 transition duration-500">
+                    <span class="bg-black bg-opacity-50 text-white px-3 py-1 rounded text-xs relative z-10">Ver Evidencia Completa</span>
+                </div>
+
+                <div class="bg-white p-3 rounded border border-gray-200 shadow-sm">
+                    <p class="text-xs text-gray-500 font-bold mb-1">Comentarios del Chofer:</p>
+                    <p class="text-sm italic text-gray-600">"Pasajero dejado en garita principal sin novedades. Se firmó vale físico N° 4402."</p>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="bg-gray-50 px-6 py-4 border-t border-gray-200 flex justify-end gap-3">
+            <button class="text-gray-600 hover:text-gray-800 font-medium text-sm px-4 py-2">Descargar PDF</button>
+            <button class="bg-primary text-white font-bold text-sm px-4 py-2 rounded shadow hover:bg-blue-900">Enviar Factura</button>
+        </div>
+    </div>
+</body>
+</html>
