@@ -324,6 +324,31 @@ export const recoverPasswordMockData = {
   buttonText: "Enviar Enlace",
 };
 
+export const loginMockData = {
+  title: "Inicio de Sesión",
+  subtitle: "Servicios de Transporte El Loa",
+  emailPlaceholder: "Ej: juanito.perez@correo.cl",
+  passwordPlaceholder: "Ingresa tu contraseña",
+  roles: [
+    { value: "admin", label: "Administrador" },
+    { value: "cliente", label: "Cliente" },
+    { value: "chofer", label: "Chofer" }
+  ],
+  links: {
+    recoverPassword: "/recover-password",
+    register: "/register",
+    home: "/"
+  },
+  buttonText: "Iniciar Sesión"
+};
+
+export const logoutMockData = {
+  title: "Cerrando sesión",
+  message: "Tu sesión será cerrada en unos momentos...",
+  redirectDelayMs: 2000,
+  icon: "logout"
+};
+
 export const termsMockData = {
   pageTitle: "Términos y Condiciones",
   content: "Texto de ejemplo de los términos y condiciones. Reemplazar con el contenido legal real según corresponda.",
