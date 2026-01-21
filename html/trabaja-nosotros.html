@@ -1,23 +1,32 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Términos y Condiciones | El Loa</title>
-
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>tailwind.config = { theme: { extend: { colors: { primary: '#003366', secondary: '#FF6600' }, fontFamily: { sans: ['Inter','sans-serif'] } } } }</script>
-  <link rel="stylesheet" href="assets/css/tailwind.css" />
-  <link rel="stylesheet" href="assets/css/custom.css" />    <script src="assets/js/auth-helper.js"></script></head>
-<body class="bg-surface font-sans text-gray-800">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trabaja con Nosotros | Servicios de Transporte El Loa</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        // Proteger esta página - redirigir al login si no está autenticado
-        protectPage();
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#003366',
+                        secondary: '#FF6600',
+                        surface: '#F3F4F6',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
     </script>
-
-   <nav class="bg-primary text-white shadow-lg w-full sticky top-0 z-40">
+    <link rel="stylesheet" href="assets/css/custom.css" />
+</head>
+<body class="bg-surface font-sans text-gray-800 min-h-screen flex flex-col">
+    <nav class="bg-primary text-white shadow-lg w-full sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <div class="flex items-center">
@@ -26,77 +35,72 @@
                     </a>
                     <div class="hidden md:block">
                         <div class="ml-10 flex items-baseline space-x-4">
-                            <a href="index.html" class="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Dashboard</a>
+                            <a href="index.html" class="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Inicio</a>
                             <a href="service-request.html" class="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Solicitudes</a>
-                            
-                            <a href="users.html" class="bg-blue-900 text-white px-3 py-2 rounded-md text-sm font-medium border-b-4 border-secondary h-16 flex items-center pt-1">
-                                Usuarios
-                            </a>
-                            
                             <a href="companies.html" class="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Clientes</a>
                             <a href="vehicles.html" class="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Flota</a>
+                            <a href="trabaja-nosotros.html" class="bg-blue-900 text-white px-3 py-2 rounded-md text-sm font-medium border-b-4 border-secondary h-16 flex items-center pt-1">Trabaja con Nosotros</a>
                         </div>
-                    </div>
-                </div>
-                <div class="flex items-center gap-4">
-                    <button class="bg-primary p-1 rounded-full text-gray-400 hover:text-white transition">
-                        <span class="material-icons">notifications</span>
-                    </button>
-                    <div class="flex items-center gap-3 pl-4 border-l border-blue-800">
-                        <div class="text-right hidden sm:block">
-                            <p class="text-sm font-bold leading-none user-name">Usuario</p>
-                            <p class="text-xs text-blue-300 user-role">Admin</p>
-                        </div>
-                        <div class="h-8 w-8 rounded-full bg-secondary flex items-center justify-center text-white text-xs font-bold ring-2 ring-blue-900 user-initials">US</div>
-                        <a href="logout.html" class="ml-2 text-sm font-semibold hover:text-gray-300">Salir</a>
                     </div>
                 </div>
             </div>
         </div>
     </nav>
 
-<main class="max-w-5xl mx-auto p-6">
-  <h1 class="text-2xl font-bold text-primary mb-4">Términos y Condiciones</h1>
-  <div class="bg-white rounded-lg shadow p-6 text-sm text-gray-700 space-y-4">
-    <p>
-      <strong>1. Solicitud de Servicios:</strong><br>
-      El usuario declara que la información proporcionada en la solicitud de transporte es verídica y completa. La empresa se reserva el derecho de rechazar solicitudes con datos incorrectos o incompletos.
-    </p>
-    <p>
-      <strong>2. Confirmación y Modificación:</strong><br>
-      Una vez enviada la solicitud, el usuario recibirá una confirmación. Cualquier modificación o cancelación debe ser informada con al menos 2 horas de anticipación al horario programado.
-    </p>
-    <p>
-      <strong>3. Tarifas y Pagos:</strong><br>
-      El valor del servicio se calcula en base a la distancia y horario seleccionados. El usuario acepta pagar el monto total indicado antes de la prestación del servicio, utilizando los medios de pago habilitados en la plataforma.
-    </p>
-    <p>
-      <strong>4. Recargos Nocturnos:</strong><br>
-      Los servicios solicitados entre las 22:01 y las 06:59 horas tendrán un recargo adicional del 5% sobre la tarifa base.
-    </p>
-    <p>
-      <strong>5. Responsabilidad:</strong><br>
-      La empresa no se hace responsable por retrasos causados por fuerza mayor, condiciones climáticas, tráfico u otros factores externos.
-    </p>
-    <p>
-      <strong>6. Reembolsos y Cancelaciones:</strong><br>
-      En caso de cancelación con la debida anticipación, se podrá solicitar el reembolso del pago realizado. No se realizarán devoluciones por cancelaciones fuera del plazo establecido.
-    </p>
-    <p>
-      <strong>7. Aceptación:</strong><br>
-      Al solicitar y pagar el servicio, el usuario declara haber leído y aceptado estos términos y condiciones.
-    </p>
-  </div>
-  <div class="mt-6">
-    <a href="index.html" class="btn btn-primary">Volver</a>
-  </div>
-</main>
+    <main class="flex-1 flex items-center justify-center py-12 px-4">
+        <div class="bg-white rounded-lg shadow-lg border border-gray-200 p-8 w-full max-w-xl">
+            <h1 class="text-2xl font-bold text-primary mb-6 flex items-center gap-2">
+                <span class="material-icons text-secondary">work_outline</span>
+                Trabaja con Nosotros
+            </h1>
+            <form class="space-y-6" enctype="multipart/form-data">
+                <!-- Nombre y Apellido -->
+                <div>
+                    <label for="nombre" class="block text-sm font-semibold mb-1">Nombre y Apellido</label>
+                    <input type="text" id="nombre" name="nombre" required class="w-full border border-gray-300 rounded px-4 py-2 focus:border-primary focus:ring-1 focus:ring-primary transition" placeholder="Ej: Juan Pérez">
+                </div>
+                <!-- Fecha de Nacimiento -->
+                <div>
+                    <label for="fechaNacimiento" class="block text-sm font-semibold mb-1">Fecha de Nacimiento</label>
+                    <input type="date" id="fechaNacimiento" name="fechaNacimiento" required class="w-full border border-gray-300 rounded px-4 py-2 focus:border-primary focus:ring-1 focus:ring-primary transition">
+                </div>
+                <!-- Teléfono de Contacto -->
+                <div>
+                    <label for="telefono" class="block text-sm font-semibold mb-1">Teléfono de Contacto</label>
+                    <input type="tel" id="telefono" name="telefono" required pattern="[0-9+ ]{8,15}" class="w-full border border-gray-300 rounded px-4 py-2 focus:border-primary focus:ring-1 focus:ring-primary transition" placeholder="Ej: +56 9 1234 5678">
+                </div>
+                <!-- Correo Electrónico -->
+                <div>
+                    <label for="correo" class="block text-sm font-semibold mb-1">Correo Electrónico</label>
+                    <input type="email" id="correo" name="correo" required class="w-full border border-gray-300 rounded px-4 py-2 focus:border-primary focus:ring-1 focus:ring-primary transition" placeholder="Ej: correo@ejemplo.com">
+                </div>
+                <!-- Adjuntar CV -->
+                <div>
+                    <label for="cv" class="block text-sm font-semibold mb-1">Adjuntar Currículum Vitae</label>
+                    <input type="file" id="cv" name="cv" accept=".pdf,.doc,.docx" required class="w-full border border-gray-300 rounded px-4 py-2 focus:border-primary focus:ring-1 focus:ring-primary transition bg-white">
+                    <p class="text-xs text-gray-500 mt-1">Formatos permitidos: PDF, DOC, DOCX. Máx. 5MB.</p>
+                </div>
+                <!-- Carta de Presentación -->
+                <div>
+                    <label for="carta" class="block text-sm font-semibold mb-1">Carta de Presentación</label>
+                    <textarea id="carta" name="carta" rows="4" required class="w-full border border-gray-300 rounded px-4 py-2 focus:border-primary focus:ring-1 focus:ring-primary transition" placeholder="Cuéntanos brevemente sobre ti y por qué quieres trabajar con nosotros"></textarea>
+                </div>
+                <!-- ¿Cómo conoció la empresa? -->
+                <div>
+                    <label for="conocio" class="block text-sm font-semibold mb-1">¿Cómo conoció la empresa?</label>
+                    <input type="text" id="conocio" name="conocio" required class="w-full border border-gray-300 rounded px-4 py-2 focus:border-primary focus:ring-1 focus:ring-primary transition" placeholder="Ej: Redes sociales, recomendación, etc.">
+                </div>
+                <!-- Botón Enviar -->
+                <button type="submit" class="w-full bg-secondary hover:bg-orange-700 text-white font-bold py-3 px-4 rounded shadow-md transition text-lg flex items-center justify-center gap-2">
+                    <span class="material-icons text-base">send</span> Enviar Postulación
+                </button>
+            </form>
+        </div>
+    </main>
 
-<footer class="bg-[#002244] text-gray-300 border-t-4 border-secondary mt-auto">
-        
+    <footer class="bg-[#002244] text-gray-300 border-t-4 border-secondary mt-auto">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                
                 <div class="space-y-4">
                     <div class="flex items-center gap-2 text-white">
                         <span class="material-icons text-secondary text-3xl">local_shipping</span>
@@ -115,7 +119,6 @@
                             <span class="material-icons text-sm">photo_camera</span> </a>
                     </div>
                 </div>
-
                 <div>
                     <h3 class="text-white font-bold uppercase tracking-wider text-sm mb-4 border-b border-blue-800 pb-2 inline-block">Navegación</h3>
                     <ul class="space-y-3 text-sm">
@@ -123,11 +126,10 @@
                         <li><a href="service-request.html" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Solicitudes</a></li>
                         <li><a href="companies.html" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Clientes</a></li>
                         <li><a href="portal-choferes.html" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Portal Choferes</a></li>
-                        <li><a href="portal-choferes.html" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Contáctanos</a></li>
-                        <li><a href="portal-choferes.html" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Trabaja con Nosotoros</a></li>
+                        <li><a href="contacto.html" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Contáctanos</a></li>
+                        <li><a href="trabaja-nosotros.html" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Trabaja con Nosotros</a></li>
                     </ul>
                 </div>
-
                 <div>
                     <h3 class="text-white font-bold uppercase tracking-wider text-sm mb-4 border-b border-blue-800 pb-2 inline-block">Contacto Central</h3>
                     <ul class="space-y-4 text-sm">
@@ -149,11 +151,9 @@
                         </li>
                     </ul>
                 </div>
-
                 <div>
                     <h3 class="text-white font-bold uppercase tracking-wider text-sm mb-4 border-b border-blue-800 pb-2 inline-block">Descarga la App</h3>
                     <p class="text-xs text-gray-400 mb-4">Gestiona tus viajes y monitorea la ruta en tiempo real.</p>
-                    
                     <div class="space-y-3">
                         <button class="w-full bg-gray-800 hover:bg-gray-700 border border-gray-600 rounded-lg p-2 flex items-center gap-3 transition">
                             <span class="material-icons text-3xl">apple</span>
@@ -171,10 +171,8 @@
                         </button>
                     </div>
                 </div>
-
             </div>
         </div>
-
         <div class="bg-[#001a33] py-6 border-t border-blue-900/50">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
                 <div class="text-xs text-gray-500 text-center md:text-left">
