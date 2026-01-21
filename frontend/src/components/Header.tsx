@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { site } from '../mocks/data'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 export default function Header() {
   const navigate = useNavigate()
@@ -44,13 +44,13 @@ export default function Header() {
           <div className="hidden md:block ml-6">
             <div className="flex items-baseline gap-6">
               {site.nav.map((n) => (
-                <a
+                <Link
                   key={n.href}
-                  href={n.href}
+                  to={n.href}
                   className={`${current === n.href ? 'text-white border-b-2 border-secondary px-4 py-3' : 'text-gray-300 hover:bg-blue-800 hover:text-white px-4 py-3'} rounded-md text-sm font-medium transition`}
                 >
                   {n.label}
-                </a>
+                </Link>
               ))}
             </div>
           </div>
@@ -80,8 +80,8 @@ export default function Header() {
               </>
             ) : (
               <>
-                <a href="/login" className="text-sm font-semibold hover:text-gray-300">Iniciar sesión</a>
-                <a href="/register" className="bg-secondary hover:bg-orange-600 text-white text-sm font-bold py-2 px-5 rounded-md transition shadow-md">Registrarse</a>
+                <Link to="/login" className="text-sm font-semibold hover:text-gray-300">Iniciar sesión</Link>
+                <Link to="/register" className="bg-secondary hover:bg-orange-600 text-white text-sm font-bold py-2 px-5 rounded-md transition shadow-md">Registrarse</Link>
               </>
             )}
           </div>
