@@ -55,7 +55,38 @@ export const site = {
     { label: 'Términos y Condiciones', href: '/terms' },
     { label: 'Política de Privacidad', href: '/privacy' },
     { label: 'Portal de Denuncias', href: '/complaints' }
-  ]
+  ],
+
+  // Admin Dashboard mock data
+  adminDashboard: {
+    kpis: {
+      totalTrips: 245,
+      totalRevenue: 1245000,
+      pendingTrips: 23,
+      activeVehicles: '18 / 20'
+    },
+    revenueByService: [
+      { label: 'Transporte Personal', value: 400000 },
+      { label: 'Corporativo', value: 520000 },
+      { label: 'Turismo', value: 150000 },
+      { label: 'Otros', value: 75000 }
+    ],
+    topClients: [
+      { name: 'Minera ABC', value: 450000 },
+      { name: 'Constructora XYZ', value: 320000 },
+      { name: 'Transportes ABC', value: 250000 },
+      { name: 'Empresas LMN', value: 150000 },
+      { name: 'Otros Clientes', value: 75000 }
+    ],
+    tripsByMonth: [180, 200, 220, 230, 245, 250],
+    vehicleOccupancy: { occupied: 12, available: 6, maintenance: 2 },
+    recentTrips: [
+      { id: 'VJ-2601', client: 'Minera ABC', driver: 'Juan Pérez', origin: 'Aeropuerto', dest: 'Faena Atacama', date: '20/01/2026 08:30', fare: 85000, status: 'Completado' },
+      { id: 'VJ-2600', client: 'Constructora XYZ', driver: 'Carlos López', origin: 'Centro Calama', dest: 'Obra Construcción', date: '20/01/2026 07:15', fare: 42000, status: 'Completado' },
+      { id: 'VJ-2599', client: 'Transportes ABC', driver: 'Miguel González', origin: 'Estación de Bus', dest: 'Terminal Aéreo', date: '20/01/2026 06:45', fare: 28000, status: 'Completado' }
+    ]
+  }
 }
+
 
 export default site
