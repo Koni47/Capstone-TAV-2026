@@ -3,16 +3,24 @@ import { driverDashboardMockData } from '../mocks/data'
 import '../components/charts/ChartSetup'
 import BarChart from '../components/charts/BarChart'
 import DoughnutChart from '../components/charts/DoughnutChart'
+import { useNavigate } from 'react-router-dom'
 
 export default function DriverDashboard() {
+  const navigate = useNavigate();
   const { header, kpis, nextTrips, completed } = driverDashboardMockData
 
   return (
     <div className="flex-1 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-primary mb-2">{header.title}</h1>
-          <p className="text-gray-600">{header.subtitle}</p>
+        <div className="mb-8 flex items-center justify-between">
+          <button onClick={() => navigate(-1)} className="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded">
+            Volver Atrás
+          </button>
+          <div className="text-center">
+            <h1 className="text-4xl font-bold text-primary mb-2">{header.title}</h1>
+            <p className="text-gray-600">{header.subtitle}</p>
+          </div>
+          <div></div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">

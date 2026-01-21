@@ -47,7 +47,7 @@ export default function Header() {
                 <Link
                   key={n.href}
                   to={n.href}
-                  className={`${current === n.href ? 'text-white border-b-2 border-secondary px-4 py-3' : 'text-gray-300 hover:bg-blue-800 hover:text-white px-4 py-3'} rounded-md text-sm font-medium transition`}
+                  className={`${current === n.href ? 'text-white border-b-2 border-secondary px-4 py-3' : 'text-gray-300 hover:bg-primary-light hover:text-white px-4 py-3'} rounded-md text-sm font-medium transition`}
                 >
                   {n.label}
                 </Link>
@@ -60,7 +60,7 @@ export default function Header() {
               <>
                 <button
                   onClick={() => navigate('/notifications')}
-                  className="relative p-2 rounded-full bg-primary hover:bg-blue-900 text-gray-300"
+                  className="relative p-2 rounded-full bg-primary hover:bg-primary-dark text-white"
                   aria-label="Notifications"
                 >
                   <span className="material-icons">notifications</span>
@@ -69,13 +69,13 @@ export default function Header() {
                   )}
                 </button>
 
-                <div className="flex items-center gap-3 pl-4 border-l border-blue-800">
-                  <div className="text-right hidden sm:block">
+                <div className="flex items-center gap-3 pl-4 border-l border-primary-light">
+                  <div className="text-right hidden sm:block text-white">
                     <p className="text-sm font-bold leading-none">{userEmail.split('@')[0]}</p>
-                    <p className="text-xs text-blue-300">{userRole || 'Usuario'}</p>
+                    <p className="text-xs text-secondary">{userRole || 'Usuario'}</p>
                   </div>
-                  <div className="h-8 w-8 rounded-full bg-secondary flex items-center justify-center text-white text-xs font-bold ring-2 ring-blue-900">{getInitials()}</div>
-                  <button onClick={handleLogout} className="ml-2 text-sm font-semibold hover:text-gray-300">Salir</button>
+                  <div className="h-8 w-8 rounded-full bg-secondary flex items-center justify-center text-white text-xs font-bold ring-2 ring-primary-dark">{getInitials()}</div>
+                  <button onClick={handleLogout} className="ml-2 text-sm font-semibold hover:text-secondary text-white transition-colors">Salir</button>
                 </div>
               </>
             ) : (

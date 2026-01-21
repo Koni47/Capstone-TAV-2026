@@ -1,8 +1,9 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { companiesMockData, site } from '../mocks/data';
 import Header from '../components/Header';
 
-export function Companies() {
+export default function Companies() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('Todos los estados');
   const [currentPage, setCurrentPage] = useState(1);
@@ -31,6 +32,12 @@ export function Companies() {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="mb-4">
+          <Link to="/" className="text-gray-500 hover:text-primary flex items-center gap-1 transition-colors">
+            <span className="material-icons text-sm">arrow_back</span>
+            Volver al Inicio
+          </Link>
+        </div>
         {/* Header */}
         <div className="md:flex md:items-center md:justify-between mb-8">
           <div className="flex-1 min-w-0">
@@ -48,19 +55,19 @@ export function Companies() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-3 mb-8">
-          <div className="bg-white overflow-hidden shadow rounded-lg border-l-4 border-secondary">
+          <div className="bg-white overflow-hidden shadow rounded-lg border-l-4 border-primary">
             <div className="px-4 py-5 sm:p-6">
               <dt className="text-sm font-medium text-gray-500 truncate">Total Empresas Activas</dt>
               <dd className="mt-1 text-3xl font-bold text-gray-900">{companiesMockData.stats.totalCompanies}</dd>
             </div>
           </div>
-          <div className="bg-white overflow-hidden shadow rounded-lg border-l-4 border-blue-400">
+          <div className="bg-white overflow-hidden shadow rounded-lg border-l-4 border-warning">
             <div className="px-4 py-5 sm:p-6">
               <dt className="text-sm font-medium text-gray-500 truncate">Contratos por Vencer</dt>
               <dd className="mt-1 text-3xl font-bold text-gray-900">{companiesMockData.stats.expiringContracts}</dd>
             </div>
           </div>
-          <div className="bg-white overflow-hidden shadow rounded-lg border-l-4 border-green-400">
+          <div className="bg-white overflow-hidden shadow rounded-lg border-l-4 border-success">
             <div className="px-4 py-5 sm:p-6">
               <dt className="text-sm font-medium text-gray-500 truncate">Viajes Facturados (Mes)</dt>
               <dd className="mt-1 text-3xl font-bold text-gray-900">{companiesMockData.stats.billedTripsMonth}</dd>
@@ -333,5 +340,3 @@ export function Companies() {
     </div>
   );
 }
-
-export default Companies;

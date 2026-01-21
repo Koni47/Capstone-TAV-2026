@@ -2,7 +2,7 @@ import { privacyMockData } from '../mocks/data';
 import Header from '../components/Header';
 import { useNavigate } from 'react-router-dom';
 
-export function Privacy() {
+export default function Privacy() {
   const navigate = useNavigate();
 
   const handleBack = () => {
@@ -41,5 +41,3 @@ export function Privacy() {
     </div>
   );
 }
-
-export default Privacy;

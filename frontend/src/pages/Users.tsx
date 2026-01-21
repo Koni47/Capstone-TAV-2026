@@ -51,6 +51,12 @@ const Users = () => {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="mb-4">
+          <button onClick={() => navigate(-1)} className="text-gray-500 hover:text-primary flex items-center gap-1 transition-colors">
+            <span className="material-icons text-sm">arrow_back</span>
+            Volver
+          </button>
+        </div>
         {/* Header */}
         <div className="md:flex md:items-center md:justify-between mb-8">
           <div className="flex-1 min-w-0">
@@ -74,28 +80,55 @@ const Users = () => {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-3 mb-8">
-          {usersMockData.stats.map((stat, idx) => (
-            <div
-              key={idx}
-              className={`bg-white overflow-hidden shadow rounded-lg border-l-4 border-${stat.color}-500`}
-            >
-              <div className="px-4 py-5 sm:p-6 flex items-center">
-                <div
-                  className={`p-3 rounded-full bg-${stat.color}-100 text-${stat.color}-600 mr-4`}
-                >
-                  <span className="material-icons">{stat.icon}</span>
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-500 truncate">
-                    {stat.label}
-                  </p>
-                  <p className="text-2xl font-bold text-gray-900">
-                    {stat.value}
-                  </p>
+          {usersMockData.stats.map((stat, idx) => {
+            const getBorderColor = (color: string) => {
+              if (color === 'primary') return 'border-primary';
+              if (color === 'secondary') return 'border-secondary';
+              if (color === 'success' || color === 'green') return 'border-success';
+              if (color === 'danger' || color === 'red') return 'border-danger';
+              if (color === 'warning' || color === 'yellow') return 'border-warning';
+              return `border-${color}-500`;
+            };
+            const getBgColor = (color: string) => {
+              if (color === 'primary') return 'bg-blue-50';
+              if (color === 'secondary') return 'bg-orange-50';
+              if (color === 'success' || color === 'green') return 'bg-green-50';
+              if (color === 'danger' || color === 'red') return 'bg-red-50';
+              if (color === 'warning' || color === 'yellow') return 'bg-yellow-50';
+              return `bg-${color}-100`;
+            };
+            const getTextColor = (color: string) => {
+              if (color === 'primary') return 'text-primary';
+              if (color === 'secondary') return 'text-secondary';
+              if (color === 'success' || color === 'green') return 'text-success';
+              if (color === 'danger' || color === 'red') return 'text-danger';
+              if (color === 'warning' || color === 'yellow') return 'text-warning';
+              return `text-${color}-600`;
+            };
+
+            return (
+              <div
+                key={idx}
+                className={`bg-white overflow-hidden shadow rounded-lg border-l-4 ${getBorderColor(stat.color)}`}
+              >
+                <div className="px-4 py-5 sm:p-6 flex items-center">
+                  <div
+                    className={`p-3 rounded-full ${getBgColor(stat.color)} ${getTextColor(stat.color)} mr-4`}
+                  >
+                    <span className="material-icons">{stat.icon}</span>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-500 truncate">
+                      {stat.label}
+                    </p>
+                    <p className="text-2xl font-bold text-gray-900">
+                      {stat.value}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {/* Search and Filters */}

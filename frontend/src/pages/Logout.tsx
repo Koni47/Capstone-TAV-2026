@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { logoutMockData } from '../mocks/data'
 
-export function Logout() {
+export default function Logout() {
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -37,5 +37,3 @@ export function Logout() {
     </div>
   )
 }
-
-export default Logout

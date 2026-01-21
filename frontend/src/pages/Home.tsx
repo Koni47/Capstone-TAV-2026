@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 import { site } from '../mocks/data'
 import '../index.css'
 import Header from '../components/Header' 
@@ -66,7 +67,7 @@ export default function Home() {
                 <input type="datetime-local" className="w-full mt-1 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#FF6600] outline-none text-gray-600" />
               </div>
 
-              <button className="w-full bg-[#003366] hover:bg-[#002244] text-white font-bold py-3 rounded-lg shadow-lg flex justify-center items-center gap-2 transition group">
+              <button className="w-full bg-primary hover:bg-primary-dark text-white font-bold py-3 rounded-lg shadow-lg flex justify-center items-center gap-2 transition group">
                 {site.hero.cta}
                 <span className="material-icons group-hover:translate-x-1 transition-transform">arrow_forward</span>
               </button>
@@ -92,14 +93,14 @@ export default function Home() {
                 </div>
                 <h3 className="text-xl font-bold text-gray-800 mb-3">{s.title}</h3>
                 <p className="text-gray-600 text-sm mb-6">{s.desc}</p>
-                <a href={s.href} className="text-secondary font-bold text-sm flex items-center gap-1 hover:gap-2 transition-all">Ver más <span className="material-icons text-sm">arrow_forward</span></a>
+                <Link to={s.href} className="text-secondary font-bold text-sm flex items-center gap-1 hover:gap-2 transition-all">Ver más <span className="material-icons text-sm">arrow_forward</span></Link>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <footer className="bg-[#002244] text-gray-300 border-t-4 border-secondary mt-auto">
+      <footer className="bg-primary-dark text-gray-300 border-t-4 border-secondary mt-auto">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             <div className="space-y-4">
@@ -114,7 +115,7 @@ export default function Home() {
               <h3 className="text-white font-bold uppercase tracking-wider text-sm mb-4 border-b border-blue-800 pb-2 inline-block">Navegación</h3>
               <ul className="space-y-3 text-sm">
                 {site.nav.map((n) => (
-                  <li key={n.href}><a href={n.href} className="hover:text-secondary transition flex items-center gap-2"><span className="material-icons text-xs">chevron_right</span> {n.label}</a></li>
+                  <li key={n.href}><Link to={n.href} className="hover:text-secondary transition flex items-center gap-2"><span className="material-icons text-xs">chevron_right</span> {n.label}</Link></li>
                 ))}
               </ul>
             </div>
@@ -156,7 +157,7 @@ export default function Home() {
                 { label: 'Registrarse', href: '/register' },
                 ...site.footerLinks.filter(l => l.href !== '/login' && l.href !== '/register')
               ].map((l) => (
-                <a key={l.href} href={l.href} className="hover:text-white transition">{l.label}</a>
+                <Link key={l.href} to={l.href} className="hover:text-white transition">{l.label}</Link>
               ))}
             </div>
           </div>
