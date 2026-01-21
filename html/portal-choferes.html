@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal de Choferes | Servicios El Loa</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#003366',    /* Azul Corporativo */
+                        secondary: '#FF6600',  /* Naranja Acción */
+                        surface: '#F3F4F6',
+                        success: '#10B981',
+                        warning: '#F59E0B',
+                        danger: '#EF4444',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="assets/css/custom.css" />
+    <script src="assets/js/auth-helper.js"></script>
+</head>
+<body class="bg-surface font-sans text-gray-800">
+    <script>
+        // Proteger esta página - redirigir al login si no está autenticado
+        protectPage();
+    </script>
+
+    <nav class="bg-primary text-white shadow-lg w-full sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <a href="index.html" class="flex-shrink-0 text-white flex items-center gap-2 font-bold text-xl cursor-pointer">
+                        <span class="material-icons text-secondary">local_shipping</span> EL LOA
+                    </a>
+                    <div class="hidden md:block">
+                        <div class="ml-10 flex items-baseline space-x-4">
+                            <a id="dashboardLink" href="#" onclick="redirectToDashboard(event)" class="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Dashboard</a>
+                            <a href="service-request.html" class="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Solicitudes</a>
+                            <a href="users.html" class="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Usuarios</a>
+                            <a href="companies.html" class="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Clientes</a>
+                            <a href="vehicles.html" class="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Flota</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <button class="bg-primary p-1 rounded-full text-gray-400 hover:text-white transition">
+                        <span class="material-icons">notifications</span>
+                    </button>
+                    <div class="flex items-center gap-3 pl-4 border-l border-blue-800">
+                        <div class="text-right hidden sm:block">
+                            <p class="text-sm font-bold leading-none user-name">Usuario</p>
+                            <p class="text-xs text-blue-300 user-role">Chofer</p>
+                        </div>
+                        <div class="h-8 w-8 rounded-full bg-secondary flex items-center justify-center text-white text-xs font-bold ring-2 ring-blue-900 user-initials">US</div>
+                        <a href="logout.html" class="ml-2 text-sm font-semibold hover:text-gray-300">Salir</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-primary flex items-center gap-3">
+                <span class="material-icons text-4xl text-secondary">people</span> Portal de Choferes
+            </h1>
+            <p class="text-gray-600 mt-2">Gestiona tus datos y asignaciones de viajes</p>
+        </div>
+
+        <!-- Tabs -->
+        <div class="flex gap-4 mb-6 border-b border-gray-300">
+            <button onclick="switchTab('mis-solicitudes')" class="px-4 py-3 font-semibold text-primary border-b-4 border-secondary tab-button active" id="tab-mis-solicitudes">
+                <span class="material-icons inline mr-2">assignment</span> Mis Solicitudes
+            </button>
+            <button onclick="switchTab('choferes')" class="px-4 py-3 font-semibold text-gray-600 hover:text-primary tab-button" id="tab-choferes">
+                <span class="material-icons inline mr-2">people_alt</span> Choferes Disponibles
+            </button>
+        </div>
+
+        <!-- TAB 1: MIS SOLICITUDES -->
+        <div id="mis-solicitudes" class="tab-content">
+            <div class="bg-white rounded-lg shadow-lg border border-gray-200 p-6">
+                <h2 class="text-2xl font-bold text-primary mb-6 flex items-center gap-2">
+                    <span class="material-icons">assignment_turned_in</span> Mis Solicitudes Asignadas
+                </h2>
+
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID Solicitud</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ruta</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cliente</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha/Hora</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200" id="misSolicitudesTable">
+                            <tr>
+                                <td colspan="6" class="px-6 py-4 text-center text-gray-500">
+                                    <span class="material-icons animate-spin inline">cached</span> Cargando solicitudes...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: CHOFERES DISPONIBLES -->
+        <div id="choferes" class="tab-content hidden">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="choferesGrid">
+                <div class="bg-white rounded-lg shadow-lg border border-gray-200 p-6">
+                    <div class="flex justify-center mb-4">
+                        <span class="material-icons text-5xl text-primary animate-spin">cached</span>
+                    </div>
+                    <p class="text-center text-gray-500">Cargando choferes...</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal de Asignación -->
+    <div id="assignModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+        <div class="bg-white rounded-lg shadow-2xl max-w-md w-full mx-4">
+            <div class="bg-primary text-white px-6 py-4 flex justify-between items-center">
+                <h3 class="text-xl font-bold flex items-center gap-2">
+                    <span class="material-icons">task</span> Asignar Solicitud
+                </h3>
+                <button onclick="closeAssignModal()" class="text-white hover:bg-blue-800 rounded-full p-2">
+                    <span class="material-icons">close</span>
+                </button>
+            </div>
+
+            <div class="p-6 space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Solicitud</label>
+                    <select id="requestSelect" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none">
+                        <option value="">-- Seleccionar Solicitud --</option>
+                    </select>
+                </div>
+
+                <div id="requestDetails" class="bg-gray-50 p-4 rounded hidden">
+                    <div class="space-y-2 text-sm">
+                        <p><strong>Origen:</strong> <span id="detailOrigen">-</span></p>
+                        <p><strong>Destino:</strong> <span id="detailDestino">-</span></p>
+                        <p><strong>Fecha/Hora:</strong> <span id="detailFecha">-</span></p>
+                        <p><strong>Pasajeros:</strong> <span id="detailPax">-</span></p>
+                    </div>
+                </div>
+
+                <div class="flex gap-3 pt-4">
+                    <button onclick="closeAssignModal()" class="flex-1 px-4 py-2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded font-semibold transition">
+                        Cancelar
+                    </button>
+                    <button onclick="confirmAssignment()" class="flex-1 px-4 py-2 bg-secondary hover:bg-orange-700 text-white rounded font-semibold transition flex items-center justify-center gap-2">
+                        <span class="material-icons text-sm">check</span> Aceptar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Datos simulados de choferes y sus vehículos
+        const choferesData = [
+            {
+                id: '1',
+                nombre: 'Juan Pérez García',
+                email: 'juan.perez@elloa.cl',
+                telefono: '+56 9 8765 4321',
+                calificacion: 4.8,
+                vehiculo: {
+                    id: 'v1',
+                    patente: 'LHYT-88',
+                    modelo: 'Toyota Hiace',
+                    año: 2023,
+                    estado: 'DISPONIBLE'
+                },
+                solicitudesAsignadas: 2
+            },
+            {
+                id: '2',
+                nombre: 'Carlos Rodríguez López',
+                email: 'carlos.rodriguez@elloa.cl',
+                telefono: '+56 9 9876 5432',
+                calificacion: 4.6,
+                vehiculo: {
+                    id: 'v2',
+                    patente: 'LHYT-89',
+                    modelo: 'Mercedes Sprinter',
+                    año: 2022,
+                    estado: 'EN_RUTA'
+                },
+                solicitudesAsignadas: 3
+            },
+            {
+                id: '3',
+                nombre: 'Miguel Fernández Silva',
+                email: 'miguel.fernandez@elloa.cl',
+                telefono: '+56 9 7654 3210',
+                calificacion: 4.9,
+                vehiculo: {
+                    id: 'v3',
+                    patente: 'LHYT-90',
+                    modelo: 'Ford Transit',
+                    año: 2024,
+                    estado: 'DISPONIBLE'
+                },
+                solicitudesAsignadas: 1
+            },
+            {
+                id: '4',
+                nombre: 'Roberto González Martínez',
+                email: 'roberto.gonzalez@elloa.cl',
+                telefono: '+56 9 6543 2109',
+                calificacion: 4.5,
+                vehiculo: {
+                    id: 'v4',
+                    patente: 'LHYT-91',
+                    modelo: 'Toyota Coaster',
+                    año: 2021,
+                    estado: 'DISPONIBLE'
+                },
+                solicitudesAsignadas: 4
+            }
+        ];
+
+        // Datos simulados de solicitudes pendientes
+        const solicitudesData = [
+            {
+                id: 'req-001',
+                origen: 'Aeropuerto Santiago',
+                destino: 'Faena Minera La Moneda',
+                fecha: '2025-01-22T09:00:00Z',
+                pax: 4,
+                estado: 'PENDIENTE'
+            },
+            {
+                id: 'req-002',
+                origen: 'Centro Comercial Las Condes',
+                destino: 'Hotel W Santiago',
+                fecha: '2025-01-22T14:30:00Z',
+                pax: 2,
+                estado: 'PENDIENTE'
+            },
+            {
+                id: 'req-003',
+                origen: 'Terminal de Buses',
+                destino: 'Residencia Corporativa',
+                fecha: '2025-01-22T16:00:00Z',
+                pax: 6,
+                estado: 'PENDIENTE'
+            }
+        ];
+
+        let currentDriverId = null;
+
+        // Cambiar entre tabs
+        function switchTab(tabName) {
+            // Ocultar todos los tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.add('hidden');
+            });
+
+            // Mostrar tab seleccionado
+            document.getElementById(tabName).classList.remove('hidden');
+
+            // Actualizar botones activos
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active', 'border-b-4', 'border-secondary', 'text-primary');
+                btn.classList.add('text-gray-600');
+            });
+
+            document.getElementById('tab-' + tabName).classList.add('active', 'border-b-4', 'border-secondary', 'text-primary');
+
+            // Si es el tab de choferes, cargar datos
+            if (tabName === 'choferes') {
+                cargarChoferes();
+            } else {
+                cargarMisSolicitudes();
+            }
+        }
+
+        // Cargar mis solicitudes asignadas
+        function cargarMisSolicitudes() {
+            const tbody = document.getElementById('misSolicitudesTable');
+            tbody.innerHTML = '';
+
+            // Simular solicitudes asignadas al chofer actual
+            const misAsignaciones = [
+                {
+                    id: 'req-101',
+                    origen: 'Aeropuerto',
+                    destino: 'Faena',
+                    cliente: 'Minera Gaby',
+                    fecha: '20/01/2025 08:30',
+                    estado: 'EN_RUTA'
+                },
+                {
+                    id: 'req-102',
+                    origen: 'Hotel',
+                    destino: 'Centro Comercial',
+                    cliente: 'Corporativo X',
+                    fecha: '20/01/2025 14:00',
+                    estado: 'COMPLETADO'
+                }
+            ];
+
+            if (misAsignaciones.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="px-6 py-4 text-center text-gray-500">
+                            No tienes solicitudes asignadas
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            misAsignaciones.forEach(asignacion => {
+                const statusColors = {
+                    'EN_RUTA': { bg: 'bg-green-100', text: 'text-green-800' },
+                    'COMPLETADO': { bg: 'bg-blue-100', text: 'text-blue-800' }
+                };
+                const status = statusColors[asignacion.estado] || { bg: 'bg-gray-100', text: 'text-gray-800' };
+
+                const row = `
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="px-6 py-4 whitespace-nowrap font-bold text-primary">#${asignacion.id}</td>
+                        <td class="px-6 py-4 text-sm">
+                            <div><span class="material-icons text-[14px] text-green-600 inline">circle</span> ${asignacion.origen}</div>
+                            <div><span class="material-icons text-[14px] text-red-600 inline">location_on</span> ${asignacion.destino}</div>
+                        </td>
+                        <td class="px-6 py-4 text-sm">${asignacion.cliente}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${asignacion.fecha}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-3 py-1 text-xs font-semibold rounded-full ${status.bg} ${status.text}">
+                                ${asignacion.estado}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
+                            <button class="text-blue-600 hover:text-blue-900 font-semibold">Ver Detalles</button>
+                        </td>
+                    </tr>
+                `;
+                tbody.insertAdjacentHTML('beforeend', row);
+            });
+        }
+
+        // Cargar lista de choferes
+        function cargarChoferes() {
+            const grid = document.getElementById('choferesGrid');
+            grid.innerHTML = '';
+
+            choferesData.forEach(chofer => {
+                const statusColor = {
+                    'DISPONIBLE': { color: 'text-green-600', bg: 'bg-green-50' },
+                    'EN_RUTA': { color: 'text-blue-600', bg: 'bg-blue-50' },
+                    'MANTENCION': { color: 'text-yellow-600', bg: 'bg-yellow-50' }
+                };
+
+                const status = statusColor[chofer.vehiculo.estado] || { color: 'text-gray-600', bg: 'bg-gray-50' };
+
+                const card = `
+                    <div class="bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden hover:shadow-xl transition">
+                        <!-- Header con datos del chofer -->
+                        <div class="bg-primary text-white p-4">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center gap-3">
+                                    <div class="h-12 w-12 rounded-full bg-secondary flex items-center justify-center text-white font-bold">
+                                        ${chofer.nombre.split(' ').map(n => n[0]).join('')}
+                                    </div>
+                                    <div>
+                                        <h3 class="font-bold text-lg">${chofer.nombre}</h3>
+                                        <p class="text-blue-200 text-sm">${chofer.email}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Body con datos del vehículo -->
+                        <div class="p-4 space-y-3">
+                            <!-- Teléfono -->
+                            <div class="flex items-center gap-2 text-sm">
+                                <span class="material-icons text-secondary text-lg">phone</span>
+                                <span>${chofer.telefono}</span>
+                            </div>
+
+                            <!-- Calificación -->
+                            <div class="flex items-center gap-2">
+                                <span class="material-icons text-yellow-500">star</span>
+                                <span class="font-semibold">${chofer.calificacion}</span>
+                                <span class="text-gray-500 text-sm">(${chofer.solicitudesAsignadas} viajes completados)</span>
+                            </div>
+
+                            <!-- Vehículo -->
+                            <div class="border-t pt-3">
+                                <p class="text-xs font-bold text-gray-500 uppercase mb-2">Vehículo Asignado</p>
+                                <div class="bg-gray-50 p-3 rounded">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="font-bold text-primary">${chofer.vehiculo.modelo}</span>
+                                        <span class="material-icons ${status.color}">directions_car</span>
+                                    </div>
+                                    <div class="text-xs text-gray-600 space-y-1">
+                                        <p><strong>Patente:</strong> ${chofer.vehiculo.patente}</p>
+                                        <p><strong>Año:</strong> ${chofer.vehiculo.año}</p>
+                                        <p class="pt-2">
+                                            <span class="px-2 py-1 ${status.bg} ${status.color} rounded-full text-xs font-semibold">
+                                                ${chofer.vehiculo.estado}
+                                            </span>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Footer con botón -->
+                        <div class="border-t p-4 bg-gray-50">
+                            <button onclick="openAssignModal('${chofer.id}')" class="w-full bg-secondary hover:bg-orange-700 text-white font-bold py-2 px-4 rounded transition flex items-center justify-center gap-2">
+                                <span class="material-icons text-sm">assignment</span> Asignar Solicitud
+                            </button>
+                        </div>
+                    </div>
+                `;
+                grid.insertAdjacentHTML('beforeend', card);
+            });
+        }
+
+        // Abrir modal de asignación
+        function openAssignModal(driverId) {
+            currentDriverId = driverId;
+            const modal = document.getElementById('assignModal');
+            modal.classList.remove('hidden');
+
+            // Cargar solicitudes disponibles
+            const select = document.getElementById('requestSelect');
+            select.innerHTML = '<option value="">-- Seleccionar Solicitud --</option>';
+
+            solicitudesData.forEach(req => {
+                const option = document.createElement('option');
+                option.value = req.id;
+                option.textContent = `${req.id} - ${req.origen} → ${req.destino}`;
+                select.appendChild(option);
+            });
+
+            // Agregar evento para mostrar detalles
+            select.onchange = mostrarDetallesSolicitud;
+        }
+
+        // Mostrar detalles de solicitud
+        function mostrarDetallesSolicitud(e) {
+            const selectId = e.target.value;
+            if (!selectId) {
+                document.getElementById('requestDetails').classList.add('hidden');
+                return;
+            }
+
+            const solicitud = solicitudesData.find(s => s.id === selectId);
+            if (solicitud) {
+                document.getElementById('detailOrigen').textContent = solicitud.origen;
+                document.getElementById('detailDestino').textContent = solicitud.destino;
+                document.getElementById('detailFecha').textContent = new Date(solicitud.fecha).toLocaleDateString('es-CL') + ' ' + new Date(solicitud.fecha).toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' });
+                document.getElementById('detailPax').textContent = solicitud.pax;
+                document.getElementById('requestDetails').classList.remove('hidden');
+            }
+        }
+
+        // Confirmar asignación
+        function confirmAssignment() {
+            const requestId = document.getElementById('requestSelect').value;
+            if (!requestId) {
+                alert('Por favor selecciona una solicitud');
+                return;
+            }
+
+            alert(`✅ Solicitud asignada exitosamente\nChofer ID: ${currentDriverId}\nSolicitud: ${requestId}`);
+            closeAssignModal();
+            cargarMisSolicitudes();
+        }
+
+        // Cerrar modal
+        function closeAssignModal() {
+            document.getElementById('assignModal').classList.add('hidden');
+            document.getElementById('requestSelect').value = '';
+            document.getElementById('requestDetails').classList.add('hidden');
+        }
+
+        // Cargar datos iniciales
+        document.addEventListener('DOMContentLoaded', function() {
+            cargarMisSolicitudes();
+        });
+    </script>
+    <footer class="bg-[#002244] text-gray-300 border-t-4 border-secondary mt-auto">
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                
+                <div class="space-y-4">
+                    <div class="flex items-center gap-2 text-white">
+                        <span class="material-icons text-secondary text-3xl">local_shipping</span>
+                        <span class="font-bold text-xl tracking-wide">Servicios El Loa</span>
+                    </div>
+                    <p class="text-sm leading-relaxed text-gray-400">
+                        Líderes en transporte corporativo y privado en la región de Antofagasta. Seguridad, puntualidad y tecnología al servicio de la minería.
+                    </p>
+                    <div class="flex gap-4 pt-2">
+                        <a href="https://facebook.com" target="_blank" class="w-8 h-8 rounded-full bg-blue-900 flex items-center justify-center hover:bg-secondary transition text-white">
+                            <span class="material-icons text-sm">facebook</span>
+                        </a>
+                        <a href="https://elloa.cl" target="_blank" class="w-8 h-8 rounded-full bg-blue-900 flex items-center justify-center hover:bg-secondary transition text-white">
+                            <span class="material-icons text-sm">public</span> </a>
+                        <a href="https://instagram.com" target="_blank" class="w-8 h-8 rounded-full bg-blue-900 flex items-center justify-center hover:bg-secondary transition text-white">
+                            <span class="material-icons text-sm">photo_camera</span> </a>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-white font-bold uppercase tracking-wider text-sm mb-4 border-b border-blue-800 pb-2 inline-block">Navegación</h3>
+                    <ul class="space-y-3 text-sm">
+                        <li><a href="index.html" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Inicio</a></li>
+                        <li><a href="service-request.html" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Solicitudes</a></li>
+                        <li><a href="companies.html" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Clientes</a></li>
+                        <li><a href="portal-choferes.html" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Portal Choferes</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-white font-bold uppercase tracking-wider text-sm mb-4 border-b border-blue-800 pb-2 inline-block">Contacto Central</h3>
+                    <ul class="space-y-4 text-sm">
+                        <li class="flex items-start gap-3">
+                            <span class="material-icons text-secondary text-sm mt-1">location_on</span>
+                            <span>Av. Granaderos 2550, Of. 304<br>Calama, Región de Antofagasta</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <span class="material-icons text-secondary text-sm">phone</span>
+                            <span>+56 55 234 5678</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <span class="material-icons text-secondary text-sm">email</span>
+                            <span>operaciones@elloa.cl</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <span class="material-icons text-secondary text-sm">access_time</span>
+                            <span>24/7 Soporte en Ruta</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-white font-bold uppercase tracking-wider text-sm mb-4 border-b border-blue-800 pb-2 inline-block">Descarga la App</h3>
+                    <p class="text-xs text-gray-400 mb-4">Gestiona tus viajes y monitorea la ruta en tiempo real.</p>
+                    
+                    <div class="space-y-3">
+                        <button class="w-full bg-gray-800 hover:bg-gray-700 border border-gray-600 rounded-lg p-2 flex items-center gap-3 transition">
+                            <span class="material-icons text-3xl">apple</span>
+                            <div class="text-left">
+                                <div class="text-[10px] uppercase">Disponible en</div>
+                                <div class="font-bold text-sm text-white">App Store</div>
+                            </div>
+                        </button>
+                        <button class="w-full bg-gray-800 hover:bg-gray-700 border border-gray-600 rounded-lg p-2 flex items-center gap-3 transition">
+                            <span class="material-icons text-3xl">android</span>
+                            <div class="text-left">
+                                <div class="text-[10px] uppercase">Disponible en</div>
+                                <div class="font-bold text-sm text-white">Google Play</div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="bg-[#001a33] py-6 border-t border-blue-900/50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="text-xs text-gray-500 text-center md:text-left">
+                    &copy; 2026 Servicios de Transporte El Loa SpA. Todos los derechos reservados.
+                </div>
+                <div class="flex gap-6 text-xs text-gray-400 font-medium">
+                    <a href="terms.html" class="hover:text-white transition">Términos y Condiciones</a>
+                    <a href="privacy.html" class="hover:text-white transition">Política de Privacidad</a>
+                    <a href="complaints.html" class="hover:text-white transition">Portal de Denuncias</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
