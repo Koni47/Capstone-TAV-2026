@@ -1,34 +1,12 @@
 import React from 'react'
 import { site } from '../mocks/data'
 import '../index.css'
+import Header from '../components/Header' 
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-surface text-gray-800 font-sans">
-      <nav className="bg-primary text-white shadow-lg sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-20 items-center">
-            <div className="flex items-center gap-3 cursor-pointer">
-              <div className="w-10 h-10 bg-white rounded-md flex items-center justify-center text-primary font-bold text-xl">EL</div>
-              <span className="font-bold text-xl tracking-wide">{site.companyName}</span>
-            </div>
-            <div className="hidden md:flex space-x-6">
-              {site.nav.map((n) => (
-                <a key={n.href} href={n.href} className={`text-secondary font-bold border-b-2 border-secondary px-1 pb-1`}>{n.label}</a>
-              ))}
-            </div>
-            <div className="hidden md:flex items-center gap-3">
-              <a href="/client-portal" className="text-sm font-semibold hover:text-gray-300">Iniciar sesión</a>
-              <a href="/client-portal" className="bg-secondary hover:bg-orange-600 text-white text-sm font-bold py-2 px-5 rounded-md transition shadow-md">Registrarse</a>
-            </div>
-            <div className="md:hidden">
-              <button className="text-white hover:text-secondary">
-                <span className="material-icons text-3xl">menu</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <Header />
 
       <section className="relative min-h-[650px] flex items-center pt-20 pb-20">
         <div className="absolute inset-0 w-full h-full bg-[url('/assets/img/hero.jpg')] bg-cover bg-center opacity-90"></div>

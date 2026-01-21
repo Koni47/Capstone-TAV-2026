@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { usersMockData } from "../mocks/data";
+import Header from '../components/Header';
 
 const Users = () => {
   const navigate = useNavigate();
@@ -46,78 +47,7 @@ const Users = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Navigation */}
-      <nav className="bg-primary text-white shadow-lg sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center">
-              <button
-                onClick={() => navigate("/")}
-                className="flex-shrink-0 text-white flex items-center gap-2 font-bold text-xl hover:opacity-80"
-              >
-                <span className="material-icons text-secondary">local_shipping</span>
-                EL LOA
-              </button>
-              <div className="hidden md:block ml-10">
-                <div className="flex items-baseline space-x-4">
-                  <button
-                    onClick={() => navigate("/dashboard-admin")}
-                    className="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition"
-                  >
-                    Dashboard Admin
-                  </button>
-                  <button
-                    onClick={() => navigate("/dashboard-client")}
-                    className="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition"
-                  >
-                    Dashboard Cliente
-                  </button>
-                  <button
-                    onClick={() => navigate("/dashboard-driver")}
-                    className="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition"
-                  >
-                    Dashboard Chofer
-                  </button>
-                  <button
-                    onClick={() => navigate("/service-request")}
-                    className="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition"
-                  >
-                    Solicitudes
-                  </button>
-                  <button className="bg-blue-900 text-white px-3 py-2 rounded-md text-sm font-medium border-b-4 border-secondary h-16 flex items-center pt-1">
-                    Usuarios
-                  </button>
-                  <button
-                    onClick={() => navigate("/companies")}
-                    className="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition"
-                  >
-                    Clientes
-                  </button>
-                  <button
-                    onClick={() => navigate("/vehicles")}
-                    className="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition"
-                  >
-                    Flota
-                  </button>
-                </div>
-              </div>
-            </div>
-            <div className="flex items-center gap-4">
-              <button className="bg-primary p-1 rounded-full text-gray-400 hover:text-white transition">
-                <span className="material-icons">notifications</span>
-              </button>
-              <div className="flex items-center gap-3 pl-4 border-l border-blue-800">
-                <div className="text-right hidden sm:block">
-                  <p className="text-sm font-bold leading-none">Zaida K.</p>
-                  <p className="text-xs text-blue-300">Admin</p>
-                </div>
-                <div className="h-8 w-8 rounded-full bg-secondary flex items-center justify-center text-white text-xs font-bold ring-2 ring-blue-900">
-                  ZK
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <Header />
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
