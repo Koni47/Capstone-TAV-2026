@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 import { site } from '../mocks/data'
 import '../index.css'
 import Header from '../components/Header' 
@@ -12,7 +13,7 @@ export default function Home() {
         <div className="absolute inset-0 w-full h-full bg-[url('/assets/img/hero.jpg')] bg-cover bg-center opacity-90"></div>
         <div className="absolute inset-0 bg-gradient-to-r from-[#002244]/95 via-[#003366]/80 to-transparent"></div>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full grid lg:grid-cols-2 gap-12 items-center">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full grid lg:grid-cols-2 gap-8 items-center">
           <div className="text-white space-y-6">
             <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 px-4 py-1.5 rounded-full text-sm font-semibold text-[#FF6600]">
               <span className="material-icons text-sm">verified_user</span> Estándar de Seguridad Minero
@@ -33,7 +34,7 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl shadow-2xl p-6 md:p-8 transform lg:translate-y-8 border-t-8 border-[#FF6600]">
+          <div className="bg-white rounded-2xl shadow-2xl p-6 md:p-8 transform lg:translate-y-6 border-t-8 border-[#FF6600] max-w-md w-full mx-auto lg:ml-0">
             <h3 className="text-primary font-bold text-xl mb-6 flex items-center gap-2">
               <span className="material-icons">directions_car</span> Cotiza tu traslado ahora
             </h3>
@@ -66,7 +67,7 @@ export default function Home() {
                 <input type="datetime-local" className="w-full mt-1 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#FF6600] outline-none text-gray-600" />
               </div>
 
-              <button className="w-full bg-[#003366] hover:bg-[#002244] text-white font-bold py-3 rounded-lg shadow-lg flex justify-center items-center gap-2 transition group">
+              <button className="w-full bg-primary hover:bg-primary-dark text-white font-bold py-3 rounded-lg shadow-lg flex justify-center items-center gap-2 transition group">
                 {site.hero.cta}
                 <span className="material-icons group-hover:translate-x-1 transition-transform">arrow_forward</span>
               </button>
@@ -92,14 +93,14 @@ export default function Home() {
                 </div>
                 <h3 className="text-xl font-bold text-gray-800 mb-3">{s.title}</h3>
                 <p className="text-gray-600 text-sm mb-6">{s.desc}</p>
-                <a href={s.href} className="text-secondary font-bold text-sm flex items-center gap-1 hover:gap-2 transition-all">Ver más <span className="material-icons text-sm">arrow_forward</span></a>
+                <Link to={s.href} className="text-secondary font-bold text-sm flex items-center gap-1 hover:gap-2 transition-all">Ver más <span className="material-icons text-sm">arrow_forward</span></Link>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <footer className="bg-[#002244] text-gray-300 border-t-4 border-secondary mt-auto">
+      <footer className="bg-primary-dark text-gray-300 border-t-4 border-secondary mt-auto">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             <div className="space-y-4">
@@ -114,7 +115,7 @@ export default function Home() {
               <h3 className="text-white font-bold uppercase tracking-wider text-sm mb-4 border-b border-blue-800 pb-2 inline-block">Navegación</h3>
               <ul className="space-y-3 text-sm">
                 {site.nav.map((n) => (
-                  <li key={n.href}><a href={n.href} className="hover:text-secondary transition flex items-center gap-2"><span className="material-icons text-xs">chevron_right</span> {n.label}</a></li>
+                  <li key={n.href}><Link to={n.href} className="hover:text-secondary transition flex items-center gap-2"><span className="material-icons text-xs">chevron_right</span> {n.label}</Link></li>
                 ))}
               </ul>
             </div>
@@ -151,8 +152,12 @@ export default function Home() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="text-xs text-gray-500 text-center md:text-left">&copy; 2026 {site.companyName} SpA. Todos los derechos reservados.</div>
             <div className="flex gap-6 text-xs text-gray-400 font-medium">
-              {site.footerLinks.map((l) => (
-                <a key={l.href} href={l.href} className="hover:text-white transition">{l.label}</a>
+              {[
+                { label: 'Iniciar sesión', href: '/login' },
+                { label: 'Registrarse', href: '/register' },
+                ...site.footerLinks.filter(l => l.href !== '/login' && l.href !== '/register')
+              ].map((l) => (
+                <Link key={l.href} to={l.href} className="hover:text-white transition">{l.label}</Link>
               ))}
             </div>
           </div>
