@@ -52,6 +52,8 @@ export const site = {
     email: 'operaciones@elloa.cl'
   },
   footerLinks: [
+    { label: 'Iniciar sesión', href: '/login' },
+    { label: 'Registrarse', href: '/register' },
     { label: 'Términos y Condiciones', href: '/terms' },
     { label: 'Política de Privacidad', href: '/privacy' },
     { label: 'Portal de Denuncias', href: '/complaints' }

@@ -23,6 +23,7 @@ import VehicleDetail from './pages/VehicleDetail'
 import TripDetail from './pages/TripDetail'
 import Reports from './pages/Reports'
 import Login from './pages/Login'
+import Register from './pages/Register'
 import Logout from './pages/Logout'  
 
 export default function App() {
@@ -48,6 +49,7 @@ export default function App() {
       <Route path="/trip-detail" element={<TripDetail />} />
       <Route path="/reports" element={<Reports />} />
       <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
       <Route path="/logout" element={<Logout />} />
       <Route path="/privacy" element={<Privacy />} />
       <Route path="/recover-password" element={<RecoverPassword />} />

@@ -18,8 +18,8 @@ export default function Home() {
               ))}
             </div>
             <div className="hidden md:flex items-center gap-3">
-              <a href="/client-portal" className="text-sm font-semibold hover:text-gray-300">Iniciar sesión</a>
-              <a href="/client-portal" className="bg-secondary hover:bg-orange-600 text-white text-sm font-bold py-2 px-5 rounded-md transition shadow-md">Registrarse</a>
+              <a href="/login" className="text-sm font-semibold hover:text-gray-300">Iniciar sesión</a>
+              <a href="/register" className="bg-secondary hover:bg-orange-600 text-white text-sm font-bold py-2 px-5 rounded-md transition shadow-md">Registrarse</a>
             </div>
             <div className="md:hidden">
               <button className="text-white hover:text-secondary">
@@ -173,7 +173,11 @@ export default function Home() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="text-xs text-gray-500 text-center md:text-left">&copy; 2026 {site.companyName} SpA. Todos los derechos reservados.</div>
             <div className="flex gap-6 text-xs text-gray-400 font-medium">
-              {site.footerLinks.map((l) => (
+              {[
+                { label: 'Iniciar sesión', href: '/login' },
+                { label: 'Registrarse', href: '/register' },
+                ...site.footerLinks.filter(l => l.href !== '/login' && l.href !== '/register')
+              ].map((l) => (
                 <a key={l.href} href={l.href} className="hover:text-white transition">{l.label}</a>
               ))}
             </div>
