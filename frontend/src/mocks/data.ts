@@ -10,6 +10,9 @@ export const site = {
   },
   nav: [
     { label: 'Inicio', href: '/' },
+    { label: 'Dashboard Admin', href: '/dashboard-admin' },
+    { label: 'Dashboard Cliente', href: '/dashboard-client' },
+    { label: 'Dashboard Chofer', href: '/dashboard-driver' },
     { label: 'Solicitudes', href: '/service-request' },
     { label: 'Viajes', href: '/trips' },
     { label: 'Vehículos', href: '/vehicles' },
@@ -632,6 +635,105 @@ export const reportsMockData = {
     ],
     totalGeneral: "$1.800.000",
   },
+};
+
+export const adminDashboardMockData = {
+  header: { title: "Panel de Control", subtitle: "Bienvenido, visualiza el desempeño de tu negocio" },
+  kpis: [
+    { label: "Total Viajes", value: 245, color: 'primary', delta: "+12% vs mes anterior", icon: "directions_car" },
+    { label: "Ingresos Totales", value: "$1.245.000", color: 'secondary', delta: "+18% vs mes anterior", icon: "attach_money" },
+    { label: "Viajes Pendientes", value: 23, color: 'yellow', icon: "schedule" },
+    { label: "Vehículos Activos", value: "18 / 20", color: 'green', icon: "directions_bus" },
+  ],
+  topClients: [
+    { name: "Minera ABC", total: "$450.000" },
+    { name: "Constructora XYZ", total: "$320.000" },
+    { name: "Transportes ABC", total: "$250.000" },
+    { name: "Empresas LMN", total: "$150.000" },
+    { name: "Otros Clientes", total: "$75.000" },
+  ],
+  recentTrips: [
+    { id: "VJ-2601", client: "Minera ABC", driver: "Juan Pérez", origin: "Aeropuerto", destination: "Faena Atacama", date: "20/01/2026 08:30", fare: "$85.000", status: "Completado", statusColor: "green" },
+    { id: "VJ-2600", client: "Constructora XYZ", driver: "Carlos López", origin: "Centro Calama", destination: "Obra Construcción", date: "20/01/2026 07:15", fare: "$42.000", status: "Completado", statusColor: "green" },
+    { id: "VJ-2599", client: "Transportes ABC", driver: "Miguel González", origin: "Estación de Bus", destination: "Terminal Aéreo", date: "20/01/2026 06:45", fare: "$28.000", status: "Completado", statusColor: "green" },
+    { id: "VJ-2598", client: "Empresas LMN", driver: "Roberto Sáez", origin: "Hotel Atacama", destination: "Complejo Turístico", date: "19/01/2026 19:30", fare: "$65.000", status: "Completado", statusColor: "green" },
+    { id: "VJ-2597", client: "Minera ABC", driver: "Francisco Silva", origin: "Oficina Central", destination: "Faena Norte", date: "19/01/2026 14:20", fare: "$95.000", status: "En Curso", statusColor: "yellow" },
+  ],
+  // Chart data
+  chartServices: {
+    labels: ['Transporte Personal', 'Corporativo', 'Turismo', 'Otros'],
+    datasets: [
+      { label: 'Ingresos ($)', data: [450000, 520000, 180000, 95000], backgroundColor: ['#003366', '#FF6600', '#0066CC', '#66BB6A'] }
+    ]
+  },
+  chartViajesPorMes: {
+    labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio'],
+    datasets: [
+      { label: 'Viajes Realizados', data: [180, 195, 210, 225, 235, 245], borderColor: '#003366', backgroundColor: 'rgba(0, 51, 102, 0.1)', fill: true }
+    ]
+  },
+  chartOcupacion: {
+    labels: ['Ocupados', 'Disponibles', 'Mantenimiento'],
+    datasets: [
+      { data: [12, 6, 2], backgroundColor: ['#66BB6A', '#FFA726', '#EF5350'] }
+    ]
+  }
+};
+
+export const clientDashboardMockData = {
+  header: { title: "Mi Panel de Control", subtitle: "Bienvenido, gestiona tus viajes y pagos" },
+  kpis: [
+    { label: "Viajes Realizados", value: 12, icon: "directions_car" },
+    { label: "Gasto Total", value: "$285.000", color: 'secondary', icon: "credit_card" },
+    { label: "Viajes Pendientes", value: 2, color: 'yellow', icon: "schedule" },
+    { label: "Calificación", value: "4.8 ⭐", color: 'green', icon: "star" },
+  ],
+  upcomingTrips: [
+    { title: "Viaje a Faena - 22/01/2026", route: "Hotel Atacama → Faena Minera", time: "08:30 AM", driver: "Juan Pérez", price: "$75.000", status: "Confirmado" },
+    { title: "Viaje al Centro - 23/01/2026", route: "Aeropuerto → Centro Calama", time: "10:15 AM", driver: "Carlos López", price: "$35.000", status: "Pendiente" },
+  ],
+  history: [
+    { date: "20/01/2026", origin: "Aeropuerto", destination: "Hotel Atacama", driver: "Juan Pérez", amount: "$65.000", status: "Completado" },
+    { date: "19/01/2026", origin: "Centro Calama", destination: "Complejo Turístico", driver: "Carlos López", amount: "$45.000", status: "Completado" },
+  ],
+  // Charts
+  chartGasto: {
+    labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio'],
+    datasets: [{ label: 'Gasto ($)', data: [180000, 195000, 165000, 225000, 240000, 285000], borderColor: '#FF6600', backgroundColor: 'rgba(255, 102, 0, 0.1)', fill: true }]
+  },
+  chartTipos: {
+    labels: ['Trabajo', 'Turismo', 'Personal'],
+    datasets: [{ data: [6, 3, 3], backgroundColor: ['#003366', '#FF6600', '#0066CC'] }]
+  }
+};
+
+export const driverDashboardMockData = {
+  header: { title: "Mi Panel Chofer", subtitle: "Gestiona tus viajes y controla tus ganancias" },
+  kpis: [
+    { label: "Viajes Hoy", value: 5, color: 'primary', icon: "route", sub: "2 pendientes" },
+    { label: "Ganancias Hoy", value: "$245.000", color: 'secondary', icon: "attach_money" },
+    { label: "Mi Calificación", value: "4.9 ⭐", color: 'yellow', icon: "star" },
+    { label: "Vehículo", value: "Toyota Hiace", color: 'green', icon: "directions_bus" },
+  ],
+  nextTrips: [
+    { title: "Viaje #VJ-2601", passenger: "Juan Pérez", client: "Minera ABC", time: "08:30 AM", routeInfo: "Aeropuerto → Faena Atacama | 45 km aprox", price: "$85.000", status: "En Ruta", level: 'green' },
+    { title: "Viaje #VJ-2602", passenger: "Carlos López", client: "Constructora XYZ", time: "10:45 AM", routeInfo: "Centro Calama → Complejo Turístico | 12 km", price: "$42.000", status: "Confirmado", level: 'yellow' },
+    { title: "Viaje #VJ-2603", passenger: "María García", client: "Turismo", time: "14:00 PM", routeInfo: "Hotel Atacama → Aeropuerto | 25 km", price: "$60.000", status: "Pendiente", level: 'blue' },
+  ],
+  completed: [
+    { time: "06:30", client: "Juan Pérez", route: "Hotel → Faena", km: "35 km", fare: "$65.000", stars: '⭐⭐⭐⭐⭐', rating: '5.0' },
+    { time: "08:00", client: "Ana García", route: "Aeropuerto → Centro", km: "18 km", fare: "$42.000", stars: '⭐⭐⭐⭐⭐', rating: '5.0' },
+    { time: "09:30", client: "Roberto Sáez", route: "Centro → Complejo", km: "12 km", fare: "$28.000", stars: '⭐⭐⭐⭐', rating: '4.8' },
+  ],
+  // Charts
+  chartGanancias: {
+    labels: ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'],
+    datasets: [{ label: 'Ganancias ($)', data: [185000, 210000, 195000, 225000, 240000, 260000, 0], backgroundColor: ['#FF6600', '#FF8533', '#FF6600', '#FF8533', '#FF6600', '#FF8533', '#E0E0E0'] }]
+  },
+  chartDistribucion: {
+    labels: ['Corta Distancia', 'Media Distancia', 'Larga Distancia'],
+    datasets: [{ data: [35, 45, 20], backgroundColor: ['#66BB6A', '#FFA726', '#EF5350'] }]
+  }
 };
 
 export default site

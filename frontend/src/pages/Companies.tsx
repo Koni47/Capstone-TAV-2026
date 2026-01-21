@@ -35,8 +35,14 @@ export function Companies() {
               </div>
               <div className="hidden md:block">
                 <div className="ml-10 flex items-baseline space-x-4">
-                  <a href="/" className="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">
-                    Dashboard
+                  <a href="/dashboard-admin" className="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">
+                    Dashboard Admin
+                  </a>
+                  <a href="/dashboard-client" className="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">
+                    Dashboard Cliente
+                  </a>
+                  <a href="/dashboard-driver" className="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">
+                    Dashboard Chofer
                   </a>
                   <a href="/service-request" className="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">
                     Solicitudes
