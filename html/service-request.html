@@ -147,115 +147,6 @@
                 </div>
             </div>
 
-            <div class="w-full lg:w-2/3 space-y-8">
-                
-                <div class="flex justify-between items-center">
-                    <h2 class="text-2xl font-bold text-primary">Listado de Solicitudes</h2>
-                    <div class="flex gap-2">
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                            5 Pendientes
-                        </span>
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                            3 En Ruta
-                        </span>
-                    </div>
-                </div>
-
-                <div class="bg-white shadow overflow-hidden sm:rounded-lg border border-gray-200">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID / Cliente</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ruta</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
-                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white divide-y divide-gray-200 text-sm">
-                            
-                            <tr class="hover:bg-blue-50 transition border-l-4 border-yellow-400">
-                                <td class="px-6 py-4">
-                                    <div class="font-bold text-gray-900">#REQ-101</div>
-                                    <div class="text-xs text-gray-500">Minera Gaby</div>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <div class="flex items-center gap-1 text-xs text-gray-500"><span class="material-icons text-[10px] text-green-600">circle</span> Aeropuerto</div>
-                                    <div class="flex items-center gap-1 text-xs text-gray-500 mt-1"><span class="material-icons text-[10px] text-red-600">location_on</span> Faena</div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-gray-500">
-                                    20/01 - 08:30
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                                        Pendiente
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                    <button onclick="toggleAssignPanel()" class="text-secondary hover:text-orange-900 font-bold bg-orange-50 px-3 py-1 rounded border border-orange-200">
-                                        ASIGNAR
-                                    </button>
-                                </td>
-                            </tr>
-
-                            <tr class="hover:bg-gray-50 transition border-l-4 border-green-500">
-                                <td class="px-6 py-4">
-                                    <div class="font-bold text-gray-900">#REQ-099</div>
-                                    <div class="text-xs text-gray-500">Part: Juan Perez</div>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <div class="flex items-center gap-1 text-xs text-gray-500"><span class="material-icons text-[10px] text-green-600">circle</span> Hotel Diego</div>
-                                    <div class="flex items-center gap-1 text-xs text-gray-500 mt-1"><span class="material-icons text-[10px] text-red-600">location_on</span> Aeropuerto</div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-gray-500">
-                                    20/01 - 14:00
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                        Agendado
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                    <button class="text-primary hover:text-blue-900 mr-2">Ver</button>
-                                    <button class="text-gray-400 hover:text-red-600"><span class="material-icons text-sm">cancel</span></button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div id="assignPanel" class="hidden bg-blue-50 border border-blue-200 rounded-lg p-6 shadow-inner transition-all">
-                    <div class="flex justify-between items-start mb-4">
-                        <h3 class="text-lg font-bold text-primary">Asignando Recurso: <span class="text-gray-600">#REQ-101</span></h3>
-                        <button onclick="toggleAssignPanel()" class="text-gray-400 hover:text-gray-600"><span class="material-icons">close</span></button>
-                    </div>
-
-                    <form id="assignForm" class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
-                        <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Chofer Disponible</label>
-                            <select name="driverId" class="w-full border border-gray-300 rounded px-3 py-2 text-sm bg-white">
-                                <option value="">Seleccionar...</option>
-                                <option value="1">Juan Pérez (Disponible)</option>
-                                <option value="2">Pedro Soto (En Ruta - Termina 10min)</option>
-                            </select>
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Vehículo</label>
-                            <select name="vehicleId" class="w-full border border-gray-300 rounded px-3 py-2 text-sm bg-white">
-                                <option value="">Seleccionar...</option>
-                                <option value="1">Toyota Hilux (LHYT-88)</option>
-                                <option value="2">Van Mercedes (KJSD-22)</option>
-                            </select>
-                        </div>
-
-                        <button type="submit" class="bg-success hover:bg-green-600 text-white font-bold py-2 px-4 rounded shadow transition flex justify-center items-center gap-2">
-                            <span class="material-icons text-sm">check_circle</span> Confirmar Asignación
-                        </button>
-                    </form>
-                </div>
-
-            </div>
         </div>
 
     </main>
@@ -290,7 +181,7 @@
                         <li><a href="index.html" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Inicio</a></li>
                         <li><a href="service-request.html" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Solicitudes</a></li>
                         <li><a href="companies.html" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Clientes</a></li>
-                        <li><a href="client-portal.html" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Portal Choferes</a></li>
+                        <li><a href="portal-choferes.html" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Portal Choferes</a></li>
                     </ul>
                 </div>
 
