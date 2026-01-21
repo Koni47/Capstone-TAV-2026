@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { vehicleDetailMockData } from "../mocks/data";
+import Header from '../components/Header';
 
 const VehicleDetail = () => {
   const navigate = useNavigate();
@@ -8,29 +9,7 @@ const VehicleDetail = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header/Navigation */}
-      <nav className="bg-primary text-white shadow-lg sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center">
-              <button
-                onClick={() => navigate("/")}
-                className="flex-shrink-0 text-white flex items-center gap-2 font-bold text-xl hover:opacity-80"
-              >
-                EL LOA
-              </button>
-              <div className="hidden md:block ml-10">
-                <button
-                  onClick={() => navigate("/vehicles")}
-                  className="text-white font-medium px-3 py-2 rounded-md hover:bg-opacity-80"
-                >
-                  Vehículos
-                </button>
-              </div>
-            </div>
-            <div></div>
-          </div>
-        </div>
-      </nav>
+      <Header />
 
       {/* Main Content */}
       <main className="max-w-6xl mx-auto p-6">

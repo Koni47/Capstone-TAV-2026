@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { companyEditMockData } from '../mocks/data';
 import { useNavigate } from 'react-router-dom';
+import Header from '../components/Header';
 
 export function CompanyEdit() {
   const navigate = useNavigate();
@@ -31,17 +32,7 @@ export function CompanyEdit() {
   return (
     <div className="bg-surface font-sans text-gray-800 min-h-screen">
       {/* Navigation */}
-      <nav className="bg-primary text-white shadow-lg w-full sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center">
-              <a href="/" className="flex-shrink-0 text-white flex items-center gap-2 font-bold text-xl">
-                EL LOA
-              </a>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <Header />
 
       {/* Main Content */}
       <main className="max-w-4xl mx-auto p-6">
