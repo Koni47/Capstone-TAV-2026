@@ -1,0 +1,37 @@
+{
+  "recommendations": [
+    // GitHub Copilot - Asistente de código con IA
+    "github.copilot",
+    "github.copilot-chat",
+    
+    // TypeScript y JavaScript
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    
+    // React y Frontend
+    "dsznajder.es7-react-js-snippets",
+    "bradlc.vscode-tailwindcss",
+    
+    // Backend NestJS
+    "firsttris.vscode-jest-runner",
+    "orta.vscode-jest",
+    
+    // Base de Datos y Prisma
+    "prisma.prisma",
+    "mtxr.sqltools",
+    "mtxr.sqltools-driver-pg",
+    
+    // Docker
+    "ms-azuretools.vscode-docker",
+    
+    // Git
+    "eamodio.gitlens",
+    "mhutchie.git-graph",
+    
+    // Utilidades
+    "editorconfig.editorconfig",
+    "usernamehw.errorlens",
+    "christian-kohler.path-intellisense",
+    "visualstudioexptteam.vscodeintellicode"
+  ]
+}

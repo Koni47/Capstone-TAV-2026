@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { paymentMockData, site } from '../mocks/data';
 import Header from '../components/Header';
 
-export function Payment() {
+export default function Payment() {
   const [showAssignPanel, setShowAssignPanel] = useState(false);
   const [selectedRequestId, setSelectedRequestId] = useState('');
   const [formData, setFormData] = useState({
@@ -421,5 +421,3 @@ export function Payment() {
     </div>
   );
 }
-
-export default Payment;
