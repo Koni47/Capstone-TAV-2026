@@ -2,7 +2,7 @@ import { termsMockData } from '../mocks/data';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 
-export function Terms() {
+export default function Terms() {
   const navigate = useNavigate();
 
   const handleBack = () => {
@@ -41,5 +41,3 @@ export function Terms() {
     </div>
   );
 }
-
-export default Terms;

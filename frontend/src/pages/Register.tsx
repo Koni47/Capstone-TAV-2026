@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 
-export function Register() {
+export default function Register() {
   const navigate = useNavigate()
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
@@ -86,11 +86,9 @@ export function Register() {
 
           <button type="submit" className="w-full bg-primary hover:bg-blue-900 text-white font-bold py-2 rounded shadow transition mt-4">Crear Cuenta</button>
 
-          <a href="/login" className="block text-center text-sm text-gray-500 mt-4 hover:text-gray-700">¿Ya tienes cuenta? Inicia sesión</a>
+          <Link to="/login" className="block text-center text-sm text-gray-500 mt-4 hover:text-gray-700">¿Ya tienes cuenta? Inicia sesión</Link>
         </form>
       </div>
     </div>
   )
 }
-
-export default Register

@@ -1,9 +1,10 @@
 import React from 'react'
 import Header from '../components/Header'
 import { site } from '../mocks/data'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 export default function AdminDashboard() {
+  const navigate = useNavigate();
   const d = site.adminDashboard
 
   const formatCurrency = (n: number) => {
@@ -16,9 +17,15 @@ export default function AdminDashboard() {
 
       <main className="flex-1 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="mb-8">
-            <h1 className="text-4xl font-bold text-primary mb-2">Panel de Control</h1>
-            <p className="text-gray-600">Bienvenido, visualiza el desempeño de tu negocio</p>
+          <div className="mb-8 flex items-center justify-between">
+            <button onClick={() => navigate(-1)} className="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded">
+              Volver Atrás
+            </button>
+            <div className="text-center">
+              <h1 className="text-4xl font-bold text-primary mb-2">Panel de Control</h1>
+              <p className="text-gray-600">Bienvenido, visualiza el desempeño de tu negocio</p>
+            </div>
+            <div></div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -48,28 +55,28 @@ export default function AdminDashboard() {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-yellow-500 hover:shadow-lg transition">
+            <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-warning hover:shadow-lg transition">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-gray-600 text-sm font-semibold mb-2">Viajes Pendientes</p>
-                  <p className="text-3xl font-bold text-yellow-600">{d.kpis.pendingTrips}</p>
+                  <p className="text-3xl font-bold text-warning">{d.kpis.pendingTrips}</p>
                   <p className="text-xs text-gray-500 mt-2">Requieren atención</p>
                 </div>
                 <div className="w-14 h-14 bg-yellow-100 rounded-full flex items-center justify-center">
-                  <span className="material-icons text-2xl text-yellow-600">hourglass_empty</span>
+                  <span className="material-icons text-2xl text-warning">hourglass_empty</span>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-green-500 hover:shadow-lg transition">
+            <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-success hover:shadow-lg transition">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-gray-600 text-sm font-semibold mb-2">Vehículos Activos</p>
-                  <p className="text-3xl font-bold text-green-600">{d.kpis.activeVehicles}</p>
+                  <p className="text-3xl font-bold text-success">{d.kpis.activeVehicles}</p>
                   <p className="text-xs text-gray-500 mt-2">Operativos</p>
                 </div>
                 <div className="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center">
-                  <span className="material-icons text-2xl text-green-600">directions_bus</span>
+                  <span className="material-icons text-2xl text-success">directions_bus</span>
                 </div>
               </div>
             </div>

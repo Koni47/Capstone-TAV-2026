@@ -1,12 +1,14 @@
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { loginMockData } from '../mocks/data'
+import { useNavigate, Link } from 'react-router-dom'
+import { site } from '../mocks/data'
 
-export function Login() {
+export default function Login() {
   const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [userRole, setUserRole] = useState('')
+
+  const { loginMockData } = site
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -23,13 +25,13 @@ export function Login() {
 
     switch (userRole) {
       case 'admin':
-        navigate('/reports')
+        navigate('/dashboard-admin')
         break
       case 'cliente':
         navigate('/client-portal')
         break
       case 'chofer':
-        navigate('/trips')
+        navigate('/dashboard-driver')
         break
       default:
         navigate('/')
@@ -106,19 +108,17 @@ export function Login() {
           <hr className="my-4" />
 
           <div className="text-center">
-            <a href={loginMockData.links.recoverPassword} className="block text-sm text-gray-500 hover:text-gray-700">Recuperar contraseña</a>
-            <a href={loginMockData.links.register} className="block text-sm text-gray-500 hover:text-gray-700">Regístrate aquí</a>
+            <Link to={loginMockData.links.recoverPassword} className="block text-sm text-gray-500 hover:text-gray-700">Recuperar contraseña</Link>
+            <Link to={loginMockData.links.register} className="block text-sm text-gray-500 hover:text-gray-700">Regístrate aquí</Link>
           </div>
 
           <button type="submit" className="w-full bg-primary hover:bg-blue-900 text-white font-bold py-2 rounded shadow transition mt-4">
             {loginMockData.buttonText}
           </button>
 
-          <a href={loginMockData.links.home} className="block text-center text-sm text-gray-500 mt-4 hover:text-gray-700">Volver al Inicio</a>
+          <Link to={loginMockData.links.home} className="block text-center text-sm text-gray-500 mt-4 hover:text-gray-700">Volver al Inicio</Link>
         </form>
       </div>
     </div>
   )
 }
-
-export default Login

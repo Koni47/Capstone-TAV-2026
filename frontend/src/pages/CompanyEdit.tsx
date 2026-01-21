@@ -30,70 +30,116 @@ export function CompanyEdit() {
   };
 
   return (
-    <div className="bg-surface font-sans text-gray-800 min-h-screen">
-      {/* Navigation */}
+    <div className="bg-gray-50 font-sans text-gray-800 min-h-screen flex flex-col">
       <Header />
 
-      {/* Main Content */}
-      <main className="max-w-4xl mx-auto p-6">
-        <h1 className="text-2xl font-bold text-primary mb-4">Editar Empresa</h1>
-
-        <form className="bg-white rounded-lg shadow p-6 grid gap-4" onSubmit={handleSave}>
-          <label className="block">
-            <span className="text-sm text-slate-600">Razón Social</span>
-            <input
-              type="text"
-              name="razónSocial"
-              value={formData.razónSocial}
-              onChange={handleChange}
-              className="form-input mt-1 block w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary"
-            />
-          </label>
-
-          <label className="block">
-            <span className="text-sm text-slate-600">RUT</span>
-            <input
-              type="text"
-              name="rut"
-              value={formData.rut}
-              onChange={handleChange}
-              className="form-input mt-1 block w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary"
-            />
-          </label>
-
-          <label className="block">
-            <span className="text-sm text-slate-600">Contacto</span>
-            <input
-              type="email"
-              name="contacto"
-              value={formData.contacto}
-              onChange={handleChange}
-              className="form-input mt-1 block w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary"
-            />
-          </label>
-
-          <div className="flex gap-3 mt-4">
-            <button
-              type="submit"
-              className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-blue-900 focus:outline-none transition"
-            >
-              Guardar
-            </button>
-            <button
-              type="button"
-              onClick={handleCancel}
-              className="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-50 transition"
-            >
-              Cancelar
-            </button>
+      <main className="flex-grow max-w-4xl mx-auto p-6 lg:p-10 w-full">
+        {/* Navigation & Header */}
+        <div className="mb-8">
+          <button 
+            onClick={handleCancel} 
+            className="text-gray-500 hover:text-primary flex items-center gap-1 transition-colors mb-4 group"
+          >
+            <span className="material-icons text-sm transition-transform group-hover:-translate-x-1">arrow_back</span> 
+            Cancelar y Volver
+          </button>
+          
+          <div className="flex items-center gap-4">
+            <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center text-white shadow-lg">
+              <span className="material-icons text-3xl">business</span>
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold text-primary">Editar Empresa</h1>
+              <p className="text-slate-500 font-medium">Actualice la ficha comercial del cliente</p>
+            </div>
           </div>
-        </form>
+        </div>
+
+        {/* Edit Form */}
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+          <div className="p-8">
+            <form onSubmit={handleSave} className="space-y-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {/* Field: Razón Social */}
+                <div className="space-y-2">
+                  <label className="text-sm font-bold text-slate-700 block ml-1 uppercase tracking-wider">
+                    Razón Social
+                  </label>
+                  <div className="relative">
+                    <span className="material-icons absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xl">corporate_fare</span>
+                    <input
+                      type="text"
+                      name="razónSocial"
+                      value={formData.razónSocial}
+                      onChange={handleChange}
+                      placeholder="Nombre de la empresa"
+                      className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary focus:bg-white transition-all outline-none"
+                    />
+                  </div>
+                </div>
+
+                {/* Field: RUT */}
+                <div className="space-y-2">
+                  <label className="text-sm font-bold text-slate-700 block ml-1 uppercase tracking-wider">
+                    RUT Empresa
+                  </label>
+                  <div className="relative">
+                    <span className="material-icons absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xl">assignment_ind</span>
+                    <input
+                      type="text"
+                      name="rut"
+                      value={formData.rut}
+                      onChange={handleChange}
+                      placeholder="12.345.678-9"
+                      className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary focus:bg-white transition-all outline-none"
+                    />
+                  </div>
+                </div>
+
+                {/* Field: Contacto (Full width) */}
+                <div className="space-y-2 md:col-span-2">
+                  <label className="text-sm font-bold text-slate-700 block ml-1 uppercase tracking-wider">
+                    Nombre de Contacto / Email
+                  </label>
+                  <div className="relative">
+                    <span className="material-icons absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xl">contact_mail</span>
+                    <input
+                      type="text"
+                      name="contacto"
+                      value={formData.contacto}
+                      onChange={handleChange}
+                      placeholder="Ej: Juan Soto - jsoto@empresa.cl"
+                      className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary focus:bg-white transition-all outline-none"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="pt-8 border-t border-gray-100 flex items-center justify-end gap-4">
+                <button
+                  type="button"
+                  onClick={handleCancel}
+                  className="px-6 py-3 text-slate-600 font-bold hover:bg-gray-100 rounded-xl transition-all"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="px-8 py-3 bg-secondary text-white rounded-xl font-bold shadow-lg shadow-secondary/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-2"
+                >
+                  <span className="material-icons">save</span>
+                  Confirmar Cambios
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
       </main>
 
-      {/* Footer */}
-      <footer className="bg-white border-t mt-12">
-        <div className="max-w-7xl mx-auto px-6 py-6 text-sm text-slate-600">
-          © 2026 Servicios de Transporte El Loa
+      <footer className="mt-auto py-10 border-t border-gray-200 w-full">
+        <div className="max-w-7xl mx-auto px-6 text-center text-sm text-slate-400">
+          © 2026 Transportes El Loa | Gestión de Clientes Corporativos
         </div>
       </footer>
     </div>
