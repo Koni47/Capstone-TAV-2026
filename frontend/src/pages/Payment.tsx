@@ -49,8 +49,14 @@ export function Payment() {
               </a>
               <div className="hidden md:block">
                 <div className="ml-10 flex items-baseline space-x-4">
-                  <a href="/" className="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">
-                    Dashboard
+                  <a href="/dashboard-admin" className="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">
+                    Dashboard Admin
+                  </a>
+                  <a href="/dashboard-client" className="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">
+                    Dashboard Cliente
+                  </a>
+                  <a href="/dashboard-driver" className="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">
+                    Dashboard Chofer
                   </a>
                   <a href="/service-request" className="bg-blue-900 text-white px-3 py-2 rounded-md text-sm font-medium border-b-4 border-secondary h-16 flex items-center pt-1">
                     Solicitudes

@@ -20,6 +20,11 @@ export function ClientPortal() {
                 EL LOA <span className="text-gray-400 font-normal">| Portal Empresas</span>
               </span>
             </div>
+            <div className="hidden md:flex items-center gap-6">
+              <a href="/dashboard-admin" className="text-sm text-gray-600 hover:text-primary">Dashboard Admin</a>
+              <a href="/dashboard-client" className="text-sm text-gray-600 hover:text-primary">Dashboard Cliente</a>
+              <a href="/dashboard-driver" className="text-sm text-gray-600 hover:text-primary">Dashboard Chofer</a>
+            </div>
             <div className="flex items-center gap-4">
               <span className="text-sm font-bold text-gray-600">{clientPortalMockData.company.name}</span>
               <div className="h-8 w-8 bg-primary rounded-full text-white flex items-center justify-center text-xs font-bold">

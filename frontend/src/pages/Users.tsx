@@ -60,10 +60,22 @@ const Users = () => {
               <div className="hidden md:block ml-10">
                 <div className="flex items-baseline space-x-4">
                   <button
-                    onClick={() => navigate("/")}
+                    onClick={() => navigate("/dashboard-admin")}
                     className="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition"
                   >
-                    Dashboard
+                    Dashboard Admin
+                  </button>
+                  <button
+                    onClick={() => navigate("/dashboard-client")}
+                    className="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition"
+                  >
+                    Dashboard Cliente
+                  </button>
+                  <button
+                    onClick={() => navigate("/dashboard-driver")}
+                    className="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition"
+                  >
+                    Dashboard Chofer
                   </button>
                   <button
                     onClick={() => navigate("/service-request")}
