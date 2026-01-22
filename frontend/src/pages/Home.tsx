@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { site } from '../mocks/data'
+import { site } from '../services/mockApi'
 import '../index.css'
 import Header from '../components/Header' 
 

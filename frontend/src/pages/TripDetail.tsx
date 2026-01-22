@@ -1,12 +1,12 @@
 import React from 'react'
 import Header from '../components/Header'
-import { tripsMockData } from '../mocks/data'
+import { tripsMockData } from '../services/mockApi'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 
 export default function TripDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const trip = tripsMockData.trips.find((t) => t.id === id) || tripsMockData.trips[0]
+  const trip = tripsMockData.trips.find((t: any) => t.id === id) || tripsMockData.trips[0]
 
   return (
     <div className="min-h-screen bg-gray-50 font-sans text-gray-800">

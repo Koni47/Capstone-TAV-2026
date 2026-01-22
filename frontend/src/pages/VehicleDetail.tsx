@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { vehicleDetailMockData } from "../mocks/data";
+import { vehicleDetailMockData } from "../services/mockApi";
 import Header from '../components/Header';
 
 const VehicleDetail = () => {
@@ -88,7 +88,7 @@ const VehicleDetail = () => {
               </h3>
               
               <div className="space-y-6">
-                {vehicleDetailMockData.history.map((item, idx) => (
+                {vehicleDetailMockData.history.map((item: any, idx: number) => (
                   <div key={idx} className="relative pl-6 border-l-2 border-slate-100 last:border-0 pb-2">
                     <div className="absolute left-[-9px] top-0 w-4 h-4 rounded-full bg-white border-2 border-primary"></div>
                     <p className="text-xs font-bold text-slate-400">{item.date}</p>

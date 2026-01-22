@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { vehicleEditMockData } from "../mocks/data";
+import { vehicleEditMockData } from "../services/mockApi";
 import Header from '../components/Header';
 
 const VehicleEdit = () => {
@@ -104,7 +104,7 @@ const VehicleEdit = () => {
                       onChange={handleInputChange}
                       className="w-full pl-12 pr-10 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary focus:bg-white transition-all outline-none appearance-none cursor-pointer font-bold text-slate-700"
                     >
-                      {vehicleEditMockData.statuses.map((status) => (
+                      {vehicleEditMockData.statuses.map((status: any) => (
                         <option key={status} value={status}>
                           {status}
                         </option>

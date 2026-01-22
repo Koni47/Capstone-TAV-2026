@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { paymentMockData, site } from '../mocks/data';
+import { paymentMockData, site } from '../services/mockApi';
 import Header from '../components/Header';
 
 export default function Payment() {
@@ -180,7 +180,7 @@ export default function Payment() {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200 text-sm">
-                  {paymentMockData.requests.map((request) => (
+                  {paymentMockData.requests.map((request: any) => (
                     <tr key={request.id} className={`hover:bg-blue-50 transition border-l-4 border-${request.borderColor}-400`}>
                       <td className="px-6 py-4">
                         <div className="font-bold text-gray-900">{request.id}</div>
@@ -249,7 +249,7 @@ export default function Payment() {
                     <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Chofer Disponible</label>
                     <select className="w-full border border-gray-300 rounded px-3 py-2 text-sm bg-white">
                       <option value="">Seleccionar...</option>
-                      {paymentMockData.drivers.map((driver) => (
+                      {paymentMockData.drivers.map((driver: any) => (
                         <option key={driver.id} value={driver.id}>
                           {driver.name} ({driver.status})
                         </option>
@@ -261,7 +261,7 @@ export default function Payment() {
                     <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Vehículo</label>
                     <select className="w-full border border-gray-300 rounded px-3 py-2 text-sm bg-white">
                       <option value="">Seleccionar...</option>
-                      {paymentMockData.vehicles.map((vehicle) => (
+                      {paymentMockData.vehicles.map((vehicle: any) => (
                         <option key={vehicle.id} value={vehicle.id}>
                           {vehicle.name} ({vehicle.plate})
                         </option>

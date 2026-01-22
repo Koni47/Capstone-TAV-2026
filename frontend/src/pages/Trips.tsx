@@ -1,6 +1,6 @@
 import React from 'react'
 import Header from '../components/Header'
-import { tripsMockData } from '../mocks/data'
+import { tripsMockData } from '../services/mockApi'
 import { Link, useNavigate } from 'react-router-dom'
 
 export default function Trips() {
@@ -18,7 +18,7 @@ export default function Trips() {
         <h1 className="text-2xl font-bold text-primary mb-4">Mis Viajes</h1>
 
         <div className="grid grid-cols-1 gap-6">
-          {tripsMockData.trips.map((t) => (
+          {tripsMockData.trips.map((t: any) => (
             <Link to={`/trip-detail/${t.id}`} key={t.id} className="block hover:bg-gray-50 transition">
               <div className="bg-white rounded-lg shadow p-4 flex items-center justify-between border hover:border-primary">
                 <div>
