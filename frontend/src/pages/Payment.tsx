@@ -1,8 +1,14 @@
 import { useState } from 'react';
-import { paymentMockData, site } from '../services/mockApi';
+import { paymentMockData, site, getHtmlMock } from '../services/mockApi';
+import HtmlMockRenderer from '../components/HtmlMockRenderer'
 import Header from '../components/Header';
+import { useNavigate } from 'react-router-dom';
 
 export default function Payment() {
+  const navigate = useNavigate();
+  const mock = getHtmlMock('payment.html')
+  if (mock) return <HtmlMockRenderer html={mock} navigate={navigate} />
+
   const [showAssignPanel, setShowAssignPanel] = useState(false);
   const [selectedRequestId, setSelectedRequestId] = useState('');
   const [formData, setFormData] = useState({

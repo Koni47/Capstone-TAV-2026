@@ -1,9 +1,15 @@
 import { useState } from 'react';
-import { companiesPage2MockData, site } from '../services/mockApi';
+import { useNavigate } from 'react-router-dom';
+import { companiesPage2MockData, site, getHtmlMock } from '../services/mockApi';
+import HtmlMockRenderer from '../components/HtmlMockRenderer';
 import Header from '../components/Header';
 
 export function CompaniesPage2() {
+  const navigate = useNavigate()
   const [currentPage, setCurrentPage] = useState(2);
+
+  const mock = getHtmlMock('companies-page-2.html');
+  if (mock) return <HtmlMockRenderer html={mock} navigate={navigate} />;
 
   const getAvatarColors = (bgColor: string) => {
     const colors: Record<string, string> = {

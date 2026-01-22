@@ -1,10 +1,13 @@
 import React from 'react'
 import Header from '../components/Header'
-import { tripsMockData } from '../services/mockApi'
+import { tripsMockData, getHtmlMock } from '../services/mockApi'
+import HtmlMockRenderer from '../components/HtmlMockRenderer'
 import { Link, useNavigate } from 'react-router-dom'
 
 export default function Trips() {
   const navigate = useNavigate()
+  const mock = getHtmlMock('trips.html')
+  if (mock) return <HtmlMockRenderer html={mock} navigate={navigate} />
   return (
     <div className="min-h-screen bg-gray-50 font-sans text-gray-800">
       <Header />

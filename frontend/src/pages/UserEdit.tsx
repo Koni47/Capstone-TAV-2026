@@ -1,10 +1,17 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { userEditMockData } from "../services/mockApi";
+import { userEditMockData, getHtmlMock } from "../services/mockApi";
 import Header from '../components/Header';
+import HtmlMockRenderer from '../components/HtmlMockRenderer';
 
 const UserEdit = () => {
   const navigate = useNavigate();
+
+  const htmlMock = getHtmlMock('user-edit.html');
+  if (htmlMock) {
+    return <HtmlMockRenderer html={htmlMock} />;
+  }
+
   const [formData, setFormData] = useState({
     name: userEditMockData.user.name,
     email: userEditMockData.user.email,
