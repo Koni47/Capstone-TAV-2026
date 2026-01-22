@@ -61,82 +61,95 @@
         </div>
     </nav>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
         
-        <div class="md:flex md:items-center md:justify-between mb-8">
+        <!-- Breadcrumb & Header -->
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div class="flex-1 min-w-0">
-                <h2 class="text-2xl font-bold leading-7 text-primary sm:text-3xl sm:truncate">
-                    Usuarios del Sistema
+                <nav class="flex text-sm text-gray-500 mb-1" aria-label="Breadcrumb">
+                    <ol class="flex items-center space-x-2">
+                        <li><a href="index.html" class="hover:text-primary transition">Inicio</a></li>
+                        <li><span class="text-gray-400">/</span></li>
+                        <li class="text-gray-800 font-medium">Gestión de Usuarios</li>
+                    </ol>
+                </nav>
+                <h2 class="text-2xl font-bold leading-7 text-primary sm:text-3xl sm:truncate flex items-center gap-2">
+                    <span class="material-icons">people</span> Usuarios del Sistema
                 </h2>
                 <p class="mt-1 text-sm text-gray-500">Administra accesos, roles y perfiles de conductores y clientes.</p>
             </div>
             <div class="mt-4 flex md:mt-0 md:ml-4">
-                <button onclick="toggleModal('userModal')" type="button" class="ml-3 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-secondary hover:bg-orange-700 focus:outline-none transition">
-                    <span class="material-icons text-sm mr-2">person_add</span> Nuevo Usuario
+                <button onclick="toggleModal('userModal')" type="button" class="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary hover:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition shadow-md">
+                    <span class="material-icons mr-2 text-sm">person_add</span>
+                    Nuevo Usuario
                 </button>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 gap-5 sm:grid-cols-3 mb-8">
-            <div class="bg-white overflow-hidden shadow rounded-lg border-l-4 border-blue-500">
-                <div class="px-4 py-5 sm:p-6 flex items-center">
-                    <div class="p-3 rounded-full bg-blue-100 text-blue-600 mr-4">
+        <!-- KPI Cards -->
+        <div class="grid grid-cols-1 gap-5 sm:grid-cols-3">
+             <div class="bg-white overflow-hidden shadow-md rounded-xl border border-gray-100 hover:shadow-lg transition">
+                <div class="p-5 flex items-center justify-between">
+                     <div>
+                        <dt class="text-sm font-medium text-gray-500 truncate uppercase tracking-wide">Total Choferes</dt>
+                        <dd class="mt-1 text-3xl font-bold text-gray-900">15</dd>
+                    </div>
+                     <div class="bg-blue-50 p-2 rounded-full text-blue-600">
                         <span class="material-icons">badge</span>
                     </div>
-                    <div>
-                        <p class="text-sm font-medium text-gray-500 truncate">Total Choferes</p>
-                        <p class="text-2xl font-bold text-gray-900">15</p>
-                    </div>
                 </div>
             </div>
-            <div class="bg-white overflow-hidden shadow rounded-lg border-l-4 border-green-500">
-                <div class="px-4 py-5 sm:p-6 flex items-center">
-                    <div class="p-3 rounded-full bg-green-100 text-green-600 mr-4">
+
+            <div class="bg-white overflow-hidden shadow-md rounded-xl border border-gray-100 hover:shadow-lg transition">
+                <div class="p-5 flex items-center justify-between">
+                     <div>
+                        <dt class="text-sm font-medium text-gray-500 truncate uppercase tracking-wide">Clientes Corp.</dt>
+                        <dd class="mt-1 text-3xl font-bold text-gray-900">8</dd>
+                    </div>
+                     <div class="bg-green-50 p-2 rounded-full text-green-600">
                         <span class="material-icons">business_center</span>
                     </div>
-                    <div>
-                        <p class="text-sm font-medium text-gray-500 truncate">Clientes Corporativos</p>
-                        <p class="text-2xl font-bold text-gray-900">8</p>
-                    </div>
                 </div>
             </div>
-            <div class="bg-white overflow-hidden shadow rounded-lg border-l-4 border-purple-500">
-                <div class="px-4 py-5 sm:p-6 flex items-center">
-                    <div class="p-3 rounded-full bg-purple-100 text-purple-600 mr-4">
-                        <span class="material-icons">admin_panel_settings</span>
+
+            <div class="bg-white overflow-hidden shadow-md rounded-xl border border-gray-100 hover:shadow-lg transition">
+                <div class="p-5 flex items-center justify-between">
+                     <div>
+                        <dt class="text-sm font-medium text-gray-500 truncate uppercase tracking-wide">Administradores</dt>
+                        <dd class="mt-1 text-3xl font-bold text-gray-900">3</dd>
                     </div>
-                    <div>
-                        <p class="text-sm font-medium text-gray-500 truncate">Administradores</p>
-                        <p class="text-2xl font-bold text-gray-900">3</p>
+                     <div class="bg-purple-50 p-2 rounded-full text-purple-600">
+                        <span class="material-icons">admin_panel_settings</span>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="bg-white p-4 rounded-lg shadow mb-6 flex flex-col md:flex-row gap-4 items-center justify-between">
-            
+        <!-- Filters & Actions -->
+        <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 flex flex-col md:flex-row gap-4 items-center justify-between">
             <div class="relative w-full md:w-1/3">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <span class="material-icons text-gray-400">search</span>
                 </div>
-                <input type="text" class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary sm:text-sm" placeholder="Buscar por nombre o email...">
+                <input type="text" class="focus:ring-primary focus:border-primary block w-full pl-10 sm:text-sm border-gray-300 rounded-lg p-2.5 transition" placeholder="Buscar por nombre o email...">
             </div>
 
             <div class="flex flex-wrap gap-2 w-full md:w-auto justify-end">
-                <select class="block pl-3 pr-8 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm rounded-md border">
+                <select class="focus:ring-primary focus:border-primary block w-full sm:w-auto sm:text-sm border-gray-300 rounded-lg p-2.5 bg-white cursor-pointer hover:border-blue-400 transition">
                     <option value="">Rol: Todos</option>
                     <option value="ADMIN">Administrador</option>
                     <option value="DRIVER">Chofer</option>
                     <option value="CLIENT">Cliente</option>
                 </select>
 
-                <button class="inline-flex items-center px-4 py-2 border border-green-300 shadow-sm text-sm font-medium rounded-md text-green-700 bg-green-50 hover:bg-green-100 transition">
+                <button class="inline-flex items-center px-4 py-2 border border-green-300 shadow-sm text-sm font-medium rounded-lg text-green-700 bg-green-50 hover:bg-green-100 transition shadow-sm">
                     <span class="material-icons text-sm mr-2">fact_check</span> Choferes Disponibles
                 </button>
             </div>
         </div>
 
-        <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+        <!-- Table Card -->
+        <div class="bg-white shadow-md rounded-xl border border-gray-100 overflow-hidden">
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
                     <tr>
@@ -149,7 +162,7 @@
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
                     
-                    <tr class="hover:bg-gray-50 transition">
+                    <tr class="hover:bg-gray-50 transition duration-150">
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="flex items-center">
                                 <div class="flex-shrink-0 h-10 w-10 bg-purple-100 rounded-full flex items-center justify-center text-purple-700 font-bold border border-purple-200">
@@ -162,12 +175,12 @@
                             </div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800 border border-purple-200">
                                 ADMIN
                             </span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 border border-green-200">
                                 Activo
                             </span>
                         </td>
@@ -175,11 +188,11 @@
                             Hace 5 mins
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            <a href="user-detail.html" class="text-primary hover:text-blue-900">Editar</a>
+                            <a href="user-detail.html" class="text-primary hover:text-blue-900 hover:underline flex items-center justify-end gap-1">Ver <span class="material-icons text-sm">arrow_forward</span></a>
                         </td>
                     </tr>
 
-                    <tr class="hover:bg-gray-50 transition">
+                    <tr class="hover:bg-gray-50 transition duration-150">
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="flex items-center">
                                 <div class="flex-shrink-0 h-10 w-10 bg-blue-100 rounded-full flex items-center justify-center text-primary font-bold border border-blue-200">
@@ -192,13 +205,13 @@
                             </div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800 border border-blue-200">
                                 CHOFER
                             </span>
                             <div class="text-xs text-gray-400 mt-1">Licencia A3</div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 border border-green-200">
                                 Activo
                             </span>
                         </td>
@@ -206,11 +219,11 @@
                             Ayer
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            <a href="user-detail.html" class="text-primary hover:text-blue-900">Editar</a>
+                            <a href="user-detail.html" class="text-primary hover:text-blue-900 hover:underline flex items-center justify-end gap-1">Ver <span class="material-icons text-sm">arrow_forward</span></a>
                         </td>
                     </tr>
 
-                    <tr class="hover:bg-gray-50 transition">
+                    <tr class="hover:bg-gray-50 transition duration-150">
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="flex items-center">
                                 <div class="flex-shrink-0 h-10 w-10 bg-green-100 rounded-full flex items-center justify-center text-green-700 font-bold border border-green-200">
@@ -223,13 +236,13 @@
                             </div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 border border-green-200">
                                 CLIENTE
                             </span>
                             <div class="text-xs text-gray-400 mt-1">Minera Escondida</div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800 border border-gray-200">
                                 Inactivo
                             </span>
                         </td>
@@ -237,16 +250,14 @@
                             Hace 1 semana
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            <a href="user-detail.html" class="text-primary hover:text-blue-900">Editar</a>
+                            <a href="user-detail.html" class="text-primary hover:text-blue-900 hover:underline flex items-center justify-end gap-1">Ver <span class="material-icons text-sm">arrow_forward</span></a>
                         </td>
                     </tr>
 
                 </tbody>
             </table>
-        </div>
-
-        <div class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6 rounded-b-lg">
-            <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+            <div class="bg-gray-50 px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+                 <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
                 <div>
                     <p class="text-sm text-gray-700">
                         Mostrando <span class="font-medium">1</span> a <span class="font-medium">3</span> de <span class="font-medium">26</span> usuarios
@@ -257,13 +268,14 @@
                         <a href="users.html" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
                             <span class="material-icons text-sm">chevron_left</span>
                         </a>
-                        <a href="users.html" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">1</a>
-                        <a href="users-page-2.html" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">2</a>
+                        <a href="users.html" class="relative inline-flex items-center px-4 py-2 border border-blue-500 bg-blue-50 text-sm font-medium text-blue-600 z-10">1</a>
+                        <a href="users-page-2.html" class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium">2</a>
                         <a href="users-page-2.html" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
                             <span class="material-icons text-sm">chevron_right</span>
                         </a>
                     </nav>
                 </div>
+            </div>
             </div>
         </div>
     </main>

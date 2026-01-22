@@ -1,24 +1,19 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestión de Clientes - Servicios El Loa</title>
-        <meta charset="utf-8" />
-        <title>Clientes | Servicios de Transporte El Loa</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Clientes | Servicios de Transporte El Loa</title>
     
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-        <script src="https://cdn.tailwindcss.com"></script>
-        <script>
-            tailwind.config = { theme: { extend: { colors: { primary: '#003366', secondary: '#FF6600', surface: '#F3F4F6' }, fontFamily: { sans: ['Inter','sans-serif'] } } } }
-        </script>
-        <link rel="stylesheet" href="assets/css/tailwind.css" />
-        <link rel="stylesheet" href="assets/css/custom.css" />
-    <script src="assets/js/auth-helper.js"></script>
-
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { theme: { extend: { colors: { primary: '#003366', secondary: '#FF6600', surface: '#F3F4F6' }, fontFamily: { sans: ['Inter','sans-serif'] } } } }
     </script>
+    <link rel="stylesheet" href="assets/css/tailwind.css" />
+    <link rel="stylesheet" href="assets/css/custom.css" />
+    <script src="assets/js/auth-helper.js"></script>
 </head>
 <body class="bg-surface font-sans text-gray-800">
     <script>
@@ -66,61 +61,102 @@
 
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         
-        <div class="md:flex md:items-center md:justify-between mb-8">
+        <!-- Breadcrumb & Header -->
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
             <div class="flex-1 min-w-0">
-                <h2 class="text-2xl font-bold leading-7 text-primary sm:text-3xl sm:truncate">
-                    Clientes Corporativos
+                <nav class="flex text-sm text-gray-500 mb-1" aria-label="Breadcrumb">
+                    <ol class="flex items-center space-x-2">
+                        <li><a href="index.html" class="hover:text-primary transition">Inicio</a></li>
+                        <li><span class="text-gray-400">/</span></li>
+                        <li class="text-gray-800 font-medium">Gestión de Clientes</li>
+                    </ol>
+                </nav>
+                <h2 class="text-2xl font-bold leading-7 text-primary sm:text-3xl sm:truncate flex items-center gap-2">
+                    <span class="material-icons">business</span> Clientes Corporativos
                 </h2>
-                <p class="mt-1 text-sm text-gray-500">Gestión de empresas mineras y centros de costo.</p>
+                <p class="mt-1 text-sm text-gray-500">Gestión de empresas mineras, contratos y centros de costo.</p>
             </div>
             <div class="mt-4 flex md:mt-0 md:ml-4">
-                <button type="button" class="ml-3 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-secondary hover:bg-orange-700 focus:outline-none transition">
-                    <span class="material-icons text-sm mr-2">add</span> Nueva Empresa
-                </button>
+                <a href="company-edit.html" class="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-secondary hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-secondary transition shadow-md">
+                    <span class="material-icons mr-2 text-sm">add_business</span>
+                    Nueva Empresa
+                </a>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 gap-5 sm:grid-cols-3 mb-8">
-            <div class="bg-white overflow-hidden shadow rounded-lg border-l-4 border-secondary">
-                <div class="px-4 py-5 sm:p-6">
-                    <dt class="text-sm font-medium text-gray-500 truncate">Total Empresas Activas</dt>
-                    <dd class="mt-1 text-3xl font-bold text-gray-900">8</dd>
+        <!-- KPI Cards -->
+        <div class="grid grid-cols-1 gap-5 sm:grid-cols-4 mb-8">
+            <div class="bg-white overflow-hidden shadow-md rounded-xl border border-gray-100 hover:shadow-lg transition">
+                <div class="p-5 flex items-center justify-between">
+                     <div>
+                        <dt class="text-sm font-medium text-gray-500 truncate uppercase tracking-wide">Empresas Activas</dt>
+                        <dd class="mt-1 text-3xl font-bold text-gray-900">8</dd>
+                    </div>
+                     <div class="bg-blue-50 p-2 rounded-full text-primary">
+                        <span class="material-icons">business</span>
+                    </div>
                 </div>
             </div>
-            <div class="bg-white overflow-hidden shadow rounded-lg border-l-4 border-blue-400">
-                <div class="px-4 py-5 sm:p-6">
-                    <dt class="text-sm font-medium text-gray-500 truncate">Contratos por Vencer</dt>
-                    <dd class="mt-1 text-3xl font-bold text-gray-900">2</dd>
+
+            <div class="bg-white overflow-hidden shadow-md rounded-xl border border-gray-100 hover:shadow-lg transition">
+                <div class="p-5 flex items-center justify-between">
+                     <div>
+                        <dt class="text-sm font-medium text-gray-500 truncate uppercase tracking-wide">Contratos x Vencer</dt>
+                        <dd class="mt-1 text-3xl font-bold text-orange-600">2</dd>
+                    </div>
+                     <div class="bg-orange-50 p-2 rounded-full text-orange-600">
+                        <span class="material-icons">warning</span>
+                    </div>
                 </div>
             </div>
-            <div class="bg-white overflow-hidden shadow rounded-lg border-l-4 border-green-400">
-                <div class="px-4 py-5 sm:p-6">
-                    <dt class="text-sm font-medium text-gray-500 truncate">Viajes Facturados (Mes)</dt>
-                    <dd class="mt-1 text-3xl font-bold text-gray-900">142</dd>
+
+            <div class="bg-white overflow-hidden shadow-md rounded-xl border border-gray-100 hover:shadow-lg transition">
+                 <div class="p-5 flex items-center justify-between">
+                     <div>
+                        <dt class="text-sm font-medium text-gray-500 truncate uppercase tracking-wide">Viajes del Mes</dt>
+                        <dd class="mt-1 text-3xl font-bold text-blue-600">142</dd>
+                    </div>
+                     <div class="bg-blue-50 p-2 rounded-full text-blue-600">
+                        <span class="material-icons">commute</span>
+                    </div>
+                </div>
+            </div>
+
+             <div class="bg-white overflow-hidden shadow-md rounded-xl border border-gray-100 hover:shadow-lg transition">
+                <div class="p-5 flex items-center justify-between">
+                     <div>
+                        <dt class="text-sm font-medium text-gray-500 truncate uppercase tracking-wide">Facturación</dt>
+                        <dd class="mt-1 text-3xl font-bold text-green-600">OK</dd>
+                    </div>
+                     <div class="bg-green-50 p-2 rounded-full text-green-600">
+                        <span class="material-icons">receipt_long</span>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="bg-white p-4 rounded-lg shadow mb-6 flex flex-col sm:flex-row gap-4 items-center justify-between">
+        <!-- Filters & Actions -->
+        <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 flex flex-col sm:flex-row gap-4 items-center justify-between mb-6">
             <div class="relative w-full sm:w-96">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <span class="material-icons text-gray-400">search</span>
                 </div>
-                <input type="text" class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary sm:text-sm" placeholder="Buscar por RUT o Razón Social...">
+                <input type="text" class="focus:ring-primary focus:border-primary block w-full pl-10 sm:text-sm border-gray-300 rounded-lg p-2.5 transition" placeholder="Buscar por RUT o Razón Social...">
             </div>
             <div class="flex gap-2 w-full sm:w-auto">
-                <select class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm rounded-md border">
-                    <option>Todos los estados</option>
-                    <option>Activos</option>
-                    <option>Inactivos</option>
+                <select class="focus:ring-primary focus:border-primary block w-full sm:w-auto sm:text-sm border-gray-300 rounded-lg p-2.5 bg-white cursor-pointer hover:border-blue-400 transition">
+                    <option value="">Estado: Todos</option>
+                    <option value="activo">Activos</option>
+                    <option value="inactivo">Inactivos</option>
                 </select>
-                <button class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none">
-                    <span class="material-icons text-sm mr-2">file_download</span> Exportar
+                <button class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none transition">
+                    <span class="material-icons text-gray-500 text-sm mr-2">file_download</span> Exportar
                 </button>
             </div>
         </div>
 
-        <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+        <!-- Table Card -->
+        <div class="bg-white shadow-md rounded-xl border border-gray-100 overflow-hidden">
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
                     <tr>
@@ -301,6 +337,8 @@
                         <li><a href="service-request.html" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Solicitudes</a></li>
                         <li><a href="companies.html" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Clientes</a></li>
                         <li><a href="portal-choferes.html" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Portal Choferes</a></li>
+                        <li><a href="contacto.html" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Contáctanos</a></li>
+                        <li><a href="trabaja-nosotros.html" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Trabaja con Nosotros</a></li>
                     </ul>
                 </div>
 
