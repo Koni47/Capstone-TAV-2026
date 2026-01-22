@@ -2,132 +2,187 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Login | Servicios El Loa</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro | Servicios El Loa</title>
+    
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>tailwind.config = { theme: { extend: { colors: { primary: '#003366', secondary: '#FF6600' }, fontFamily: { sans: ['Inter','sans-serif'] } } } }</script>
-    <link rel="stylesheet" href="assets/css/tailwind.css" />
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#003366',
+                        secondary: '#FF6600',
+                        surface: '#F3F4F6',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
     <link rel="stylesheet" href="assets/css/custom.css" />
 </head>
-<body class="bg-gray-50 font-sans flex items-center justify-center min-h-screen">
+<body class="bg-gray-50 font-sans min-h-screen flex text-gray-800 selection:bg-secondary selection:text-white">
 
-    <div class="bg-white rounded-lg shadow-lg w-full max-w-2xl p-8">
-        <div class="text-center mb-6">
-            <div class="w-24 h-24 bg-primary rounded-full mx-auto flex items-center justify-center text-white text-3xl font-bold mb-4 border-4 border-white shadow-md"><span class="material-icons text-white" style="font-size: 60px;">person_add</span></div>
-            <h1 class="text-2xl font-bold text-gray-800">Registro</h1>
-            <p class="text-sm text-gray-500">Servicios de Transporte El Loa</p>
-        </div>
+    <!-- Lado Izquierdo: Branding (Visible en pantallas grandes) -->
+    <div class="hidden lg:flex w-full lg:w-5/12 bg-[#001a33] relative justify-center items-center overflow-hidden">
+        <!-- Imagen de fondo -->
+        <img src="https://images.unsplash.com/photo-1549923746-c502d488b3ea?q=80&w=2071&auto=format&fit=crop" 
+             alt="Ruta del Desierto" 
+             class="absolute inset-0 w-full h-full object-cover opacity-30 mix-blend-overlay">
+        
+        <!-- Gradiente Overlay -->
+        <div class="absolute inset-0 bg-gradient-to-br from-primary/95 to-blue-900/90 mix-blend-multiply"></div>
 
-        <form class="space-y-4">
-
-            <!-- Nombre/Razón Social -->
-            <div>
-                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Nombre Completo / Razón Social</label>
-                <div class="relative">
-                    <span class="material-icons absolute left-3 top-2 text-gray-400 text-sm">person</span>
-                    <input type="text" name="fullname" placeholder="Ej: Juan Pérez García" class="w-full pl-9 border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none">
-                </div>
-            </div>
-
-            <!-- Rut/Número de Identificación -->
-            <div>
-                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">RUT / Número de Identificación</label>
-                <div class="relative">
-                    <span class="material-icons absolute left-3 top-2 text-gray-400 text-sm">badge</span>
-                    <input type="text" name="rut" placeholder="Ej: 12.345.678-9" class="w-full pl-9 border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none">
-                </div>
-            </div>
-
-            <!-- Correo Electrónico -->
-            <div>
-                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Correo Electrónico</label>
-                <div class="relative">
-                    <span class="material-icons absolute left-3 top-2 text-gray-400 text-sm">email</span>
-                    <input type="email" name="email" placeholder="Ej: juanito.perez@correo.cl" class="w-full pl-9 border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none">
-                </div>
-            </div>
-
-            <!-- Teléfono -->
-            <div>
-                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Teléfono</label>
-                <div class="relative">
-                    <span class="material-icons absolute left-3 top-2 text-gray-400 text-sm">phone</span>
-                    <input type="tel" name="phone" placeholder="Ej: +56 9 1234 5678" class="w-full pl-9 border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none">
-                </div>
-            </div>
-
-            <!-- Dirección -->
-            <div>
-                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Dirección</label>
-                <div class="relative">
-                    <span class="material-icons absolute left-3 top-2 text-gray-400 text-sm">location_on</span>
-                    <input type="text" name="address" placeholder="Ej: Calle Principal 123, Apt 4B" class="w-full pl-9 border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none">
-                </div>
-            </div>
-
-            <!-- Contraseña -->
-            <div>
-                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Contraseña</label>
-                <div class="relative">
-                    <span class="material-icons absolute left-3 top-2 text-gray-400 text-sm">lock</span>
-                    <input type="password" name="password" placeholder="Ingresa una contraseña segura" class="w-full pl-9 border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none">
-                </div>
-            </div>
-
-            <!-- Confirmar Contraseña -->
-            <div>
-                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Confirmar Contraseña</label>
-                <div class="relative">
-                    <span class="material-icons absolute left-3 top-2 text-gray-400 text-sm">lock_outline</span>
-                    <input type="password" name="confirmPassword" placeholder="Confirma tu contraseña" class="w-full pl-9 border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none">
-                </div>
-            </div>
-
-            <!-- Sección Administrador (oculta por defecto) -->
-            <div id="adminSection" class="hidden bg-yellow-50 border-2 border-yellow-300 rounded p-4">
-                <div class="flex items-center mb-3">
-                    <span class="material-icons text-yellow-600 mr-2">admin_panel_settings</span>
-                    <label class="block text-sm font-bold text-yellow-800">Credencial de Administrador</label>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Contraseña de Administrador</label>
-                    <div class="relative">
-                        <span class="material-icons absolute left-3 top-2 text-gray-400 text-sm">security</span>
-                        <input type="password" name="adminPassword" placeholder="Ingresa la contraseña de administrador" class="w-full pl-9 border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none">
-                    </div>
-                    <p class="text-xs text-gray-600 mt-2">Se requiere una contraseña especial para registrar un nuevo administrador</p>
-                </div>
-            </div>
-
-            <!-- Términos y condiciones -->
-            <div class="flex items-center mt-4">
-                <input type="checkbox" id="terms" name="terms" class="w-4 h-4 text-primary rounded focus:ring-2 focus:ring-primary">
-                <label for="terms" class="ml-2 text-sm text-gray-600">Acepto los <a href="terms.html" class="text-primary hover:underline">términos y condiciones</a></label>
+        <!-- Contenido Branding -->
+        <div class="relative z-10 p-12 text-white max-w-lg">
+            <div class="mb-8 flex items-center gap-3">
+                 <div class="w-12 h-12 bg-white rounded-lg flex items-center justify-center text-primary font-bold text-2xl shadow-lg">EL</div>
+                 <span class="text-3xl font-bold tracking-wide">Servicios El Loa</span>
             </div>
             
-            <hr class="my-4">
+            <h2 class="text-3xl font-bold mb-6 leading-tight text-white">Únete a nuestra red de transporte de primer nivel.</h2>
+            <p class="text-blue-100 text-lg leading-relaxed mb-8">
+                Registra tu cuenta para gestionar solicitudes de transporte, consultar estados de flota y acceder a reportes detallados.
+            </p>
+            
+            <ul class="space-y-4 text-blue-100/90">
+                 <li class="flex items-center gap-3">
+                    <span class="material-icons text-secondary">check_circle</span>
+                    <span>Acceso a monitoreo en tiempo real</span>
+                 </li>
+                 <li class="flex items-center gap-3">
+                    <span class="material-icons text-secondary">check_circle</span>
+                    <span>Gestión centralizada de facturación</span>
+                 </li>
+                 <li class="flex items-center gap-3">
+                    <span class="material-icons text-secondary">check_circle</span>
+                    <span>Soporte dedicado para empresas</span>
+                 </li>
+            </ul>
+        </div>
 
-            <!-- Botones -->
-            <button type="submit" class="w-full bg-primary hover:bg-blue-900 text-white font-bold py-2 rounded shadow transition">
-                Registrarse
-            </button>
-            <a href="login.html" class="block text-center text-sm text-gray-500 mt-4 hover:text-gray-700">¿Ya tienes cuenta? Inicia sesión</a>
-            <a href="index.html" class="block text-center text-sm text-gray-500 mt-2 hover:text-gray-700">Volver al Inicio</a>
-        </form>
-
-        <script>
-            const roleSelect = document.getElementById('roleSelect');
-            const adminSection = document.getElementById('adminSection');
-
-            roleSelect.addEventListener('change', function() {
-                if (this.value === 'admin') {
-                    adminSection.classList.remove('hidden');
-                } else {
-                    adminSection.classList.add('hidden');
-                }
-            });
-        </script>
+        <!-- Footer Izquierdo -->
+        <div class="absolute bottom-8 left-12 text-xs text-blue-200/60 font-medium">
+            &copy; 2026 Servicios El Loa SpA.
+        </div>
     </div>
+
+    <!-- Lado Derecho: Formulario de Registro -->
+    <div class="w-full lg:w-7/12 flex flex-col justify-center items-center p-6 lg:p-12 bg-white relative overflow-y-auto h-screen">
+        <!-- Botón Volver Absoluto -->
+        <a href="index.html" class="absolute top-6 right-6 lg:top-10 lg:right-10 text-gray-400 hover:text-primary transition flex items-center gap-2 text-sm font-medium group z-20">
+            <span class="group-hover:-translate-x-1 transition-transform duration-200">Volver al inicio</span> 
+            <span class="material-icons text-lg">arrow_forward</span>
+        </a>
+
+        <div class="w-full max-w-lg my-auto">
+            
+            <!-- Cabecera Mobile (Logo) -->
+            <div class="lg:hidden flex justify-center mb-6">
+                <div class="w-14 h-14 bg-primary rounded-xl flex items-center justify-center text-white text-2xl font-bold shadow-md">EL</div>
+            </div>
+
+            <!-- Título Formulario -->
+            <div class="text-center lg:text-left mb-8">
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">Crear Cuenta</h1>
+                <p class="text-gray-500">Completa tus datos para comenzar.</p>
+            </div>
+
+            <form class="space-y-5">
+
+                <!-- Grid de Inputs -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    
+                    <!-- Nombre -->
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Nombre Completo / Razón Social</label>
+                        <div class="relative group">
+                            <span class="material-icons absolute left-3 top-3 text-gray-400 group-focus-within:text-primary transition-colors text-lg">person</span>
+                            <input type="text" name="fullname" placeholder="Ej: Juan Pérez o Empresa Ltda." class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary focus:outline-none transition-all">
+                        </div>
+                    </div>
+
+                    <!-- RUT -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">RUT</label>
+                        <div class="relative group">
+                            <span class="material-icons absolute left-3 top-3 text-gray-400 group-focus-within:text-primary transition-colors text-lg">badge</span>
+                            <input type="text" name="rut" placeholder="Ej: 12.345.678-9" class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary focus:outline-none transition-all">
+                        </div>
+                    </div>
+
+                    <!-- Teléfono -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Teléfono</label>
+                        <div class="relative group">
+                            <span class="material-icons absolute left-3 top-3 text-gray-400 group-focus-within:text-primary transition-colors text-lg">phone</span>
+                            <input type="tel" name="phone" placeholder="+56 9 ..." class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary focus:outline-none transition-all">
+                        </div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Correo Electrónico</label>
+                        <div class="relative group">
+                            <span class="material-icons absolute left-3 top-3 text-gray-400 group-focus-within:text-primary transition-colors text-lg">email</span>
+                            <input type="email" name="email" placeholder="nombre@ejemplo.com" class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary focus:outline-none transition-all">
+                        </div>
+                    </div>
+
+                    <!-- Dirección -->
+                    <div class="md:col-span-2">
+                         <label class="block text-sm font-semibold text-gray-700 mb-1">Dirección</label>
+                        <div class="relative group">
+                            <span class="material-icons absolute left-3 top-3 text-gray-400 group-focus-within:text-primary transition-colors text-lg">location_on</span>
+                            <input type="text" name="address" placeholder="Ej: Av. Granaderos 1234, Calama" class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary focus:outline-none transition-all">
+                        </div>
+                    </div>
+
+                    <!-- Passwords -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Contraseña</label>
+                        <div class="relative group">
+                            <span class="material-icons absolute left-3 top-3 text-gray-400 group-focus-within:text-primary transition-colors text-lg">lock</span>
+                            <input type="password" name="password" placeholder="••••••••" class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary focus:outline-none transition-all">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Confirmar</label>
+                        <div class="relative group">
+                            <span class="material-icons absolute left-3 top-3 text-gray-400 group-focus-within:text-primary transition-colors text-lg">lock_outline</span>
+                            <input type="password" name="confirmPassword" placeholder="••••••••" class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary focus:outline-none transition-all">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Términos -->
+                <div class="flex items-start mt-4">
+                    <div class="flex items-center h-5">
+                        <input id="terms" name="terms" type="checkbox" class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary">
+                    </div>
+                    <div class="ml-3 text-sm">
+                        <label for="terms" class="font-medium text-gray-700">Acepto los <a href="terms.html" class="text-primary hover:text-secondary font-bold hover:underline">términos y condiciones</a></label>
+                    </div>
+                </div>
+
+                <!-- Botón -->
+                <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-bold text-white bg-primary hover:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all duration-200 transform hover:-translate-y-0.5 mt-6">
+                    Crear mi cuenta
+                </button>
+            </form>
+
+             <div class="mt-8 text-center text-sm text-gray-500">
+                <p>¿Ya tienes una cuenta? <a href="login.html" class="font-bold text-primary hover:text-secondary transition">Inicia sesión aquí</a></p>
+            </div>
+
+        </div>
+    </div>
+
 </body>
 </html>
