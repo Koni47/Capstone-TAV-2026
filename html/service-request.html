@@ -1,42 +1,19 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Solicitudes | Servicios de Transporte El Loa</title>
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#003366',    /* Azul Corporativo */
-                        secondary: '#FF6600',  /* Naranja Acción */
-                        surface: '#F3F4F6',
-                        success: '#10B981',
-                        warning: '#F59E0B',
-                        danger: '#EF4444',
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    }
-                }
-            }
-        }
+        tailwind.config = { theme: { extend: { colors: { primary: '#003366', secondary: '#FF6600', surface: '#F3F4F6' }, fontFamily: { sans: ['Inter','sans-serif'] } } } }
     </script>
+    <link rel="stylesheet" href="assets/css/tailwind.css" />
     <link rel="stylesheet" href="assets/css/custom.css" />
     <script src="assets/js/auth-helper.js"></script>
-    
-    <!-- Leaflet CSS para mapa -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
-    <!-- OpenStreetMap Geocoding -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-control-geocoder/1.14.0/Control.Geocoder.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-control-geocoder/1.14.0/Control.Geocoder.css" />
 </head>
 <body class="bg-surface font-sans text-gray-800">
     <script>
@@ -83,104 +60,256 @@
     </nav>
 
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Breadcrumb & Header -->
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+            <div class="flex-1 min-w-0">
+                <nav class="flex text-sm text-gray-500 mb-1" aria-label="Breadcrumb">
+                    <ol class="flex items-center space-x-2">
+                        <li><a href="index.html" class="hover:text-primary transition">Inicio</a></li>
+                        <li><span class="text-gray-400">/</span></li>
+                        <li class="text-gray-800 font-medium">Solicitudes</li>
+                    </ol>
+                </nav>
+                <h2 class="text-2xl font-bold leading-7 text-primary sm:text-3xl sm:truncate flex items-center gap-2">
+                    <span class="material-icons">assignment</span> Gestión de Solicitudes
+                </h2>
+            </div>
+            <div class="mt-4 flex md:mt-0 md:ml-4">
+                <a href="service-request-create.html" class="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-secondary hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-secondary transition shadow-md">
+                    <span class="material-icons mr-2 text-sm">add_circle</span>
+                    Nueva Solicitud
+                </a>
+            </div>
+        </div>
 
-        <div class="flex flex-col lg:flex-row gap-8">
-            <div class="w-full lg:w-1/3">
-                <div class="bg-white rounded-lg shadow-lg border border-gray-200 w-full max-w-xl p-6 mt-4 lg:mt-0">
-                    <div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
-                        <h2 class="text-lg font-bold text-primary flex items-center gap-2">
-                            <span class="material-icons text-secondary">add_circle</span> Nueva Solicitud
-                        </h2>
+        <!-- KPI Cards -->
+        <div class="grid grid-cols-1 gap-5 sm:grid-cols-4 mb-8">
+             <div class="bg-white overflow-hidden shadow-md rounded-xl border border-gray-100 hover:shadow-lg transition">
+                <div class="p-5 flex items-center justify-between">
+                     <div>
+                        <dt class="text-sm font-medium text-gray-500 truncate uppercase tracking-wide">Total Mes</dt>
+                        <dd class="mt-1 text-3xl font-bold text-gray-900">124</dd>
                     </div>
-                    
-                    <form id="createRequestForm" class="p-6 space-y-4">
-                        
-                        <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Tipo de Cliente</label>
-                            <select name="clientType" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none">
-                                <option value="empresa">Empresa / Convenio</option>
-                                <option value="persona">Persona Natural</option>
-                            </select>
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Origen</label>
-                            <div class="relative">
-                                <span class="material-icons absolute left-3 top-2 text-gray-400 text-sm">trip_origin</span>
-                                <input type="text" name="origin" placeholder="Dirección de retiro" class="w-full pl-9 border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none">
-                            </div>
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Destino</label>
-                            <div class="relative">
-                                <span class="material-icons absolute left-3 top-2 text-gray-400 text-sm">location_on</span>
-                                <input type="text" name="destination" placeholder="Dirección de destino" class="w-full pl-9 border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none">
-                            </div>
-                        </div>
-
-                        <button type="button" id="viewMapBtn" onclick="openMapModal()" class="w-full bg-primary hover:bg-blue-900 text-white font-bold py-2 px-4 rounded shadow-md transition flex justify-center items-center gap-2">
-                            <span class="material-icons text-sm">map</span> Ver Mapa de Ruta
-                        </button>
-
-                        <div class="grid grid-cols-2 gap-3">
-                            <div>
-                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Fecha</label>
-                                <input type="date" name="date" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Hora</label>
-                                <input type="time" name="time" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none">
-                            </div>
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Notas / Pasajeros</label>
-                            <textarea name="notes" rows="3" placeholder="Nombres de pasajeros, notas adicionales, etc." class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none"></textarea>
-                        </div>
-
-                        <button type="submit" class="w-full bg-secondary hover:bg-orange-700 text-white font-bold py-2 px-4 rounded shadow-md transition flex justify-center items-center gap-2">
-                            <span class="material-icons text-sm">save</span> Crear Solicitud
-                        </button>
-                    </form>
+                     <div class="bg-blue-50 p-2 rounded-full text-blue-600">
+                        <span class="material-icons">summarize</span>
+                    </div>
                 </div>
             </div>
 
-        
+            <div class="bg-white overflow-hidden shadow-md rounded-xl border border-gray-100 hover:shadow-lg transition">
+                <div class="p-5 flex items-center justify-between">
+                     <div>
+                        <dt class="text-sm font-medium text-gray-500 truncate uppercase tracking-wide">Pendientes</dt>
+                        <dd class="mt-1 text-3xl font-bold text-orange-600">12</dd>
+                    </div>
+                     <div class="bg-orange-50 p-2 rounded-full text-orange-600">
+                        <span class="material-icons">pending_actions</span>
+                    </div>
+                </div>
+            </div>
 
-   <div class="w-full lg:w-2/3 flex items-start">
-        <div class="bg-white rounded-lg shadow-lg border border-gray-200 w-full p-6">
-        <!-- Panel derecho: Resumen de pago -->
-        <div class="w-full lg:w-2/3 flex flex-col items-center justify-start">
-            <div class="bg-white rounded-lg shadow-lg border border-gray-200 w-full max-w-md p-6 mt-4 lg:mt-0">
-                <h2 class="text-lg font-bold text-primary mb-4">Resumen de pago</h2>
-                <div class="mb-2 flex justify-between">
-                    <span class="font-semibold">Servicio:</span>
-                    <span>Transporte</span>
+            <div class="bg-white overflow-hidden shadow-md rounded-xl border border-gray-100 hover:shadow-lg transition">
+                 <div class="p-5 flex items-center justify-between">
+                     <div>
+                        <dt class="text-sm font-medium text-gray-500 truncate uppercase tracking-wide">En Ruta</dt>
+                        <dd class="mt-1 text-3xl font-bold text-blue-600">4</dd>
+                    </div>
+                     <div class="bg-blue-50 p-2 rounded-full text-blue-600">
+                        <span class="material-icons">local_shipping</span>
+                    </div>
                 </div>
-                <div class="mb-2 flex justify-between">
-                    <span class="font-semibold">Distancia:</span>
-                    <span id="distanceKm">-</span>
+            </div>
+
+             <div class="bg-white overflow-hidden shadow-md rounded-xl border border-gray-100 hover:shadow-lg transition">
+                <div class="p-5 flex items-center justify-between">
+                     <div>
+                        <dt class="text-sm font-medium text-gray-500 truncate uppercase tracking-wide">Completadas</dt>
+                        <dd class="mt-1 text-3xl font-bold text-green-600">108</dd>
+                    </div>
+                     <div class="bg-green-50 p-2 rounded-full text-green-600">
+                        <span class="material-icons">task_alt</span>
+                    </div>
                 </div>
-                <div class="mb-2 flex justify-between">
-                    <span class="font-semibold">Kilómetros:</span>
-                    <span id="kmPrice">-</span>
+            </div>
+        </div>
+
+        <!-- Filters & Actions -->
+        <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 flex flex-col sm:flex-row gap-4 items-center justify-between mb-6">
+            <div class="relative w-full sm:w-96">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <span class="material-icons text-gray-400">search</span>
                 </div>
-                <div class="mb-2 flex justify-between">
-                    <span class="font-semibold">Importe adicional:</span>
-                    <span id="extraCharge">-</span>
-                </div>
-                <div class="my-4 border-t pt-4 flex justify-between items-center">
-                    <span class="text-xl font-bold">Total a pagar:</span>
-                    <span id="totalPrice" class="text-2xl font-extrabold text-secondary">-</span>
-                </div>
-                <button onclick="window.location.href='payment.html'" class="w-full bg-secondary hover:bg-orange-700 text-white font-bold py-2 px-4 rounded shadow-md transition text-lg">
-                    Pagar
+                <input type="text" class="focus:ring-primary focus:border-primary block w-full pl-10 sm:text-sm border-gray-300 rounded-lg p-2.5 transition" placeholder="Buscar por Cliente o ID...">
+            </div>
+            <div class="flex gap-2 w-full sm:w-auto">
+                <select class="focus:ring-primary focus:border-primary block w-full sm:w-auto sm:text-sm border-gray-300 rounded-lg p-2.5 bg-white cursor-pointer hover:border-blue-400 transition">
+                    <option value="">Estado: Todos</option>
+                    <option value="pendiente">Pendientes</option>
+                    <option value="en_ruta">En Ruta</option>
+                    <option value="finalizado">Finalizados</option>
+                </select>
+                <button class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none transition">
+                    <span class="material-icons text-gray-500 text-sm mr-2">file_download</span> Exportar
                 </button>
             </div>
         </div>
-    </div>
 
+        <!-- Table Card -->
+        <div class="bg-white shadow-md rounded-xl border border-gray-100 overflow-hidden">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            ID / Fecha
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Cliente
+                        </th>
+                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
+                            Ruta
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Estado
+                        </th>
+                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
+                            Chofer / Vehículo
+                        </th>
+                        <th scope="col" class="relative px-6 py-3">
+                            <span class="sr-only">Acciones</span>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-bold text-gray-900">#REQ-2024</div>
+                            <div class="text-xs text-gray-500">22 Ene, 08:30</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900 font-medium">BHP Escondida</div>
+                             <div class="text-xs text-gray-500">Convenio Minería</div>
+                        </td>
+                         <td class="px-6 py-4 whitespace-nowrap hidden md:table-cell">
+                            <div class="text-sm text-gray-900 flex items-center gap-1">
+                                <span class="material-icons text-xs text-green-500">trip_origin</span> Aeropuerto C.J.L.
+                            </div>
+                            <div class="text-sm text-gray-900 flex items-center gap-1">
+                                <span class="material-icons text-xs text-red-500">location_on</span> Faena Escondida
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800 border border-blue-200">
+                                En Ruta
+                            </span>
+                        </td>
+                         <td class="px-6 py-4 whitespace-nowrap hidden md:table-cell">
+                            <div class="text-sm text-gray-900">Juan Pérez</div>
+                            <div class="text-xs text-gray-500">Mercedes Sprinter (LP-88-99)</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <a href="#" class="text-primary hover:text-blue-900 mr-3">Detalles</a>
+                            <a href="#" class="text-gray-400 hover:text-gray-600"><span class="material-icons text-sm">more_vert</span></a>
+                        </td>
+                    </tr>
+
+                     <tr class="hover:bg-gray-50 transition">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-bold text-gray-900">#REQ-2023</div>
+                            <div class="text-xs text-gray-500">22 Ene, 14:00</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900 font-medium">Codelco Norte</div>
+                             <div class="text-xs text-gray-500">Convenio Corporativo</div>
+                        </td>
+                         <td class="px-6 py-4 whitespace-nowrap hidden md:table-cell">
+                            <div class="text-sm text-gray-900 flex items-center gap-1">
+                                <span class="material-icons text-xs text-green-500">trip_origin</span> Hotel Diego Almagro
+                            </div>
+                            <div class="text-sm text-gray-900 flex items-center gap-1">
+                                <span class="material-icons text-xs text-red-500">location_on</span> Chuquicamata
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800 border border-yellow-200">
+                                Pendiente
+                            </span>
+                        </td>
+                         <td class="px-6 py-4 whitespace-nowrap hidden md:table-cell">
+                            <div class="text-sm text-gray-400 italic">-- Sin asignar --</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <button onclick="toggleAssignPanel()" class="text-primary hover:text-blue-900 mr-3">Asignar</button>
+                            <a href="#" class="text-gray-400 hover:text-gray-600"><span class="material-icons text-sm">more_vert</span></a>
+                        </td>
+                    </tr>
+
+                     <tr class="bg-gray-50 hover:bg-gray-100 transition">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-bold text-gray-900">#REQ-2020</div>
+                             <div class="text-xs text-gray-500">21 Ene, 18:00</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900 font-medium">SQM Salar</div>
+                             <div class="text-xs text-gray-500">Convenio Minería</div>
+                        </td>
+                         <td class="px-6 py-4 whitespace-nowrap hidden md:table-cell">
+                            <div class="text-sm text-gray-900 flex items-center gap-1">
+                                <span class="material-icons text-xs text-green-500">trip_origin</span> Planta Salar
+                            </div>
+                            <div class="text-sm text-gray-900 flex items-center gap-1">
+                                <span class="material-icons text-xs text-red-500">location_on</span> Calama Centro
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 border border-green-200">
+                                Finalizado
+                            </span>
+                        </td>
+                         <td class="px-6 py-4 whitespace-nowrap hidden md:table-cell">
+                            <div class="text-sm text-gray-900">Roberto Salas</div>
+                             <div class="text-xs text-gray-500">Toyota Hiace (JP-77-22)</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <a href="#" class="text-primary hover:text-blue-900 mr-3">Ver Info</a>
+                            <a href="#" class="text-gray-400 hover:text-gray-600"><span class="material-icons text-sm">more_vert</span></a>
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+            
+             <!-- Pagination -->
+            <div class="bg-gray-50 px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+                <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                    <div>
+                        <p class="text-sm text-gray-700">
+                            Mostrando <span class="font-medium">1</span> a <span class="font-medium">3</span> de <span class="font-medium">124</span> resultados
+                        </p>
+                    </div>
+                    <div>
+                        <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                            <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                <span class="material-icons text-sm">chevron_left</span>
+                            </a>
+                            <a href="#" aria-current="page" class="z-10 bg-blue-50 border-primary text-primary relative inline-flex items-center px-4 py-2 border text-sm font-medium">
+                                1
+                            </a>
+                            <a href="#" class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium">
+                                2
+                            </a>
+                            <a href="#" class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium">
+                                3
+                            </a>
+                            <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                <span class="material-icons text-sm">chevron_right</span>
+                            </a>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
 
 <footer class="bg-[#002244] text-gray-300 border-t-4 border-secondary mt-auto">
@@ -214,8 +343,8 @@
                         <li><a href="service-request.html" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Solicitudes</a></li>
                         <li><a href="companies.html" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Clientes</a></li>
                         <li><a href="portal-choferes.html" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Portal Choferes</a></li>
-                        <li><a href="portal-choferes.html" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Contáctanos</a></li>
-                        <li><a href="portal-choferes.html" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Trabaja con Nosotoros</a></li>
+                        <li><a href="contacto.html" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Contáctanos</a></li>
+                        <li><a href="trabaja-nosotros.html" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Trabaja con Nosotros</a></li>
                     </ul>
                 </div>
 
@@ -272,7 +401,7 @@
                     &copy; 2026 Servicios de Transporte El Loa SpA. Todos los derechos reservados.
                 </div>
                 <div class="flex gap-6 text-xs text-gray-400 font-medium">
-                        <a href="terms.html" class="hover:text-white transition">Términos y Condiciones</a>
+                    <a href="terms.html" class="hover:text-white transition">Términos y Condiciones</a>
                     <a href="privacy.html" class="hover:text-white transition">Política de Privacidad</a>
                     <a href="complaints.html" class="hover:text-white transition">Portal de Denuncias</a>
                 </div>
@@ -281,367 +410,20 @@
     </footer>
 
     <script>
-        function toggleAssignPanel() {
-            const panel = document.getElementById('assignPanel');
-            if (panel.classList.contains('hidden')) {
-                panel.classList.remove('hidden');
-                // Scroll suave hacia el panel
-                panel.scrollIntoView({ behavior: 'smooth' });
-            } else {
-                panel.classList.add('hidden');
-            }
-        }
-
+        // Proteger esta página - redirigir al login si no está autenticado
+        protectPage();
+        
         // Redirección dinámica al Dashboard según el rol del usuario
         function redirectToDashboard(event) {
             event.preventDefault();
-            
-            // Obtener el rol del usuario del localStorage o sessionStorage
-            const userRole = localStorage.getItem('userRole') || sessionStorage.getItem('userRole') || 'cliente';
-            
-            let dashboardUrl = 'dashboard.html'; // URL por defecto
-            
-            switch(userRole.toLowerCase()) {
-                case 'admin':
-                case 'administrador':
-                    dashboardUrl = 'dashboard_adm.html';
-                    break;
-                case 'cliente':
-                    dashboardUrl = 'dashboard-cli.html';
-                    break;
-                case 'chofer':
-                    dashboardUrl = 'dashboard-chof.html';
-                    break;
-                default:
-                    dashboardUrl = 'dashboard.html';
-            }
-            
-            // Redirigir a la URL correspondiente
-            window.location.href = dashboardUrl;
-        }
-            function markInputError(inputName) {
-                const input = document.querySelector(`input[name="${inputName}"]`);
-                input.classList.remove('border-gray-300');
-                input.classList.add('border-red-500', 'ring-2', 'ring-red-400');
-            }
-
-            function clearInputError(inputName) {
-                const input = document.querySelector(`input[name="${inputName}"]`);
-                input.classList.remove('border-red-500', 'ring-2', 'ring-red-400');
-                input.classList.add('border-gray-300');
-            }
-
-            function showAddressErrorModal() {
-                document.getElementById('addressErrorModal').classList.remove('hidden');
-            }
-
-            function closeAddressErrorModal() {
-                document.getElementById('addressErrorModal').classList.add('hidden');
-            }
-        // Modal del Mapa
-        let map;
-        let originMarker, destinationMarker;
-
-        // Crear ícono de nubecita roja personalizado
-        const cloudIcon = L.icon({
-            iconUrl: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgdmlld0JveD0iMCAwIDQwIDQwIj48cGF0aCBkPSJNMzAgMTBjMi4yIDAgNC4xLTEuNCA1LTMuNEMzNyA4IDE5IDE5IDE5IDE5SDdjLTMuMyAwLTYgMi43LTYgNnMyLjcgNiA2IDZoMjNjMi43IDAgNS0yLjIgNS01cy0yLjItNS01LTV6IiBmaWxsPSIjRUY0NDQ0Ii8+PC9zdmc+',
-            iconSize: [40, 40],
-            iconAnchor: [20, 40],
-            popupAnchor: [0, -40]
-        });
-
-        function openMapModal() {
-            const origin = document.querySelector('input[name="origin"]').value.trim();
-            const destination = document.querySelector('input[name="destination"]').value.trim();
-
-            if (!origin || !destination) {
-                alert('Por favor ingresa origen y destino');
-                return;
-            }
-
-            const modal = document.getElementById('mapModal');
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-
-            // Inicializar mapa en la modal
-            setTimeout(() => {
-                initializeMap(origin, destination);
-            }, 100);
+            // Obtener el rol del usuario (mock)
+            const userRole = localStorage.getItem('userRole') || 'admin';
+            window.location.href = userRole === 'admin' ? 'dashboard_adm.html' : 'index.html';
         }
 
-        function closeMapModal() {
-            const modal = document.getElementById('mapModal');
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-            if (map) {
-                map.remove();
-                map = null;
-            }
+        function toggleAssignPanel() {
+             alert("Panel de asignación (funcionalidad no implementada en esta vista de demostración)");
         }
-
-        function initializeMap(origin, destination) {
-            // Si el mapa ya existe, eliminarlo
-            if (map) {
-                map.remove();
-            }
-
-            // Centro por defecto (Santiago, Chile)
-            const defaultCenter = [-33.8688, -151.2093];
-            map = L.map('routeMap').setView(defaultCenter, 12);
-
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© OpenStreetMap contributors',
-                maxZoom: 19
-            }).addTo(map);
-
-            // Geocodificar origen y destino
-            geocodeAddress(origin, (originCoords) => {
-                if (!originCoords) {
-                    markInputError('origin');
-                    showAddressErrorModal();
-                    return;
-                } else {
-                    clearInputError('origin');
-                }
-
-                if (originMarker) originMarker.remove();
-                originMarker = L.marker(originCoords, { icon: cloudIcon })
-                    .addTo(map)
-                    .bindPopup(`<strong>🟢 ORIGEN</strong><br>${origin}`)
-                    .openPopup();
-
-                geocodeAddress(destination, (destinationCoords) => {
-                    if (!destinationCoords) {
-                        markInputError('destination');
-                        showAddressErrorModal();
-                        return;
-                    } else {
-                        clearInputError('destination');
-                    }
-
-                    if (destinationMarker) destinationMarker.remove();
-                    destinationMarker = L.marker(destinationCoords, { icon: cloudIcon })
-                        .addTo(map)
-                        .bindPopup(`<strong>🔴 DESTINO</strong><br>${destination}`)
-                        .openPopup();
-
-                    const bounds = L.latLngBounds([originCoords, destinationCoords]);
-                    map.fitBounds(bounds, { padding: [50, 50] });
-                });
-            });
-
-        }
-
-        function geocodeAddress(address, callback) {
-            // Usar OpenStreetMap Nominatim para geocodificación
-            const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}, Chile`;
-            
-            fetch(url)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.length > 0) {
-                        const coords = [parseFloat(data[0].lat), parseFloat(data[0].lon)];
-                        callback(coords);
-                    } else {
-                        callback(null);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error geocodificando:', error);
-                    callback(null);
-                });
-        }
-
-        function acceptRoute() {
-            const origin = document.querySelector('input[name="origin"]').value;
-            const destination = document.querySelector('input[name="destination"]').value;
-            
-            alert(`Ruta aceptada:\nOrigen: ${origin}\nDestino: ${destination}`);
-            closeMapModal();
-        }
-        // Calcula la distancia entre dos puntos en km usando la fórmula Haversine
-function haversineDistance(latlng1, latlng2) {
-    const R = 6371; // Radio de la Tierra en km
-    const toRad = deg => deg * Math.PI / 180;
-    const dLat = toRad(latlng2[0] - latlng1[0]);
-    const dLon = toRad(latlng2[1] - latlng1[1]);
-    const lat1 = toRad(latlng1[0]);
-    const lat2 = toRad(latlng2[0]);
-    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-              Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-    return R * c;
-}
-
-// Actualiza el resumen de pago
-function updatePaymentSummary(originCoords, destinationCoords) {
-    if (!originCoords || !destinationCoords) {
-        document.getElementById('distanceKm').textContent = '-';
-        document.getElementById('kmPrice').textContent = '-';
-        document.getElementById('extraCharge').textContent = '-';
-        document.getElementById('totalPrice').textContent = '-';
-        return;
-    }
-    const distance = haversineDistance(originCoords, destinationCoords);
-    const distanceRounded = Math.round(distance * 100) / 100;
-    document.getElementById('distanceKm').textContent = distanceRounded + ' km';
-
-    // Precio base por km
-    const pricePerKm = 1800;
-    const kmPrice = Math.round(distance * pricePerKm);
-
-    // Hora del servicio
-    const date = document.querySelector('input[name="date"]').value;
-    const time = document.querySelector('input[name="time"]').value;
-    let extra = 0;
-    let extraText = '$0';
-
-    if (time) {
-        // Horario nocturno: 22:01 a 06:59
-        const [h, m] = time.split(':').map(Number);
-        const minutes = h * 60 + m;
-        if (minutes > 22*60 || minutes < 7*60) {
-            extra = Math.round(kmPrice * 0.05);
-            extraText = '$' + extra.toLocaleString('es-CL');
-        }
-    }
-
-    document.getElementById('kmPrice').textContent = '$' + kmPrice.toLocaleString('es-CL');
-    document.getElementById('extraCharge').textContent = extraText;
-    document.getElementById('totalPrice').textContent = '$' + (kmPrice + extra).toLocaleString('es-CL');
-}
-
-// Modifica initializeMap para actualizar el resumen
-const originalInitializeMap = initializeMap;
-initializeMap = function(origin, destination) {
-    if (map) map.remove();
-    clearInputError('origin');
-    clearInputError('destination');
-    const defaultCenter = [-33.8688, -151.2093];
-    map = L.map('routeMap').setView(defaultCenter, 12);
-
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors',
-        maxZoom: 19
-    }).addTo(map);
-
-    geocodeAddress(origin, (originCoords) => {
-        if (!originCoords) {
-            markInputError('origin');
-            showAddressErrorModal();
-            updatePaymentSummary(null, null);
-            return;
-        } else {
-            clearInputError('origin');
-        }
-
-        if (originMarker) originMarker.remove();
-        originMarker = L.marker(originCoords, { icon: cloudIcon })
-            .addTo(map)
-            .bindPopup(`<strong>🟢 ORIGEN</strong><br>${origin}`)
-            .openPopup();
-
-        geocodeAddress(destination, (destinationCoords) => {
-            if (!destinationCoords) {
-                markInputError('destination');
-                showAddressErrorModal();
-                updatePaymentSummary(null, null);
-                return;
-            } else {
-                clearInputError('destination');
-            }
-
-            if (destinationMarker) destinationMarker.remove();
-            destinationMarker = L.marker(destinationCoords, { icon: cloudIcon })
-                .addTo(map)
-                .bindPopup(`<strong>🔴 DESTINO</strong><br>${destination}`)
-                .openPopup();
-
-            const bounds = L.latLngBounds([originCoords, destinationCoords]);
-            map.fitBounds(bounds, { padding: [50, 50] });
-
-            // Actualiza el resumen de pago
-            updatePaymentSummary(originCoords, destinationCoords);
-        });
-    });
-}
-
-// Actualiza el resumen si cambian fecha/hora
-document.querySelector('input[name="date"]').addEventListener('change', () => {
-    if (window.lastOriginCoords && window.lastDestinationCoords) {
-        updatePaymentSummary(window.lastOriginCoords, window.lastDestinationCoords);
-    }
-});
-document.querySelector('input[name="time"]').addEventListener('change', () => {
-    if (window.lastOriginCoords && window.lastDestinationCoords) {
-        updatePaymentSummary(window.lastOriginCoords, window.lastDestinationCoords);
-    }
-});
     </script>
-
-    <!-- Modal del Mapa -->
-    <div id="mapModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
-        <div class="bg-white rounded-lg shadow-2xl max-w-4xl w-full mx-4 max-h-[90vh] flex flex-col">
-            <!-- Header -->
-            <div class="bg-primary text-white px-6 py-4 flex justify-between items-center border-b">
-                <h3 class="text-xl font-bold flex items-center gap-2">
-                    <span class="material-icons">map</span> Visualizar Ruta
-                </h3>
-                <button onclick="closeMapModal()" class="text-white hover:bg-blue-800 rounded-full p-2 transition">
-                    <span class="material-icons">close</span>
-                </button>
-            </div>
-
-            <!-- Mapa -->
-            <div class="flex-1 overflow-hidden">
-                <div id="routeMap" style="width: 100%; height: 500px;"></div>
-            </div>
-
-            <!-- Footer con Botones -->
-            <div class="bg-gray-50 px-6 py-4 border-t flex justify-end gap-3">
-                <button onclick="closeMapModal()" class="px-4 py-2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded font-semibold transition">
-                    Cancelar
-                </button>
-                <button onclick="acceptRoute()" class="px-4 py-2 bg-secondary hover:bg-orange-700 text-white rounded font-semibold transition flex items-center gap-2">
-                    <span class="material-icons text-sm">check</span> Aceptar
-                </button>
-            </div>
-        </div>
-    </div>
-<!-- Modal Error Dirección -->
-<div id="addressErrorModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
-  <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
-    <div class="bg-red-600 text-white px-4 py-3 rounded-t-lg flex items-center gap-2">
-      <span class="material-icons">error</span>
-      <h3 class="font-bold text-lg">Dirección no encontrada</h3>
-    </div>
-
-    <div class="p-4 text-sm text-gray-700 space-y-3">
-      <p>
-        No se pudo encontrar una o más direcciones ingresadas en el mapa.
-      </p>
-
-      <p class="font-semibold">Ejemplos de formato correcto:</p>
-      <ul class="list-disc list-inside text-gray-600">
-        <li>Av. Granaderos 2550, Calama</li>
-        <li>Terminal de Buses Calama</li>
-        <li>Aeropuerto El Loa, Calama</li>
-        <li>Av. Balmaceda 1234, Antofagasta</li>
-      </ul>
-
-      <p class="text-xs text-gray-500">
-        Incluye calle + número y ciudad para mejores resultados.
-      </p>
-    </div>
-
-    <div class="bg-gray-50 px-4 py-3 flex justify-end">
-      <button onclick="closeAddressErrorModal()"
-        class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded font-semibold transition">
-        Entendido
-      </button>
-    </div>
-  </div>
-</div>
-
 </body>
 </html>

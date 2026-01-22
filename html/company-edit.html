@@ -13,7 +13,7 @@
 <body class="bg-surface font-sans text-gray-800">
     <script>
         // Proteger esta página - redirigir al login si no está autenticado
-        protectPage();
+        // protectPage();
     </script>
    <nav class="bg-primary text-white shadow-lg w-full sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -53,15 +53,131 @@
         </div>
     </nav>
 
-  <main class="max-w-4xl mx-auto p-6">
-    <h1 class="text-2xl font-bold text-primary mb-4">Editar Empresa</h1>
-    <form class="bg-white rounded-lg shadow p-6 grid gap-4">
-      <label class="block"><span class="text-sm text-slate-600">Razón Social</span><input class="form-input mt-1 block w-full" value="Minera Escondida Ltda." /></label>
-      <label class="block"><span class="text-sm text-slate-600">RUT</span><input class="form-input mt-1 block w-full" value="76.123.456-K" /></label>
-      <label class="block"><span class="text-sm text-slate-600">Contacto</span><input class="form-input mt-1 block w-full" value="rdiaz@escondida.cl" /></label>
-      <div class="flex gap-3 mt-4"><button type="button" class="btn btn-primary">Guardar</button><a href="company-detail.html" class="px-4 py-2 border rounded">Cancelar</a></div>
-    </form>
-  </main>
+    <main class="flex-grow flex flex-col lg:flex-row w-full min-h-[calc(100vh-4rem)]">
+        
+        <!-- Decorative Image Section (Left) -->
+        <div class="relative lg:w-5/12 hidden lg:block">
+            <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80" alt="Office Placeholder" class="absolute inset-0 w-full h-full object-cover">
+            <div class="absolute inset-0 bg-primary/80 mix-blend-multiply"></div>
+            <div class="absolute bottom-0 left-0 p-12 text-white">
+                <blockquote class="border-l-4 border-secondary pl-4 mb-4">
+                     <p class="text-xl font-medium italic">"Gestión eficiente para relaciones duraderas."</p>
+                </blockquote>
+                <h2 class="text-3xl font-bold">Servicios Corporativos</h2>
+                <p class="text-blue-200 mt-2">Administración centralizada de clientes y convenios.</p>
+            </div>
+        </div>
+
+        <!-- Form Section (Right) -->
+        <div class="flex-1 flex flex-col justify-center p-6 md:p-12 bg-gray-50 overflow-y-auto">
+            <div class="max-w-2xl w-full mx-auto">
+                
+                <!-- Breadcrumb -->
+                <nav class="flex text-sm text-gray-500 mb-6" aria-label="Breadcrumb">
+                    <ol class="flex items-center space-x-2">
+                        <li><a href="index.html" class="hover:text-primary transition">Inicio</a></li>
+                        <li><span class="text-gray-400">/</span></li>
+                        <li><a href="companies.html" class="hover:text-primary transition">Clientes</a></li>
+                        <li><span class="text-gray-400">/</span></li>
+                        <li class="text-gray-800 font-medium">Editar Empresa</li>
+                    </ol>
+                </nav>
+
+                <div class="mb-8">
+                    <h1 class="text-3xl font-bold text-gray-900 mb-2">Editar Empresa</h1>
+                    <p class="text-gray-600">Actualice la información comercial y puntos de contacto.</p>
+                </div>
+
+                <form class="space-y-8 bg-white p-8 rounded-xl shadow-sm border border-gray-200">
+                    
+                    <!-- Section: Datos Empresa -->
+                    <div class="space-y-6">
+                        <div class="border-b border-gray-100 pb-2">
+                            <h2 class="text-lg font-bold text-primary flex items-center gap-2">
+                                <span class="material-icons text-secondary text-base">domain</span> Información Corporativa
+                            </h2>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Razón Social</label>
+                                <input type="text" value="Minera Escondida Ltda." class="w-full rounded-lg border-gray-300 border p-2.5 focus:ring-2 focus:ring-primary outline-none transition font-medium">
+                            </div>
+                             <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">RUT</label>
+                                <input type="text" value="76.123.456-K" class="w-full rounded-lg border-gray-300 border p-2.5 focus:ring-2 focus:ring-primary outline-none transition bg-gray-50 text-gray-500 cursor-not-allowed" readonly>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Rubro</label>
+                                <select class="w-full rounded-lg border-gray-300 border p-2.5 focus:ring-2 focus:ring-primary outline-none transition bg-white">
+                                    <option selected>Minería</option>
+                                    <option>Transporte</option>
+                                    <option>Industrial</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section: Contacto -->
+                    <div class="space-y-6">
+                        <div class="border-b border-gray-100 pb-2">
+                            <h2 class="text-lg font-bold text-primary flex items-center gap-2">
+                                <span class="material-icons text-secondary text-base">contacts</span> Contacto & Ubicación
+                            </h2>
+                        </div>
+
+                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Nombre Contacto</label>
+                                <div class="relative">
+                                    <span class="material-icons absolute left-3 top-2.5 text-gray-400 text-sm">person</span>
+                                    <input type="text" value="Roberto Díaz" class="pl-9 w-full rounded-lg border-gray-300 border p-2.5 focus:ring-2 focus:ring-primary outline-none transition">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
+                                <div class="relative">
+                                    <span class="material-icons absolute left-3 top-2.5 text-gray-400 text-sm">phone</span>
+                                    <input type="tel" value="+56 55 212 3456" class="pl-9 w-full rounded-lg border-gray-300 border p-2.5 focus:ring-2 focus:ring-primary outline-none transition">
+                                </div>
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Email Corporativo</label>
+                                <div class="relative">
+                                    <span class="material-icons absolute left-3 top-2.5 text-gray-400 text-sm">email</span>
+                                    <input type="email" value="rdiaz@escondida.cl" class="pl-9 w-full rounded-lg border-gray-300 border p-2.5 focus:ring-2 focus:ring-primary outline-none transition">
+                                </div>
+                            </div>
+                            
+                            <div class="md:col-span-2 grid grid-cols-3 gap-4">
+                                <div class="col-span-2">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Dirección</label>
+                                    <input type="text" value="Av. La Minería 500" class="w-full rounded-lg border-gray-300 border p-2.5 focus:ring-2 focus:ring-primary outline-none transition">
+                                </div>
+                                 <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Ciudad</label>
+                                    <input type="text" value="Antofagasta" class="w-full rounded-lg border-gray-300 border p-2.5 focus:ring-2 focus:ring-primary outline-none transition">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="flex items-center justify-between pt-6 border-t border-gray-100">
+                        <button type="button" class="text-red-500 hover:text-red-700 text-sm font-medium flex items-center gap-1">
+                            <span class="material-icons text-sm">delete</span> Eliminar
+                        </button>
+                        <div class="flex gap-3">
+                            <a href="company-detail.html" class="px-5 py-2.5 rounded-lg border border-gray-300 text-gray-700 hover:bg-white hover:text-primary transition font-medium bg-white">Cancelar</a>
+                            <button type="submit" class="px-6 py-2.5 rounded-lg bg-primary text-white hover:bg-blue-900 transition font-medium shadow-md hover:shadow-lg flex items-center gap-2">
+                                <span class="material-icons text-sm">save</span> Guardar
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
 
 <footer class="bg-[#002244] text-gray-300 border-t-4 border-secondary mt-auto">
         
@@ -94,6 +210,8 @@
                         <li><a href="service-request.html" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Solicitudes</a></li>
                         <li><a href="companies.html" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Clientes</a></li>
                         <li><a href="portal-choferes.html" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Portal Choferes</a></li>
+                        <li><a href="contacto.html" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Contáctanos</a></li>
+                        <li><a href="trabaja-nosotros.html" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Trabaja con Nosotros</a></li>
                     </ul>
                 </div>
 

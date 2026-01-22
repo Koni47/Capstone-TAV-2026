@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nueva Solicitud | Servicios El Loa</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#003366',    /* Azul Corporativo */
+                        secondary: '#FF6600',  /* Naranja Acción */
+                        surface: '#F3F4F6',
+                        success: '#10B981',
+                        warning: '#F59E0B',
+                        danger: '#EF4444',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="assets/css/custom.css" />
+    <script src="assets/js/auth-helper.js"></script>
+    
+    <!-- Leaflet CSS para mapa -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+    <!-- OpenStreetMap Geocoding -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-control-geocoder/1.14.0/Control.Geocoder.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-control-geocoder/1.14.0/Control.Geocoder.css" />
+    
+    <style>
+        .map-container {
+            height: 100%;
+            min-height: 500px;
+            width: 100%;
+            border-radius: 1rem;
+            z-index: 0;
+        }
+        /* Custom Scrollbar for the form panel */
+        .custom-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: #ccc; 
+            border-radius: 3px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb:hover {
+            background: #999; 
+        }
+    </style>
+</head>
+<body class="bg-surface font-sans text-gray-800 flex flex-col min-h-screen">
+    <script> protectPage(); </script>
+
+   <nav class="bg-primary text-white shadow-xl sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-8">
+                    <a href="index.html" class="flex-shrink-0 flex items-center gap-2 font-bold text-xl cursor-pointer hover:opacity-90 transition-opacity">
+                        <div class="w-8 h-8 bg-white rounded flex items-center justify-center">
+                            <span class="material-icons text-primary text-lg">local_shipping</span>
+                        </div>
+                        <span>EL LOA</span>
+                    </a>
+                    <div class="hidden md:flex items-center space-x-1">
+                        <a id="dashboardLink" href="#" onclick="redirectToDashboard(event)" class="text-blue-100 hover:bg-white/10 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Dashboard</a>
+                        <a href="service-request.html" class="bg-secondary text-white px-3 py-2 rounded-md text-sm font-medium shadow-md transform scale-105">Solicitudes</a>
+                        <a href="users.html" class="text-blue-100 hover:bg-white/10 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Usuarios</a>
+                        <a href="companies.html" class="text-blue-100 hover:bg-white/10 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Clientes</a>
+                        <a href="vehicles.html" class="text-blue-100 hover:bg-white/10 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Flota</a>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <button class="relative p-2 rounded-full hover:bg-white/10 transition group">
+                        <span class="material-icons text-blue-200 group-hover:text-white">notifications</span>
+                        <span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border border-primary"></span>
+                    </button>
+                    <div class="flex items-center gap-3 pl-4 border-l border-white/20">
+                        <div class="text-right hidden sm:block">
+                            <p class="text-sm font-bold leading-none user-name">Usuario</p>
+                            <p class="text-xs text-blue-300 user-role uppercase tracking-wider">Perfil</p>
+                        </div>
+                        <div class="h-9 w-9 rounded-full bg-secondary flex items-center justify-center text-white text-sm font-bold ring-2 ring-white/20 shadow-lg user-initials">US</div>
+                        <a href="logout.html" class="ml-2 text-gray-300 hover:text-white transition" title="Salir">
+                            <span class="material-icons">logout</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+
+        <!-- Header Section -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
+            <div>
+                <nav class="flex text-sm text-gray-500 mb-1" aria-label="Breadcrumb">
+                    <ol class="flex items-center space-x-2">
+                        <li><a href="index.html" class="hover:text-primary transition">Inicio</a></li>
+                        <li><span class="material-icons text-[10px] text-gray-400">arrow_forward_ios</span></li>
+                        <li><a href="service-request.html" class="hover:text-primary transition">Solicitudes</a></li>
+                        <li><span class="material-icons text-[10px] text-gray-400">arrow_forward_ios</span></li>
+                        <li class="text-secondary font-medium">Nueva Solicitud</li>
+                    </ol>
+                </nav>
+                <h1 class="text-3xl font-bold text-primary">Planificar Nuevo Viaje</h1>
+                <p class="text-gray-500 mt-1">Complete los detalles para cotizar y agendar un servicio.</p>
+            </div>
+        </div>
+
+        <!-- Main Layout Split -->
+        <div class="flex flex-col lg:flex-row gap-6 h-auto lg:h-[750px]">
+            
+            <!-- Left Column: Form -->
+            <div class="w-full lg:w-5/12 h-full flex flex-col">
+                <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden flex flex-col h-full">
+                    <div class="bg-gray-50 px-6 py-4 border-b border-gray-100 flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                            <span class="material-icons">edit_road</span>
+                        </div>
+                        <h2 class="font-bold text-gray-800">Detalles del Servicio</h2>
+                    </div>
+                    
+                    <div class="p-6 overflow-y-auto custom-scroll flex-grow">
+                        <form id="createRequestForm" class="space-y-5">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 ml-1">Cliente</label>
+                                <div class="relative">
+                                    <span class="material-icons absolute left-3 top-3 text-gray-400">business</span>
+                                    <select name="clientType" class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all">
+                                        <option value="empresa">Empresa / Convenio</option>
+                                        <option value="persona">Persona Natural</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 gap-4 relative">
+                                <!-- Línea conectora visual -->
+                                <div class="absolute left-[19px] top-[40px] bottom-[40px] w-0.5 bg-gray-200 border-l border-dashed border-gray-300 z-0"></div>
+
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 ml-1">Origen</label>
+                                    <div class="relative z-10">
+                                        <span class="material-icons absolute left-3 top-2.5 text-green-600 text-sm bg-white rounded-full p-0.5">trip_origin</span>
+                                        <input type="text" name="origin" placeholder="Ej: Aeropuerto El Loa" 
+                                               class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                                               onchange="checkRouteUpdate()">
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 ml-1">Destino</label>
+                                    <div class="relative z-10">
+                                        <span class="material-icons absolute left-3 top-2.5 text-red-500 text-sm bg-white rounded-full p-0.5">location_on</span>
+                                        <input type="text" name="destination" placeholder="Ej: Hotel Diego de Almagro" 
+                                               class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                                               onchange="checkRouteUpdate()">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex justify-end">
+                                <button type="button" id="updateMapBtn" onclick="forceMapUpdate()" class="text-xs text-primary font-bold hover:underline flex items-center gap-1">
+                                    <span class="material-icons text-sm">refresh</span> Actualizar Ruta
+                                </button>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 ml-1">Fecha</label>
+                                    <div class="relative">
+                                        <span class="material-icons absolute left-3 top-2.5 text-gray-400 text-sm">event</span>
+                                        <input type="date" name="date" class="w-full pl-9 pr-2 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 ml-1">Hora</label>
+                                    <div class="relative">
+                                        <span class="material-icons absolute left-3 top-2.5 text-gray-400 text-sm">schedule</span>
+                                        <input type="time" name="time" class="w-full pl-9 pr-2 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 ml-1">Pasajeros / Notas</label>
+                                <div class="relative">
+                                    <span class="material-icons absolute left-3 top-3 text-gray-400 text-sm">group</span>
+                                    <textarea name="notes" rows="3" placeholder="Nombres, centro de costo, observaciones..." class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all resize-none"></textarea>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="p-6 bg-gray-50 border-t border-gray-100">
+                         <button type="submit" form="createRequestForm" class="w-full bg-secondary hover:bg-orange-700 text-white font-bold py-3.5 px-4 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 flex justify-center items-center gap-2">
+                            <span>Confirmar Solicitud</span>
+                            <span class="material-icons text-sm">arrow_forward</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Map & Summary -->
+            <div class="w-full lg:w-7/12 flex flex-col gap-4 relative h-full">
+                
+                <!-- Map Container -->
+                <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden flex-grow relative z-0">
+                    <div id="routeMap" class="w-full h-full bg-blue-50 relative">
+                        <!-- Placeholder State for Map -->
+                        <div id="mapPlaceholder" class="absolute inset-0 flex flex-col items-center justify-center text-gray-400 bg-gray-100 z-[1000]">
+                            <span class="material-icons text-6xl mb-2 text-gray-300">map</span>
+                            <p class="font-medium">Ingresa Origen y Destino para ver la ruta</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Floating Summary Card (Overlay on Map bottom-left) -->
+                    <div class="absolute bottom-6 left-6 right-6 md:right-auto md:w-80 bg-white/95 backdrop-blur-md rounded-xl shadow-2xl border border-white/50 p-5 z-[1001] transition-all duration-300 opacity-90 hover:opacity-100">
+                        <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-3 border-b border-gray-200 pb-2">Resumen Estimado</h3>
+                        
+                        <div class="space-y-2 mb-4">
+                            <div class="flex justify-between items-center text-sm">
+                                <span class="text-gray-600 flex items-center gap-1"><span class="material-icons text-xs text-secondary">straighten</span> Distancia</span>
+                                <span id="distanceKm" class="font-semibold text-gray-800">-</span>
+                            </div>
+                            <div class="flex justify-between items-center text-sm">
+                                <span class="text-gray-600">Tarifa Base</span>
+                                <span id="kmPrice" class="font-mono text-gray-800">-</span>
+                            </div>
+                            <div class="flex justify-between items-center text-sm">
+                                <span class="text-gray-600 flex items-center gap-1" title="Cargo Nocturno (22:00 - 07:00)"><span class="material-icons text-xs text-blue-500">nightlight</span> Recargo</span>
+                                <span id="extraCharge" class="font-mono text-orange-600">-</span>
+                            </div>
+                        </div>
+                        
+                        <div class="pt-3 border-t border-gray-200 flex justify-between items-end">
+                            <span class="text-gray-500 text-xs font-medium">Total Estimado</span>
+                            <span id="totalPrice" class="text-2xl font-bold text-primary leading-none">-</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="bg-[#002244] text-gray-300 border-t-4 border-secondary mt-auto">
+        <!-- Contenido del Footer simplificado para no extender demasiado el código, manteniendo la estética -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col md:flex-row justify-between items-center">
+            <div class="flex items-center gap-2 mb-4 md:mb-0">
+                <span class="material-icons text-secondary text-2xl">local_shipping</span>
+                <span class="font-bold text-lg text-white">Servicios El Loa</span>
+            </div>
+            <div class="text-sm text-center md:text-right">
+                <p>&copy; 2026 Servicios de Transporte El Loa SpA.</p>
+                <div class="flex gap-4 mt-2 justify-center md:justify-end text-xs text-gray-500">
+                    <a href="#" class="hover:text-secondary">Términos</a>
+                    <a href="#" class="hover:text-secondary">Privacidad</a>
+                    <a href="#" class="hover:text-secondary">Soporte</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Error Modal -->
+    <div id="addressErrorModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full overflow-hidden transform transition-all scale-100">
+            <div class="bg-red-50 p-4 flex items-center gap-3 border-b border-red-100">
+                <div class="bg-red-100 p-2 rounded-full">
+                    <span class="material-icons text-red-600">location_off</span>
+                </div>
+                <h3 class="font-bold text-red-800">Ubicación no encontrada</h3>
+            </div>
+            <div class="p-6">
+                <p class="text-gray-600 text-sm mb-4">No pudimos localizar una de las direcciones. Intenta ser más específico.</p>
+                <div class="bg-gray-50 rounded-lg p-3 text-xs text-gray-500 border border-gray-100">
+                    <strong>Sugerencias:</strong>
+                    <ul class="list-disc list-inside mt-1 space-y-1">
+                        <li>Agrega "Calama" o la ciudad al final.</li>
+                        <li>Usa nombres de lugares conocidos (Aeropuerto, Hotel...).</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="p-4 bg-gray-50 flex justify-end">
+                <button onclick="closeAddressErrorModal()" class="px-5 py-2 bg-gray-800 hover:bg-gray-900 text-white rounded-lg text-sm font-medium transition shadow">
+                    Entendido
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Lógica del Mapa y Negocio ---
+        
+        let map;
+        let originMarker, destinationMarker;
+        // Icono personalizado
+        const cloudIcon = L.icon({
+            iconUrl: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgdmlld0JveD0iMCAwIDQwIDQwIj48cGF0aCBkPSJNMzAgMTBjMi4yIDAgNC4xLTEuNCA1LTMuNEMzNyA4IDE5IDE5IDE5IDE5SDdjLTMuMyAwLTYgMi43LTYgNnMyLjcgNiA2IDZoMjNjMi43IDAgNS0yLjIgNS01cy0yLjItNS01LTV6IiBmaWxsPSIjRkY2NjAwIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMiIvPjwvc3ZnPg==', // Naranja
+            iconSize: [40, 40],
+            iconAnchor: [20, 40],
+            popupAnchor: [0, -40]
+        });
+
+        // Al cargar la página, intentar inicializar mapa centrado en Calama
+        document.addEventListener('DOMContentLoaded', () => {
+            initBaseMap();
+            // Set default date/time
+            const now = new Date();
+            document.querySelector('input[name="date"]').valueAsDate = now;
+            document.querySelector('input[name="time"]').value = now.toTimeString().substring(0,5);
+        });
+
+        function initBaseMap() {
+            // Calama Coordinates default
+            const defaultCenter = [-22.4544, -68.9292]; 
+            map = L.map('routeMap', { zoomControl: false }).setView(defaultCenter, 13);
+            L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+                maxZoom: 19
+            }).addTo(map);
+        }
+
+        let searchTimeout;
+        function checkRouteUpdate() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(forceMapUpdate, 1000); // Debounce de 1s
+        }
+
+        function forceMapUpdate() {
+            const origin = document.querySelector('input[name="origin"]').value.trim();
+            const destination = document.querySelector('input[name="destination"]').value.trim();
+
+            if (origin && destination) {
+                // Remove placeholder
+                const placeholder = document.getElementById('mapPlaceholder');
+                if (placeholder) placeholder.style.opacity = '0';
+                setTimeout(() => { if(placeholder) placeholder.style.display = 'none'; }, 300);
+
+                updateMapRoute(origin, destination);
+            }
+        }
+
+        function updateMapRoute(origin, destination) {
+            clearInputError('origin');
+            clearInputError('destination');
+
+            // 1. Geocode Origin
+            geocodeAddress(origin, (originCoords) => {
+                if (!originCoords) {
+                    markInputError('origin');
+                    showAddressErrorModal();
+                    return;
+                }
+
+                if (originMarker) originMarker.remove();
+                originMarker = L.marker(originCoords, { icon: cloudIcon }).addTo(map).bindPopup("<b>Origen</b><br>" + origin);
+
+                // 2. Geocode Destination
+                geocodeAddress(destination, (destCoords) => {
+                    if (!destCoords) {
+                        markInputError('destination');
+                        showAddressErrorModal();
+                        return;
+                    }
+
+                    if (destinationMarker) destinationMarker.remove();
+                    destinationMarker = L.marker(destCoords, { icon: cloudIcon }).addTo(map).bindPopup("<b>Destino</b><br>" + destination);
+
+                    // Fit bounds
+                    const bounds = L.latLngBounds([originCoords, destCoords]);
+                    map.fitBounds(bounds, { padding: [50, 50] });
+
+                    // Store for recalc
+                    window.lastOriginCoords = originCoords;
+                    window.lastDestinationCoords = destCoords;
+
+                    updatePaymentSummary(originCoords, destCoords);
+                });
+            });
+        }
+
+        function geocodeAddress(address, callback) {
+            const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}, Chile`;
+            fetch(url)
+                .then(r => r.json())
+                .then(data => {
+                    if (data.length > 0) callback([parseFloat(data[0].lat), parseFloat(data[0].lon)]);
+                    else callback(null);
+                })
+                .catch(e => { console.error(e); callback(null); });
+        }
+
+        function haversineDistance(coords1, coords2) {
+            const R = 6371; 
+            const dLat = (coords2[0] - coords1[0]) * Math.PI / 180;
+            const dLon = (coords2[1] - coords1[1]) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                      Math.cos(coords1[0] * Math.PI / 180) * Math.cos(coords2[0] * Math.PI / 180) * 
+                      Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
+
+        function updatePaymentSummary(originCoords, destCoords) {
+            if (!originCoords || !destCoords) return;
+
+            const dist = haversineDistance(originCoords, destCoords);
+            document.getElementById('distanceKm').textContent = dist.toFixed(2) + ' km';
+
+            const pricePerKm = 1800; // Tarifa base
+            const kmPrice = Math.round(dist * pricePerKm);
+            
+            // Recargo nocturno
+            let extra = 0;
+            const timeVal = document.querySelector('input[name="time"]').value;
+            if (timeVal) {
+                const [h, m] = timeVal.split(':').map(Number);
+                if (h >= 22 || h < 7) {
+                    extra = Math.round(kmPrice * 0.15); // 15% noche
+                }
+            }
+
+            document.getElementById('kmPrice').textContent = '$' + kmPrice.toLocaleString('es-CL');
+            document.getElementById('extraCharge').textContent = '$' + extra.toLocaleString('es-CL');
+            document.getElementById('totalPrice').textContent = '$' + (kmPrice + extra).toLocaleString('es-CL');
+        }
+
+        // Event listeners para recalcular precio si cambia la hora
+        document.querySelector('input[name="time"]').addEventListener('change', () => {
+            if(window.lastOriginCoords) updatePaymentSummary(window.lastOriginCoords, window.lastDestinationCoords);
+        });
+
+        // UI Helpers
+        function markInputError(name) {
+            const el = document.querySelector(`input[name="${name}"]`);
+            el.classList.add('border-red-500', 'ring-1', 'ring-red-500');
+        }
+        function clearInputError(name) {
+            const el = document.querySelector(`input[name="${name}"]`);
+            el.classList.remove('border-red-500', 'ring-1', 'ring-red-500');
+        }
+        function showAddressErrorModal() { document.getElementById('addressErrorModal').classList.remove('hidden'); }
+        function closeAddressErrorModal() { document.getElementById('addressErrorModal').classList.add('hidden'); }
+
+        function toggleAssignPanel() { /* Legacy support if needed */ }
+        function redirectToDashboard(e) {
+            e.preventDefault();
+            const role = localStorage.getItem('userRole') || 'cliente';
+            if(role.includes('admin')) window.location.href = 'dashboard_adm.html';
+            else if(role.includes('chofer')) window.location.href = 'dashboard-chof.html';
+            else window.location.href = 'dashboard-cli.html';
+        }
+    </script>
+</body>
+</html>

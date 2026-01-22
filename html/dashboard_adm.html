@@ -66,243 +66,300 @@
     </nav>
 
     <!-- Main Content -->
-    <div class="flex-1 py-12 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-7xl mx-auto">
+    <main class="flex-1 py-10 px-4 sm:px-6 lg:px-8 bg-gray-50/50">
+        <div class="max-w-7xl mx-auto space-y-8">
 
             <!-- Header -->
-            <div class="mb-8">
-                <h1 class="text-4xl font-bold text-primary mb-2">Panel de Control</h1>
-                <p class="text-gray-600">Bienvenido, visualiza el desempeño de tu negocio</p>
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900 tracking-tight">Panel de Control</h1>
+                    <p class="text-gray-500 mt-1">Resumen general del rendimiento de la flota y servicios.</p>
+                </div>
+                <div class="flex gap-3">
+                    <button class="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition shadow-sm">
+                        <span class="material-icons text-base">file_download</span> Exportar
+                    </button>
+                    <button class="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-blue-900 transition shadow-sm">
+                        <span class="material-icons text-base">add</span> Nuevo Reporte
+                    </button>
+                </div>
             </div>
 
             <!-- KPI Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 
                 <!-- Total Viajes -->
-                <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-primary hover:shadow-lg transition">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-gray-600 text-sm font-semibold mb-2">Total Viajes</p>
-                            <p class="text-3xl font-bold text-primary">245</p>
-                            <p class="text-xs text-green-600 mt-2 flex items-center gap-1">
-                                <span class="material-icons text-sm">trending_up</span> +12% vs mes anterior
-                            </p>
-                        </div>
-                        <div class="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center">
-                            <span class="material-icons text-2xl text-primary">directions_car</span>
-                        </div>
+                <div class="bg-white rounded-xl p-6 border border-gray-200 shadow-sm hover:shadow-md transition duration-300 relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <span class="material-icons text-6xl text-primary transform rotate-12">directions_car</span>
                     </div>
+                    <div class="relative z-10">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="p-1.5 bg-blue-50 rounded-lg text-primary">
+                                <span class="material-icons text-xl">directions_car</span>
+                            </span>
+                            <span class="text-sm font-semibold text-gray-600">Total Viajes</span>
+                        </div>
+                        <div class="flex items-baseline gap-2">
+                             <h3 class="text-3xl font-bold text-gray-900">245</h3>
+                             <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                                +12%
+                             </span>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-2">Mes actual</p>
+                    </div>
+                    <div class="absolute bottom-0 left-0 h-1 bg-primary w-full"></div>
                 </div>
 
                 <!-- Ingresos Totales -->
-                <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-secondary hover:shadow-lg transition">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-gray-600 text-sm font-semibold mb-2">Ingresos Totales</p>
-                            <p class="text-3xl font-bold text-secondary">$1.245.000</p>
-                            <p class="text-xs text-green-600 mt-2 flex items-center gap-1">
-                                <span class="material-icons text-sm">trending_up</span> +18% vs mes anterior
-                            </p>
-                        </div>
-                        <div class="w-14 h-14 bg-orange-100 rounded-full flex items-center justify-center">
-                            <span class="material-icons text-2xl text-secondary">attach_money</span>
-                        </div>
+                <div class="bg-white rounded-xl p-6 border border-gray-200 shadow-sm hover:shadow-md transition duration-300 relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <span class="material-icons text-6xl text-secondary transform rotate-12">payments</span>
                     </div>
+                     <div class="relative z-10">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="p-1.5 bg-orange-50 rounded-lg text-secondary">
+                                <span class="material-icons text-xl">payments</span>
+                            </span>
+                            <span class="text-sm font-semibold text-gray-600">Ingresos Totales</span>
+                        </div>
+                        <div class="flex items-baseline gap-2">
+                             <h3 class="text-3xl font-bold text-gray-900">$1.2M</h3>
+                             <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                                +18%
+                             </span>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-2">Mes actual</p>
+                    </div>
+                     <div class="absolute bottom-0 left-0 h-1 bg-secondary w-full"></div>
                 </div>
 
                 <!-- Viajes Pendientes -->
-                <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-yellow-500 hover:shadow-lg transition">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-gray-600 text-sm font-semibold mb-2">Viajes Pendientes</p>
-                            <p class="text-3xl font-bold text-yellow-600">23</p>
-                            <p class="text-xs text-gray-500 mt-2 flex items-center gap-1">
-                                <span class="material-icons text-sm">schedule</span> Requieren atención
-                            </p>
-                        </div>
-                        <div class="w-14 h-14 bg-yellow-100 rounded-full flex items-center justify-center">
-                            <span class="material-icons text-2xl text-yellow-600">hourglass_empty</span>
-                        </div>
+                 <div class="bg-white rounded-xl p-6 border border-gray-200 shadow-sm hover:shadow-md transition duration-300 relative overflow-hidden group">
+                     <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <span class="material-icons text-6xl text-primary transform rotate-12">pending_actions</span>
                     </div>
+                    <div class="relative z-10">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="p-1.5 bg-blue-50 rounded-lg text-primary">
+                                <span class="material-icons text-xl">pending_actions</span>
+                            </span>
+                            <span class="text-sm font-semibold text-gray-600">Pendientes</span>
+                        </div>
+                        <div class="flex items-baseline gap-2">
+                             <h3 class="text-3xl font-bold text-gray-900">23</h3>
+                        </div>
+                         <p class="text-xs text-orange-600 font-medium mt-2 flex items-center gap-1">
+                            <span class="material-icons text-xs">priority_high</span> Requieren atención
+                        </p>
+                    </div>
+                    <div class="absolute bottom-0 left-0 h-1 bg-primary w-full opacity-60"></div>
                 </div>
 
                 <!-- Vehículos Activos -->
-                <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-green-500 hover:shadow-lg transition">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-gray-600 text-sm font-semibold mb-2">Vehículos Activos</p>
-                            <p class="text-3xl font-bold text-green-600">18 / 20</p>
-                            <p class="text-xs text-gray-500 mt-2 flex items-center gap-1">
-                                <span class="material-icons text-sm">check_circle</span> Operativos
-                            </p>
-                        </div>
-                        <div class="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center">
-                            <span class="material-icons text-2xl text-green-600">directions_bus</span>
-                        </div>
+                <div class="bg-white rounded-xl p-6 border border-gray-200 shadow-sm hover:shadow-md transition duration-300 relative overflow-hidden group">
+                     <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <span class="material-icons text-6xl text-secondary transform rotate-12">local_shipping</span>
                     </div>
+                    <div class="relative z-10">
+                        <div class="flex items-center gap-2 mb-2">
+                             <span class="p-1.5 bg-orange-50 rounded-lg text-secondary">
+                                <span class="material-icons text-xl">local_shipping</span>
+                            </span>
+                            <span class="text-sm font-semibold text-gray-600">Flota Activa</span>
+                        </div>
+                        <div class="flex items-baseline gap-2">
+                             <h3 class="text-3xl font-bold text-gray-900">90%</h3>
+                             <span class="text-sm text-gray-500 font-medium">18/20</span>
+                        </div>
+                         <p class="text-xs text-green-600 font-medium mt-2 flex items-center gap-1">
+                            <span class="material-icons text-xs">check_circle</span> Operatividad óptima
+                        </p>
+                    </div>
+                     <div class="absolute bottom-0 left-0 h-1 bg-secondary w-full opacity-60"></div>
                 </div>
 
             </div>
 
             <!-- Charts Row -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
                 <!-- Ingresos por Tipo de Servicio -->
-                <div class="bg-white rounded-lg shadow-md p-6 lg:col-span-2">
-                    <h3 class="text-lg font-bold text-primary mb-4 flex items-center gap-2">
-                        <span class="material-icons">trending_up</span> Ingresos por Tipo de Servicio
-                    </h3>
-                    <canvas id="chartServicios"></canvas>
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 lg:col-span-2">
+                    <div class="flex items-center justify-between mb-6">
+                         <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+                            Ingresos por Servicio
+                        </h3>
+                         <button class="text-gray-400 hover:text-primary transition">
+                            <span class="material-icons">more_horiz</span>
+                        </button>
+                    </div>
+                    <canvas id="chartServicios" height="100"></canvas>
                 </div>
 
                 <!-- Top Clientes -->
-                <div class="bg-white rounded-lg shadow-md p-6">
-                    <h3 class="text-lg font-bold text-primary mb-4 flex items-center gap-2">
-                        <span class="material-icons">business</span> Top 5 Clientes
-                    </h3>
-                    <div class="space-y-3">
-                        <div class="flex items-center justify-between pb-2 border-b">
-                            <span class="text-sm text-gray-700">Minera ABC</span>
-                            <span class="text-sm font-bold text-secondary">$450.000</span>
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-lg font-bold text-gray-900">Top Clientes</h3>
+                         <button class="text-xs font-semibold text-primary hover:text-secondary transition uppercase">Ver Todos</button>
+                    </div>
+                    
+                    <div class="space-y-5">
+                        <div class="flex items-center justify-between group cursor-pointer">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-primary font-bold text-xs">MA</div>
+                                <div>
+                                    <p class="text-sm font-semibold text-gray-800 group-hover:text-primary transition">Minera ABC</p>
+                                    <p class="text-xs text-gray-500">12 Viajes</p>
+                                </div>
+                            </div>
+                            <span class="text-sm font-bold text-gray-900">$450k</span>
                         </div>
-                        <div class="flex items-center justify-between pb-2 border-b">
-                            <span class="text-sm text-gray-700">Constructora XYZ</span>
-                            <span class="text-sm font-bold text-secondary">$320.000</span>
+
+                         <div class="flex items-center justify-between group cursor-pointer">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center text-secondary font-bold text-xs">CX</div>
+                                <div>
+                                    <p class="text-sm font-semibold text-gray-800 group-hover:text-primary transition">Constructora XYZ</p>
+                                    <p class="text-xs text-gray-500">8 Viajes</p>
+                                </div>
+                            </div>
+                            <span class="text-sm font-bold text-gray-900">$320k</span>
                         </div>
-                        <div class="flex items-center justify-between pb-2 border-b">
-                            <span class="text-sm text-gray-700">Transportes ABC</span>
-                            <span class="text-sm font-bold text-secondary">$250.000</span>
+
+                         <div class="flex items-center justify-between group cursor-pointer">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 font-bold text-xs">TA</div>
+                                <div>
+                                    <p class="text-sm font-semibold text-gray-800 group-hover:text-primary transition">Transportes ABC</p>
+                                    <p class="text-xs text-gray-500">6 Viajes</p>
+                                </div>
+                            </div>
+                            <span class="text-sm font-bold text-gray-900">$250k</span>
                         </div>
-                        <div class="flex items-center justify-between pb-2 border-b">
-                            <span class="text-sm text-gray-700">Empresas LMN</span>
-                            <span class="text-sm font-bold text-secondary">$150.000</span>
-                        </div>
-                        <div class="flex items-center justify-between">
-                            <span class="text-sm text-gray-700">Otros Clientes</span>
-                            <span class="text-sm font-bold text-secondary">$75.000</span>
+                        
+                         <div class="flex items-center justify-between group cursor-pointer">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 font-bold text-xs">EL</div>
+                                <div>
+                                    <p class="text-sm font-semibold text-gray-800 group-hover:text-primary transition">Empresas LMN</p>
+                                    <p class="text-xs text-gray-500">4 Viajes</p>
+                                </div>
+                            </div>
+                            <span class="text-sm font-bold text-gray-900">$150k</span>
                         </div>
                     </div>
                 </div>
 
             </div>
 
-            <!-- Monthly Stats -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-
+            <!-- Monthly Stats Row 2 -->
+             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <!-- Viajes por Mes -->
-                <div class="bg-white rounded-lg shadow-md p-6">
-                    <h3 class="text-lg font-bold text-primary mb-4 flex items-center gap-2">
-                        <span class="material-icons">calendar_month</span> Viajes por Mes
-                    </h3>
-                    <canvas id="chartViajes"></canvas>
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                     <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-lg font-bold text-gray-900">Evolución de Viajes</h3>
+                    </div>
+                    <canvas id="chartViajes" height="150"></canvas>
                 </div>
 
                 <!-- Ocupación de Vehículos -->
-                <div class="bg-white rounded-lg shadow-md p-6">
-                    <h3 class="text-lg font-bold text-primary mb-4 flex items-center gap-2">
-                        <span class="material-icons">pie_chart</span> Ocupación de Vehículos
-                    </h3>
-                    <canvas id="chartOcupacion"></canvas>
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                     <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-lg font-bold text-gray-900">Estado de la Flota</h3>
+                    </div>
+                    <div class="flex items-center justify-center h-[200px]">
+                         <canvas id="chartOcupacion"></canvas>
+                    </div>
                 </div>
-
             </div>
 
-            <!-- Recent Trips Table -->
-            <div class="bg-white rounded-lg shadow-md p-6">
-                <h3 class="text-lg font-bold text-primary mb-4 flex items-center gap-2">
-                    <span class="material-icons">list</span> Últimos Viajes Realizados
-                </h3>
+            <!-- Table Section -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+                    <h3 class="text-lg font-bold text-gray-900">Últimos Viajes</h3>
+                     <a href="trips.html" class="text-sm font-medium text-primary hover:text-secondary transition">Ver historial completo &rarr;</a>
+                </div>
                 
                 <div class="overflow-x-auto">
                     <table class="w-full">
-                        <thead>
-                            <tr class="border-b-2 border-gray-200">
-                                <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">ID Viaje</th>
-                                <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Cliente</th>
-                                <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Chofer</th>
-                                <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Origen</th>
-                                <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Destino</th>
-                                <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Fecha</th>
-                                <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Tarifa</th>
-                                <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700">Estado</th>
+                        <thead class="bg-gray-50/50">
+                            <tr>
+                                <th class="text-left py-3 px-6 text-xs font-semibold text-gray-500 uppercase tracking-wider">ID</th>
+                                <th class="text-left py-3 px-6 text-xs font-semibold text-gray-500 uppercase tracking-wider">Cliente</th>
+                                <th class="text-left py-3 px-6 text-xs font-semibold text-gray-500 uppercase tracking-wider">Chofer</th>
+                                <th class="text-left py-3 px-6 text-xs font-semibold text-gray-500 uppercase tracking-wider">Origen / Destino</th>
+                                <th class="text-left py-3 px-6 text-xs font-semibold text-gray-500 uppercase tracking-wider">Fecha</th>
+                                <th class="text-left py-3 px-6 text-xs font-semibold text-gray-500 uppercase tracking-wider">Estado</th>
+                                <th class="text-right py-3 px-6 text-xs font-semibold text-gray-500 uppercase tracking-wider">Monto</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr class="border-b hover:bg-gray-50 transition">
-                                <td class="py-3 px-4 text-sm text-primary font-bold">VJ-2601</td>
-                                <td class="py-3 px-4 text-sm text-gray-700">Minera ABC</td>
-                                <td class="py-3 px-4 text-sm text-gray-700">Juan Pérez</td>
-                                <td class="py-3 px-4 text-sm text-gray-700">Aeropuerto</td>
-                                <td class="py-3 px-4 text-sm text-gray-700">Faena Atacama</td>
-                                <td class="py-3 px-4 text-sm text-gray-700">20/01/2026 08:30</td>
-                                <td class="py-3 px-4 text-sm font-bold text-secondary">$85.000</td>
-                                <td class="py-3 px-4 text-sm">
-                                    <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">Completado</span>
+                        <tbody class="divide-y divide-gray-100">
+                             <!-- Item 1 -->
+                            <tr class="hover:bg-blue-50/30 transition">
+                                <td class="py-4 px-6 text-sm font-medium text-primary">#VJ-2601</td>
+                                <td class="py-4 px-6 text-sm text-gray-700">Minera ABC</td>
+                                <td class="py-4 px-6 text-sm text-gray-500">Juan Pérez</td>
+                                <td class="py-4 px-6 text-sm text-gray-700">
+                                    <div class="flex flex-col">
+                                        <span class="font-medium">Aeropuerto</span>
+                                        <span class="text-xs text-gray-400">Faena Atacama</span>
+                                    </div>
                                 </td>
+                                <td class="py-4 px-6 text-sm text-gray-500">20 Ene, 08:30</td>
+                                <td class="py-4 px-6 text-sm">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        Completado
+                                    </span>
+                                </td>
+                                <td class="py-4 px-6 text-sm font-bold text-gray-900 text-right">$85.000</td>
                             </tr>
-                            <tr class="border-b hover:bg-gray-50 transition">
-                                <td class="py-3 px-4 text-sm text-primary font-bold">VJ-2600</td>
-                                <td class="py-3 px-4 text-sm text-gray-700">Constructora XYZ</td>
-                                <td class="py-3 px-4 text-sm text-gray-700">Carlos López</td>
-                                <td class="py-3 px-4 text-sm text-gray-700">Centro Calama</td>
-                                <td class="py-3 px-4 text-sm text-gray-700">Obra Construcción</td>
-                                <td class="py-3 px-4 text-sm text-gray-700">20/01/2026 07:15</td>
-                                <td class="py-3 px-4 text-sm font-bold text-secondary">$42.000</td>
-                                <td class="py-3 px-4 text-sm">
-                                    <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">Completado</span>
+                             <!-- Item 2 -->
+                            <tr class="hover:bg-blue-50/30 transition">
+                                <td class="py-4 px-6 text-sm font-medium text-primary">#VJ-2600</td>
+                                <td class="py-4 px-6 text-sm text-gray-700">Constructora XYZ</td>
+                                <td class="py-4 px-6 text-sm text-gray-500">Carlos López</td>
+                                <td class="py-4 px-6 text-sm text-gray-700">
+                                    <div class="flex flex-col">
+                                        <span class="font-medium">Centro Calama</span>
+                                        <span class="text-xs text-gray-400">Obra Norte</span>
+                                    </div>
                                 </td>
+                                <td class="py-4 px-6 text-sm text-gray-500">20 Ene, 07:15</td>
+                                <td class="py-4 px-6 text-sm">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        Completado
+                                    </span>
+                                </td>
+                                <td class="py-4 px-6 text-sm font-bold text-gray-900 text-right">$42.000</td>
                             </tr>
-                            <tr class="border-b hover:bg-gray-50 transition">
-                                <td class="py-3 px-4 text-sm text-primary font-bold">VJ-2599</td>
-                                <td class="py-3 px-4 text-sm text-gray-700">Transportes ABC</td>
-                                <td class="py-3 px-4 text-sm text-gray-700">Miguel González</td>
-                                <td class="py-3 px-4 text-sm text-gray-700">Estación de Bus</td>
-                                <td class="py-3 px-4 text-sm text-gray-700">Terminal Aéreo</td>
-                                <td class="py-3 px-4 text-sm text-gray-700">20/01/2026 06:45</td>
-                                <td class="py-3 px-4 text-sm font-bold text-secondary">$28.000</td>
-                                <td class="py-3 px-4 text-sm">
-                                    <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">Completado</span>
+                            <!-- Item 3 -->
+                             <tr class="hover:bg-blue-50/30 transition">
+                                <td class="py-4 px-6 text-sm font-medium text-primary">#VJ-2597</td>
+                                <td class="py-4 px-6 text-sm text-gray-700">Minera ABC</td>
+                                <td class="py-4 px-6 text-sm text-gray-500">Francisco Silva</td>
+                                <td class="py-4 px-6 text-sm text-gray-700">
+                                    <div class="flex flex-col">
+                                        <span class="font-medium">Oficina Central</span>
+                                        <span class="text-xs text-gray-400">Faena Norte</span>
+                                    </div>
                                 </td>
-                            </tr>
-                            <tr class="border-b hover:bg-gray-50 transition">
-                                <td class="py-3 px-4 text-sm text-primary font-bold">VJ-2598</td>
-                                <td class="py-3 px-4 text-sm text-gray-700">Empresas LMN</td>
-                                <td class="py-3 px-4 text-sm text-gray-700">Roberto Sáez</td>
-                                <td class="py-3 px-4 text-sm text-gray-700">Hotel Atacama</td>
-                                <td class="py-3 px-4 text-sm text-gray-700">Complejo Turístico</td>
-                                <td class="py-3 px-4 text-sm text-gray-700">19/01/2026 19:30</td>
-                                <td class="py-3 px-4 text-sm font-bold text-secondary">$65.000</td>
-                                <td class="py-3 px-4 text-sm">
-                                    <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">Completado</span>
+                                <td class="py-4 px-6 text-sm text-gray-500">19 Ene, 14:20</td>
+                                <td class="py-4 px-6 text-sm">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                        En Curso
+                                    </span>
                                 </td>
-                            </tr>
-                            <tr class="hover:bg-gray-50 transition">
-                                <td class="py-3 px-4 text-sm text-primary font-bold">VJ-2597</td>
-                                <td class="py-3 px-4 text-sm text-gray-700">Minera ABC</td>
-                                <td class="py-3 px-4 text-sm text-gray-700">Francisco Silva</td>
-                                <td class="py-3 px-4 text-sm text-gray-700">Oficina Central</td>
-                                <td class="py-3 px-4 text-sm text-gray-700">Faena Norte</td>
-                                <td class="py-3 px-4 text-sm text-gray-700">19/01/2026 14:20</td>
-                                <td class="py-3 px-4 text-sm font-bold text-secondary">$95.000</td>
-                                <td class="py-3 px-4 text-sm">
-                                    <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-xs font-semibold">En Curso</span>
-                                </td>
+                                <td class="py-4 px-6 text-sm font-bold text-gray-900 text-right">$95.000</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-
-                <div class="mt-4 text-center">
-                    <a href="trips.html" class="text-secondary font-bold text-sm flex items-center gap-1 justify-center hover:gap-2 transition-all">
-                        Ver todos los viajes <span class="material-icons text-sm">arrow_forward</span>
-                    </a>
-                </div>
             </div>
 
         </div>
-    </div>
+    </main>
 
-    <!-- Footer -->
 <footer class="bg-[#002244] text-gray-300 border-t-4 border-secondary mt-auto">
         
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -334,6 +391,8 @@
                         <li><a href="service-request.html" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Solicitudes</a></li>
                         <li><a href="companies.html" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Clientes</a></li>
                         <li><a href="portal-choferes.html" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Portal Choferes</a></li>
+                        <li><a href="contacto.html" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Contáctanos</a></li>
+                        <li><a href="trabaja-nosotros.html" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Trabaja con Nosotros</a></li>
                     </ul>
                 </div>
 
