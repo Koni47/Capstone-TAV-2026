@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { companyEditMockData } from '../mocks/data';
+import { companyEditMockData } from '../services/mockApi';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 

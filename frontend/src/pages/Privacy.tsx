@@ -1,4 +1,4 @@
-import { privacyMockData } from '../mocks/data';
+import { privacyMockData } from '../services/mockApi';
 import Header from '../components/Header';
 import { useNavigate } from 'react-router-dom';
 

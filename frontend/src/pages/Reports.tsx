@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { reportsMockData } from "../mocks/data";
+import { reportsMockData } from "../services/mockApi";
 import Header from '../components/Header';
 
 const Reports = () => {
@@ -82,7 +82,7 @@ const Reports = () => {
                 onChange={(e) => setSelectedClient(e.target.value)}
                 className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all appearance-none cursor-pointer"
               >
-                {reportsMockData.filters.clients.map((client) => (
+                {reportsMockData.filters.clients.map((client: any) => (
                   <option key={client} value={client}>{client}</option>
                 ))}
               </select>
@@ -118,7 +118,7 @@ const Reports = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {reportsMockData.results.rows.map((row, idx) => (
+                {reportsMockData.results.rows.map((row: any, idx: number) => (
                   <tr key={idx} className="hover:bg-gray-50 transition-colors">
                     <td className="px-8 py-5 font-bold text-slate-700">{row.client}</td>
                     <td className="px-8 py-5 text-center text-slate-600 font-medium">{row.trips}</td>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Header from '../components/Header';
-import { site } from '../mocks/data';
+import { site } from '../services/mockApi';
 
 export default function Contact() {
   const [formData, setFormData] = useState({

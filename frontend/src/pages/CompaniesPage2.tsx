@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { companiesPage2MockData, site } from '../mocks/data';
+import { companiesPage2MockData, site } from '../services/mockApi';
 import Header from '../components/Header';
 
 export function CompaniesPage2() {
@@ -68,7 +68,7 @@ export function CompaniesPage2() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {companiesPage2MockData.companies.map((company) => (
+              {companiesPage2MockData.companies.map((company: any) => (
                 <tr key={company.id} className="hover:bg-gray-50 transition">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">

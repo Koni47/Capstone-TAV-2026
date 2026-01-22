@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { usersPage2MockData } from "../mocks/data";
+import { usersPage2MockData } from "../services/mockApi";
 import Header from '../components/Header';
 
 const UsersPage2 = () => {
@@ -34,7 +34,7 @@ const UsersPage2 = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {usersPage2MockData.users.map((user, idx) => (
+              {usersPage2MockData.users.map((user: any, idx: number) => (
                 <tr key={idx}>
                   <td className="px-6 py-4">{user.name}</td>
                   <td className="px-6 py-4">{user.email}</td>

@@ -1,5 +1,5 @@
 import React from 'react'
-import { driverDashboardMockData } from '../mocks/data'
+import { driverDashboardMockData } from '../services/mockApi'
 import '../components/charts/ChartSetup'
 import BarChart from '../components/charts/BarChart'
 import DoughnutChart from '../components/charts/DoughnutChart'
@@ -24,7 +24,7 @@ export default function DriverDashboard() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {kpis.map((kpi, idx) => (
+          {kpis.map((kpi: any, idx: number) => (
             <div key={idx} className="bg-white rounded-lg shadow-md p-6 border-l-4 hover:shadow-lg transition">
               <div className="flex items-center justify-between">
                 <div>
@@ -59,7 +59,7 @@ export default function DriverDashboard() {
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
           <h3 className="text-lg font-bold text-primary mb-4 flex items-center gap-2"><span className="material-icons">schedule</span> Mis Próximos Viajes</h3>
           <div className="space-y-4">
-            {nextTrips.map((t, i) => (
+            {nextTrips.map((t: any, i: number) => (
               <div key={i} className={`flex items-center justify-between p-4 border-l-4 bg-${t.level}-50 rounded-lg`}>
                 <div>
                   <p className="font-bold text-primary">{t.title}</p>
@@ -90,7 +90,7 @@ export default function DriverDashboard() {
                 </tr>
               </thead>
               <tbody>
-                {completed.map((c, idx) => (
+                {completed.map((c: any, idx: number) => (
                   <tr key={idx} className="border-b hover:bg-gray-50 transition">
                     <td className="py-3 px-4 text-sm text-gray-700">{c.time}</td>
                     <td className="py-3 px-4 text-sm text-gray-700">{c.client}</td>

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { usersMockData } from "../mocks/data";
+import { usersMockData } from "../services/mockApi";
 import Header from '../components/Header';
 
 const Users = () => {
@@ -36,7 +36,7 @@ const Users = () => {
     });
   };
 
-  const filteredUsers = usersMockData.users.filter((user) => {
+  const filteredUsers = usersMockData.users.filter((user: any) => {
     const matchesSearch =
       user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.email.toLowerCase().includes(searchTerm.toLowerCase());
@@ -80,7 +80,7 @@ const Users = () => {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-3 mb-8">
-          {usersMockData.stats.map((stat, idx) => {
+          {usersMockData.stats.map((stat: any, idx: number) => {
             const getBorderColor = (color: string) => {
               if (color === 'primary') return 'border-primary';
               if (color === 'secondary') return 'border-secondary';
@@ -188,7 +188,7 @@ const Users = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {filteredUsers.map((user, idx) => (
+              {filteredUsers.map((user: any, idx: number) => (
                 <tr key={idx} className="hover:bg-gray-50 transition">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { companiesMockData, site } from '../mocks/data';
+import { companiesMockData, site } from '../services/mockApi';
 import Header from '../components/Header';
 
 export default function Companies() {

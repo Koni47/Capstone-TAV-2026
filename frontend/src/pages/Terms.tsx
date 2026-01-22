@@ -1,4 +1,4 @@
-import { termsMockData } from '../mocks/data';
+import { termsMockData } from '../services/mockApi';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 

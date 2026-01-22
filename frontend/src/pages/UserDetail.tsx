@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { userDetailMockData } from "../mocks/data";
+import { userDetailMockData } from "../services/mockApi";
 import Header from '../components/Header';
 
 const UserDetail = () => {
