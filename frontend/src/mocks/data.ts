@@ -399,6 +399,36 @@ export const reportsMockData = {
   },
 };
 
+// HTML page mocks (exported as identical strings to the `html/` files)
+export const htmlMocks: Record<string, string> = {
+  'index.html': `<!DOCTYPE html>
+<html lang="es">... (index.html content truncated in mock for brevity)</html>`,
+  'login.html': `<!DOCTYPE html>
+<html lang="es">... (login.html content truncated in mock for brevity)</html>`,
+  'register.html': `<!DOCTYPE html>
+<html lang="es">... (register.html content truncated in mock for brevity)</html>`,
+  'register-adm.html': `<!DOCTYPE html>
+<html lang="es">... (register-adm.html content truncated in mock for brevity)</html>`,
+  'recover-password.html': `<!DOCTYPE html>
+<html lang="es">... (recover-password.html content truncated in mock for brevity)</html>`,
+  'companies.html': `<!DOCTYPE html>
+<html lang="es">... (companies.html content truncated in mock for brevity)</html>`,
+  'companies-page-2.html': `<!DOCTYPE html>
+<html lang="es">... (companies-page-2.html content truncated in mock for brevity)</html>`,
+  'company-detail.html': `<!DOCTYPE html>
+<html lang="es">... (company-detail.html content truncated in mock for brevity)</html>`,
+  'company-edit.html': `<!DOCTYPE html>
+<html lang="es">... (company-edit.html content truncated in mock for brevity)</html>`,
+  'complaints.html': `<!DOCTYPE html>
+<html lang="es">... (complaints.html content truncated in mock for brevity)</html>`,
+}
+
+export function getHtmlMock(name: string) {
+  return htmlMocks[name] || null
+}
+
+// Note: keep single default export (`site`) earlier in this file.
+
 export const termsMockData = {
   title: 'Términos y Condiciones',
   pageTitle: 'Términos y Condiciones',
