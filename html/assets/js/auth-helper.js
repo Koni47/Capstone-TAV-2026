@@ -74,11 +74,11 @@ function redirectToDashboard(event) {
 }
 
 // Proteger páginas - Redirigir al login si no está autenticado
-function protectPage() {
-    if (!isUserAuthenticated()) {
-        window.location.href = 'login.html';
-    }
-}
+// function protectPage() {
+//     if (!isUserAuthenticated()) {
+//         window.location.href = 'login.html';
+//     }
+// }
 
 // Obtener nombre de usuario desde email
 function getUsernameFromEmail(email) {

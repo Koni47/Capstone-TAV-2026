@@ -55,13 +55,152 @@
         </div>
     </nav>
 
-  <main class="max-w-5xl mx-auto p-6">
-    <h1 class="text-2xl font-bold text-primary mb-4">Portal de Denuncias</h1>
-    <div class="bg-white rounded-lg shadow p-6 text-sm text-gray-700">
-      <p>En este espacio puedes enviar una denuncia o reclamo. Reemplazar con el formulario real según corresponda.</p>
+  <main class="flex-grow flex flex-col lg:flex-row w-full min-h-[calc(100vh-4rem)]">
+    
+    <!-- Decorative Image Section (Left) -->
+    <div class="relative lg:w-5/12 hidden lg:block">
+        <img src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80" alt="Meeting" class="absolute inset-0 w-full h-full object-cover">
+        <div class="absolute inset-0 bg-primary/80 mix-blend-multiply"></div>
+        <div class="absolute bottom-0 left-0 p-12 text-white">
+            <blockquote class="border-l-4 border-secondary pl-4 mb-4">
+                    <p class="text-xl font-medium italic">"Transparencia y confianza en cada paso."</p>
+            </blockquote>
+            <h2 class="text-3xl font-bold">Canal de Denuncias</h2>
+            <p class="text-blue-200 mt-2">Un espacio seguro para mejorar nuestros servicios.</p>
+        </div>
     </div>
-    <div class="mt-6">
-      <a href="index.html" class="btn btn-primary">Volver</a>
+
+    <!-- Content Section (Right) -->
+    <div class="flex-1 flex flex-col p-6 md:p-12 bg-gray-50 overflow-y-auto">
+        <div class="max-w-2xl w-full mx-auto space-y-8">
+            
+            <!-- Breadcrumb -->
+            <nav class="flex text-sm text-gray-500" aria-label="Breadcrumb">
+                <ol class="flex items-center space-x-2">
+                    <li><a href="index.html" class="hover:text-primary transition">Inicio</a></li>
+                    <li><span class="text-gray-400">/</span></li>
+                    <li class="text-gray-800 font-medium">Portal de Denuncias</li>
+                </ol>
+            </nav>
+
+            <!-- Header -->
+            <div>
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">Canal de Denuncias y Sugerencias</h1>
+                <p class="text-gray-600">
+                    Su opinión es fundamental para nosotros. Utilice este formulario para reportar irregularidades, reportar reclamos o sugerir mejoras.
+                </p>
+            </div>
+
+            <!-- Form -->
+            <form class="bg-white p-8 rounded-xl shadow-sm border border-gray-200 space-y-6">
+                <!-- Form Header -->
+                <div class="border-b border-gray-100 pb-4 mb-4">
+                     <h2 class="text-lg font-bold text-primary flex items-center gap-2">
+                        <span class="material-icons text-secondary">report_problem</span>
+                        Registrar Nueva Denuncia
+                    </h2>
+                </div>
+
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Tipo de Solicitud</label>
+                        <select class="w-full rounded-lg border-gray-300 border p-2.5 focus:ring-2 focus:ring-primary outline-none transition bg-white">
+                            <option>Reclamo por servicio</option>
+                            <option>Denuncia ética / Conducta</option>
+                            <option>Sugerencia de mejora</option>
+                            <option>Felicitaciones</option>
+                            <option>Otro</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Asunto</label>
+                        <input type="text" placeholder="Resumen breve del motivo" class="w-full rounded-lg border-gray-300 border p-2.5 focus:ring-2 focus:ring-primary outline-none transition">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Descripción Detallada</label>
+                        <textarea rows="5" placeholder="Describa los hechos (fecha, hora, lugar, personas involucradas)..." class="w-full rounded-lg border-gray-300 border p-2.5 focus:ring-2 focus:ring-primary outline-none transition"></textarea>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Nombre (Opcional)</label>
+                            <div class="relative">
+                                <span class="material-icons absolute left-3 top-2.5 text-gray-400 text-sm">person</span>
+                                <input type="text" class="pl-9 w-full rounded-lg border-gray-300 border p-2.5 focus:ring-2 focus:ring-primary outline-none transition">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Email de Contacto (Opcional)</label>
+                            <div class="relative">
+                                <span class="material-icons absolute left-3 top-2.5 text-gray-400 text-sm">email</span>
+                                <input type="email" class="pl-9 w-full rounded-lg border-gray-300 border p-2.5 focus:ring-2 focus:ring-primary outline-none transition">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-blue-50/50 p-4 rounded-lg border border-blue-100">
+                        <label class="flex items-center gap-3 cursor-pointer">
+                            <input type="checkbox" class="w-5 h-5 text-primary rounded border-gray-300 focus:ring-primary">
+                            <span class="text-sm text-gray-700 font-medium">Deseo mantener mi identidad en el anonimato</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="pt-6 border-t border-gray-100 flex justify-end gap-3">
+                    <a href="index.html" class="px-5 py-2.5 rounded-lg border border-gray-300 text-gray-700 hover:bg-white hover:text-primary transition font-medium bg-white">Cancelar</a>
+                    <button class="px-6 py-2.5 rounded-lg bg-primary text-white hover:bg-blue-900 transition font-medium shadow-md hover:shadow-lg flex items-center gap-2">
+                        Enviar Reporte <span class="material-icons text-sm">send</span>
+                    </button>
+                </div>
+            </form>
+
+            <!-- Info Sections Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Compromiso -->
+                <div class="bg-blue-50 rounded-xl p-6 border border-blue-100 text-primary h-full">
+                    <h3 class="font-bold text-lg mb-2 flex items-center gap-2">
+                        <span class="material-icons">verified</span> Compromiso
+                    </h3>
+                    <p class="text-sm mb-4 leading-relaxed text-blue-900">
+                        Todas las denuncias son revisadas por nuestro comité de ética en un plazo máximo de 48 horas hábiles, garantizando confidencialidad.
+                    </p>
+                    <div class="text-sm font-semibold border-t border-blue-200 pt-3 flex flex-col gap-2">
+                        <div class="flex items-center gap-2"><span class="material-icons text-sm">email</span> denuncias@elloa.cl</div>
+                        <div class="flex items-center gap-2"><span class="material-icons text-sm">call</span> 800-123-456</div>
+                    </div>
+                </div>
+
+                <!-- FAQ -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 h-full">
+                    <h3 class="font-bold text-gray-800 mb-3 flex items-center gap-2">
+                         <span class="material-icons text-gray-400">help</span> FAQ
+                    </h3>
+                    <div class="space-y-3">
+                        <details class="group">
+                            <summary class="flex justify-between items-center font-medium cursor-pointer list-none text-sm text-gray-700 group-hover:text-primary">
+                                <span>¿Es realmente anónimo?</span>
+                                <span class="transition group-open:rotate-180">
+                                    <svg fill="none" height="24" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" width="24"><path d="M6 9l6 6 6-6"></path></svg>
+                                </span>
+                            </summary>
+                            <p class="text-xs text-gray-500 mt-2 leading-relaxed">Sí, nuestro sistema permite el anonimato total si así lo seleccionas en el formulario.</p>
+                        </details>
+                        <hr class="border-gray-100">
+                         <details class="group">
+                            <summary class="flex justify-between items-center font-medium cursor-pointer list-none text-sm text-gray-700 group-hover:text-primary">
+                                <span>¿Plazos de respuesta?</span>
+                                <span class="transition group-open:rotate-180">
+                                    <svg fill="none" height="24" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" width="24"><path d="M6 9l6 6 6-6"></path></svg>
+                                </span>
+                            </summary>
+                            <p class="text-xs text-gray-500 mt-2 leading-relaxed">Acusamos recibo en 24 horas y entregamos resolución preliminar en 5 días.</p>
+                        </details>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
   </main>
 
@@ -96,6 +235,8 @@
                         <li><a href="service-request.html" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Solicitudes</a></li>
                         <li><a href="companies.html" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Clientes</a></li>
                         <li><a href="portal-choferes.html" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Portal Choferes</a></li>
+                        <li><a href="contacto.html" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Contáctanos</a></li>
+                        <li><a href="trabaja-nosotros.html" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Trabaja con Nosotros</a></li>
                     </ul>
                 </div>
 

@@ -10,51 +10,129 @@
     <link rel="stylesheet" href="assets/css/tailwind.css" />
     <link rel="stylesheet" href="assets/css/custom.css" />
 </head>
-<body class="bg-gray-50 font-sans flex items-center justify-center min-h-screen">
+<body class="bg-gray-50 font-sans min-h-screen flex text-gray-800 selection:bg-secondary selection:text-white">
 
-    <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-8">
-        <div class="text-center mb-6">
-            <div class="w-24 h-24 bg-primary rounded-full mx-auto flex items-center justify-center text-white text-3xl font-bold mb-4 border-4 border-white shadow-md"><span class="material-icons text-white" style="font-size: 60px;">person</span></div>
-            <h1 class="text-2xl font-bold text-gray-800">Inicio de Sesión</h1>
-            <p class="text-sm text-gray-500">Servicios de Transporte El Loa</p>
+    <!-- Lado Izquierdo: Imagen Corporativa (Visible en pantallas grandes) -->
+    <div class="hidden lg:flex w-full lg:w-5/12 bg-[#001a33] relative justify-center items-center overflow-hidden">
+        <!-- Imagen de fondo -->
+        <img src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?q=80&w=2069&auto=format&fit=crop" 
+             alt="Transporte Corporativo Paisaje" 
+             class="absolute inset-0 w-full h-full object-cover opacity-40 mix-blend-overlay">
+        
+        <!-- Gradiente Overlay -->
+        <div class="absolute inset-0 bg-gradient-to-br from-primary/90 to-blue-900/80 mix-blend-multiply"></div>
+
+        <!-- Contenido Branding -->
+        <div class="relative z-10 p-12 text-white max-w-lg">
+            <div class="mb-8 flex items-center gap-3">
+                 <div class="w-12 h-12 bg-white rounded-lg flex items-center justify-center text-primary font-bold text-2xl shadow-lg">EL</div>
+                 <span class="text-3xl font-bold tracking-wide">Servicios El Loa</span>
+            </div>
+            
+            <h2 class="text-3xl font-bold mb-6 leading-tight text-white">Tu socio confiable en rutas mineras y turismo.</h2>
+            <p class="text-blue-100 text-lg leading-relaxed mb-8">
+                Gestiona tus viajes, monitorea tus rutas y accede a soporte 24/7 a través de nuestra plataforma digital integrada.
+            </p>
+            
+            <div class="space-y-4">
+                 <div class="flex items-center gap-4 text-sm font-medium bg-white/10 px-5 py-3 rounded-xl backdrop-blur-sm border border-white/10">
+                    <span class="material-icons text-secondary">verified_user</span> 
+                    <span>Plataforma Segura SSL</span>
+                 </div>
+                 <div class="flex items-center gap-4 text-sm font-medium bg-white/10 px-5 py-3 rounded-xl backdrop-blur-sm border border-white/10">
+                    <span class="material-icons text-secondary">support_agent</span> 
+                    <span>Soporte Técnico Especializado</span>
+                 </div>
+            </div>
         </div>
 
-        <form id="loginForm" class="space-y-4">
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Correo Electrónico</label>
-                        <div class="relative">
-                            <span class="material-icons absolute left-3 top-2 text-gray-400 text-sm">email</span>
-                            <input type="email" id="email" name="email" placeholder="Ej: juanito.perez@correo.cl" class="w-full pl-9 border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none" required>
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Contraseña</label>
-                        <div class="relative">
-                            <span class="material-icons absolute left-3 top-2 text-gray-400 text-sm">lock</span>
-                            <input type="password" id="password" name="password" placeholder="Ingresa tu contraseña" class="w-full pl-9 border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none" required>
-                        </div>
-                    </div>
+        <!-- Footer Izquierdo -->
+        <div class="absolute bottom-8 left-12 text-xs text-blue-200/60 font-medium">
+            &copy; 2026 Servicios El Loa SpA.
+        </div>
+    </div>
 
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Rol de Usuario</label>
-                        <select id="userRole" name="userRole" class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none" required>
-                            <option value="">Selecciona un rol</option>
-                            <option value="admin">Administrador</option>
-                            <option value="cliente">Cliente</option>
-                            <option value="chofer">Chofer</option>
-                        </select>
-                    </div>
+    <!-- Lado Derecho: Formulario de Login -->
+    <div class="w-full lg:w-7/12 flex flex-col justify-center items-center p-6 lg:p-20 bg-white relative">
+        <!-- Botón Volver Absoluto -->
+        <a href="index.html" class="absolute top-6 right-6 lg:top-10 lg:right-10 text-gray-400 hover:text-primary transition flex items-center gap-2 text-sm font-medium group">
+            <span class="group-hover:-translate-x-1 transition-transform duration-200">Volver al inicio</span> 
+            <span class="material-icons text-lg">arrow_forward</span>
+        </a>
+
+        <div class="w-full max-w-md">
             
-            <hr class="my-4">
-             <a href="recover-password.html" class="block text-center text-sm text-gray-500 mt-4 hover:text-gray-700">Recuperar contraseña</a>
-              <a href="register.html" class="block text-center text-sm text-gray-500 mt-4 hover:text-gray-700">Regístrate aquí</a>
+            <!-- Cabecera Mobile (Logo) -->
+            <div class="lg:hidden flex justify-center mb-8">
+                <div class="w-16 h-16 bg-primary rounded-xl flex items-center justify-center text-white text-3xl font-bold shadow-md">EL</div>
+            </div>
 
+            <!-- Título Formulario -->
+            <div class="text-center lg:text-left mb-10">
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">¡Bienvenido de nuevo!</h1>
+                <p class="text-gray-500">Ingresa tus credenciales para acceder a tu panel.</p>
+            </div>
 
-            <button type="submit" class="w-full bg-primary hover:bg-blue-900 text-white font-bold py-2 rounded shadow transition mt-4">
-                Iniciar Sesión
-            </button>
-            <a href="index.html" class="block text-center text-sm text-gray-500 mt-4 hover:text-gray-700">Volver al Inicio</a>
-        </form>
+            <form id="loginForm" class="space-y-6">
+                
+                <!-- Input Email -->
+                <div>
+                    <label for="email" class="block text-sm font-semibold text-gray-700 mb-2">Correo Electrónico</label>
+                    <div class="relative group">
+                        <span class="material-icons absolute left-3 top-3.5 text-gray-400 group-focus-within:text-primary transition-colors text-xl">email</span>
+                        <input type="email" id="email" name="email" 
+                               placeholder="nombre@empresa.com" 
+                               class="w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary focus:outline-none transition-all duration-200" 
+                               required>
+                    </div>
+                </div>
+
+                <!-- Input Password -->
+                <div>
+                    <div class="flex justify-between items-center mb-2">
+                        <label for="password" class="block text-sm font-semibold text-gray-700">Contraseña</label>
+                        <a href="recover-password.html" class="text-xs font-semibold text-primary hover:text-secondary transition">¿Olvidaste tu contraseña?</a>
+                    </div>
+                    <div class="relative group">
+                        <span class="material-icons absolute left-3 top-3.5 text-gray-400 group-focus-within:text-primary transition-colors text-xl">lock</span>
+                        <input type="password" id="password" name="password" 
+                               placeholder="••••••••" 
+                               class="w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary focus:outline-none transition-all duration-200" 
+                               required>
+                    </div>
+                </div>
+
+                <!-- Select Rol (Estilizado) -->
+                <div>
+                    <label for="userRole" class="block text-sm font-semibold text-gray-700 mb-2">Perfil de Acceso</label>
+                    <div class="relative">
+                        <span class="material-icons absolute left-3 top-3.5 text-gray-400 text-xl">badge</span>
+                        <select id="userRole" name="userRole" class="w-full pl-11 pr-10 py-3 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary focus:outline-none transition-all duration-200 appearance-none cursor-pointer text-gray-600" required>
+                            <option value="" disabled selected>Selecciona tu rol...</option>
+                            <option value="admin">Administrador</option>
+                            <option value="cliente">Cliente Empresa / Particular</option>
+                            <option value="chofer">Conductor / Operador</option>
+                        </select>
+                        <span class="material-icons absolute right-3 top-3.5 text-gray-400 pointer-events-none text-xl">expand_more</span>
+                    </div>
+                </div>
+
+                <!-- Botón Login -->
+                 <button type="submit" class="w-full bg-primary hover:bg-[#002244] text-white font-bold py-3.5 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5 mt-2 flex items-center justify-center gap-2">
+                    <span>Iniciar Sesión</span>
+                    <span class="material-icons text-sm">login</span>
+                </button>
+
+            </form>
+
+            <div class="mt-8 pt-6 border-t border-gray-100 text-center">
+                <p class="text-sm text-gray-500">
+                    ¿Aún no tienes una cuenta? 
+                    <a href="register.html" class="font-bold text-secondary hover:text-orange-700 transition">Regístrate aquí</a>
+                </p>
+            </div>
+
+        </div>
     </div>
 
     <script>
