@@ -1,9 +1,13 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { companiesMockData, site } from '../services/mockApi';
+import { Link, useNavigate } from 'react-router-dom';
+import { companiesMockData, site, getHtmlMock } from '../services/mockApi';
+import HtmlMockRenderer from '../components/HtmlMockRenderer'
 import Header from '../components/Header';
 
 export default function Companies() {
+  const navigate = useNavigate()
+  const mock = getHtmlMock('companies.html')
+  if (mock) return <HtmlMockRenderer html={mock} navigate={navigate} />
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('Todos los estados');
   const [currentPage, setCurrentPage] = useState(1);

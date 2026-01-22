@@ -1,9 +1,12 @@
-import { complaintsMockData } from '../services/mockApi';
+import { complaintsMockData, getHtmlMock } from '../services/mockApi';
+import HtmlMockRenderer from '../components/HtmlMockRenderer'
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 
 export default function Complaints() {
   const navigate = useNavigate();
+  const mock = getHtmlMock('complaints.html')
+  if (mock) return <HtmlMockRenderer html={mock} navigate={navigate} />
 
   return (
     <div className="bg-gray-50 font-sans text-gray-800 min-h-screen flex flex-col">

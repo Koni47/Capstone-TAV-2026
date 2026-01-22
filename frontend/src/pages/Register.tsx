@@ -1,8 +1,14 @@
 import React, { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
+import { getHtmlMock } from '../services/mockApi'
+import HtmlMockRenderer from '../components/HtmlMockRenderer'
 
 export default function Register() {
   const navigate = useNavigate()
+  // Si existe el mock HTML, renderizarlo tal cual
+  const mock = getHtmlMock('register.html')
+  if (mock) return <HtmlMockRenderer html={mock} navigate={navigate} />
+
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')

@@ -1,8 +1,11 @@
-import { site } from '../mocks/data';
+import { site, getHtmlMock } from '../services/mockApi';
+import HtmlMockRenderer from '../components/HtmlMockRenderer'
 import { useNavigate } from 'react-router-dom';
 
 export default function ClientPortal() {
   const navigate = useNavigate();
+  const mock = getHtmlMock('client-portal.html')
+  if (mock) return <HtmlMockRenderer html={mock} navigate={navigate} />
 
   const handleNewTrip = () => {
     navigate('/service-request');

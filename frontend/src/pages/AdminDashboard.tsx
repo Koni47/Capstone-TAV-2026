@@ -1,9 +1,12 @@
 import React from 'react'
 import Header from '../components/Header'
-import { site } from '../mocks/data'
+import { site, getHtmlMock } from '../services/mockApi'
+import HtmlMockRenderer from '../components/HtmlMockRenderer'
 import { Link, useNavigate } from 'react-router-dom'
 
 export default function AdminDashboard() {
+  const mock = getHtmlMock('dashboard_adm.html')
+  if (mock) return <HtmlMockRenderer html={mock} />
   const navigate = useNavigate();
   const d = site.adminDashboard
 

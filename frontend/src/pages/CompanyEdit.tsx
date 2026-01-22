@@ -1,10 +1,13 @@
 import { useState } from 'react';
-import { companyEditMockData } from '../services/mockApi';
+import { companyEditMockData, getHtmlMock } from '../services/mockApi';
+import HtmlMockRenderer from '../components/HtmlMockRenderer';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 
 export function CompanyEdit() {
   const navigate = useNavigate();
+  const mock = getHtmlMock('company-edit.html');
+  if (mock) return <HtmlMockRenderer html={mock} navigate={navigate} />;
   const [formData, setFormData] = useState({
     razónSocial: companyEditMockData.company.razónSocial,
     rut: companyEditMockData.company.rut,

@@ -1,9 +1,12 @@
-import { companyDetailMockData } from '../services/mockApi';
+import { companyDetailMockData, getHtmlMock } from '../services/mockApi';
+import HtmlMockRenderer from '../components/HtmlMockRenderer'
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 
 export default function CompanyDetail() {
   const navigate = useNavigate();
+  const mock = getHtmlMock('company-detail.html')
+  if (mock) return <HtmlMockRenderer html={mock} navigate={navigate} />
 
   const handleEdit = () => {
     navigate('/company-edit');

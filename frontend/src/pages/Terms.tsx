@@ -1,8 +1,12 @@
-import { termsMockData } from '../services/mockApi';
+import { termsMockData, getHtmlMock } from '../services/mockApi';
+import HtmlMockRenderer from '../components/HtmlMockRenderer'
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 
 export default function Terms() {
+  const mock = getHtmlMock('terms.html')
+  if (mock) return <HtmlMockRenderer html={mock} />
+
   const navigate = useNavigate();
 
   const handleBack = () => {

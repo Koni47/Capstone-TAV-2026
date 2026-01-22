@@ -1,8 +1,12 @@
-import { privacyMockData } from '../services/mockApi';
+import { privacyMockData, getHtmlMock } from '../services/mockApi';
+import HtmlMockRenderer from '../components/HtmlMockRenderer'
 import Header from '../components/Header';
 import { useNavigate } from 'react-router-dom';
 
 export default function Privacy() {
+  const mock = getHtmlMock('privacy.html')
+  if (mock) return <HtmlMockRenderer html={mock} />
+
   const navigate = useNavigate();
 
   const handleBack = () => {

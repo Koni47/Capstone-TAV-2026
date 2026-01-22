@@ -1,10 +1,14 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { usersPage2MockData } from "../services/mockApi";
+import { usersPage2MockData, getHtmlMock } from "../services/mockApi";
 import Header from '../components/Header';
+import HtmlMockRenderer from '../components/HtmlMockRenderer';
 
 const UsersPage2 = () => {
   const navigate = useNavigate();
+
+  const mock = getHtmlMock('users-page-2.html');
+  if (mock) return <HtmlMockRenderer html={mock} navigate={navigate} />;
 
   return (
     <div className="min-h-screen bg-gray-50">

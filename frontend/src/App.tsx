@@ -1,5 +1,5 @@
 import React from 'react'
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import Home from './pages/Home'
 import Profile from './pages/Profile'
 import ClientPortal from './pages/ClientPortal'
@@ -74,6 +74,28 @@ export default function App() {
       <Route path="/contact" element={<ClientPortal />} />
       <Route path="/privacy" element={<Privacy />} />
       <Route path="/terms" element={<Terms />} />
+
+      {/* Legacy redirects for HTML mocks */}
+      <Route path="/login.html" element={<Navigate to="/login" replace />} />
+      <Route path="/register.html" element={<Navigate to="/register" replace />} />
+      <Route path="/companies.html" element={<Navigate to="/companies" replace />} />
+      <Route path="/companies-page-2.html" element={<Navigate to="/companies/page-2" replace />} />
+      <Route path="/trips.html" element={<Navigate to="/trips" replace />} />
+      <Route path="/service-request.html" element={<Navigate to="/service-request" replace />} />
+      <Route path="/users.html" element={<Navigate to="/users" replace />} />
+      <Route path="/users-page-2.html" element={<Navigate to="/users/page-2" replace />} />
+      <Route path="/recover-password.html" element={<Navigate to="/recover-password" replace />} />
+      <Route path="/dashboard_adm.html" element={<Navigate to="/dashboard/admin" replace />} />
+      <Route path="/dashboard-cli.html" element={<Navigate to="/dashboard/client" replace />} />
+      <Route path="/dashboard-chof.html" element={<Navigate to="/dashboard/driver" replace />} />
+      <Route path="/vehicle-detail.html" element={<Navigate to="/vehicle/1" replace />} />
+      <Route path="/vehicle-edit.html" element={<Navigate to="/vehicle/1/edit" replace />} />
+      <Route path="/user-detail.html" element={<Navigate to="/user/1" replace />} />
+      <Route path="/user-edit.html" element={<Navigate to="/user/1/edit" replace />} />
+      <Route path="/company-detail.html" element={<Navigate to="/company/1" replace />} />
+      <Route path="/company-edit.html" element={<Navigate to="/company/1/edit" replace />} />
+      <Route path="/trip-detail.html" element={<Navigate to="/trip/1" replace />} />
+      <Route path="/admin-dashboard.html" element={<Navigate to="/dashboard/admin" replace />} />
 
       <Route path="*" element={<NotFound />} />
     </Routes>
