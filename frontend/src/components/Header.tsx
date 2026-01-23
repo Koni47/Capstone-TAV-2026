@@ -32,18 +32,34 @@ export default function Header() {
 
   const current = typeof window !== 'undefined' ? window.location.pathname : '/'
 
+  // Define navigation based on user role
+  const getNavigation = () => {
+    if (userRole === 'admin') {
+      return [
+        { label: 'Dashboard', href: '/dashboard/admin' },
+        { label: 'Solicitudes', href: '/service-request' },
+        { label: 'Usuarios', href: '/users' },
+        { label: 'Clientes', href: '/companies' },
+        { label: 'Flota', href: '/vehicles' }
+      ]
+    }
+    return site.nav
+  }
+
+  const navigation = getNavigation()
+
   return (
     <nav className="bg-primary text-white sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/')}> 
-            <div className="w-10 h-10 bg-white rounded-md flex items-center justify-center text-primary font-bold text-xl">EL</div>
-            <span className="font-bold text-xl tracking-wide">{site.companyName}</span>
+            <span className="material-icons text-secondary text-3xl">local_shipping</span>
+            <span className="font-bold text-xl tracking-wide">EL LOA</span>
           </div>
 
           <div className="hidden md:block ml-6">
             <div className="flex items-baseline gap-6">
-              {site.nav.map((n) => (
+              {navigation.map((n) => (
                 <Link
                   key={n.href}
                   to={n.href}

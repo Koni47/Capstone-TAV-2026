@@ -1,12 +1,16 @@
 import React from 'react'
 import Header from '../components/Header'
-import { tripsMockData } from '../mocks/data'
+import { tripsMockData, getHtmlMock } from '../services/mockApi'
+import HtmlMockRenderer from '../components/HtmlMockRenderer'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 
 export default function TripDetail() {
-  const { id } = useParams()
   const navigate = useNavigate()
-  const trip = tripsMockData.trips.find((t) => t.id === id) || tripsMockData.trips[0]
+  const mock = getHtmlMock('trip-detail.html')
+  if (mock) return <HtmlMockRenderer html={mock} navigate={navigate} />
+
+  const { id } = useParams()
+  const trip = tripsMockData.trips.find((t: any) => t.id === id) || tripsMockData.trips[0]
 
   return (
     <div className="min-h-screen bg-gray-50 font-sans text-gray-800">

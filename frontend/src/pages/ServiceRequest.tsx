@@ -1,9 +1,15 @@
 import React, { useState } from 'react';
 import Header from '../components/Header';
 import { useNavigate } from 'react-router-dom';
+import { site, getHtmlMock } from '../services/mockApi';
+import { htmlMocks } from '../mocks/data';
+import HtmlMockRenderer from '../components/HtmlMockRenderer';
 
 export default function ServiceRequest() {
   const navigate = useNavigate();
+  const mock = htmlMocks['service-request.html'];
+  console.log('ServiceRequest mock:', mock?.length || 'null');
+  if (mock) return <HtmlMockRenderer html={mock} navigate={navigate} />;
   return (
     <div className="bg-surface font-sans text-gray-800 min-h-screen">
       <Header />

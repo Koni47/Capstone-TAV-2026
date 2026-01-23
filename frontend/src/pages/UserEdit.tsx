@@ -1,10 +1,17 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { userEditMockData } from "../mocks/data";
+import { userEditMockData, getHtmlMock } from "../services/mockApi";
 import Header from '../components/Header';
+import HtmlMockRenderer from '../components/HtmlMockRenderer';
 
 const UserEdit = () => {
   const navigate = useNavigate();
+
+  const htmlMock = getHtmlMock('user-edit.html');
+  if (htmlMock) {
+    return <HtmlMockRenderer html={htmlMock} navigate={navigate} />;
+  }
+
   const [formData, setFormData] = useState({
     name: userEditMockData.user.name,
     email: userEditMockData.user.email,
@@ -105,7 +112,7 @@ const UserEdit = () => {
                       onChange={handleInputChange}
                       className="w-full pl-12 pr-10 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary focus:bg-white transition-all outline-none appearance-none cursor-pointer"
                     >
-                      {userEditMockData.roles.map((role) => (
+                      {userEditMockData.roles.map((role: any) => (
                         <option key={role} value={role}>
                           {role}
                         </option>

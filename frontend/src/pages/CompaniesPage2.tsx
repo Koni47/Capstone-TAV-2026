@@ -1,9 +1,15 @@
 import { useState } from 'react';
-import { companiesPage2MockData, site } from '../mocks/data';
+import { useNavigate } from 'react-router-dom';
+import { companiesPage2MockData, site, getHtmlMock } from '../services/mockApi';
+import HtmlMockRenderer from '../components/HtmlMockRenderer';
 import Header from '../components/Header';
 
 export function CompaniesPage2() {
+  const navigate = useNavigate()
   const [currentPage, setCurrentPage] = useState(2);
+
+  const mock = getHtmlMock('companies-page-2.html');
+  if (mock) return <HtmlMockRenderer html={mock} navigate={navigate} />;
 
   const getAvatarColors = (bgColor: string) => {
     const colors: Record<string, string> = {
@@ -68,7 +74,7 @@ export function CompaniesPage2() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {companiesPage2MockData.companies.map((company) => (
+              {companiesPage2MockData.companies.map((company: any) => (
                 <tr key={company.id} className="hover:bg-gray-50 transition">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">

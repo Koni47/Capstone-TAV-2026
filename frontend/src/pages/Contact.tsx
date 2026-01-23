@@ -1,8 +1,13 @@
 import React, { useState } from 'react';
 import Header from '../components/Header';
-import { site } from '../mocks/data';
+import { site, getHtmlMock } from '../services/mockApi';
+import HtmlMockRenderer from '../components/HtmlMockRenderer'
+import { useNavigate } from 'react-router-dom';
 
 export default function Contact() {
+  const navigate = useNavigate();
+  const mock = getHtmlMock('contacto.html')
+  if (mock) return <HtmlMockRenderer html={mock} navigate={navigate} />
   const [formData, setFormData] = useState({
     name: '',
     email: '',

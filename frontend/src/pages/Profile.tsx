@@ -1,8 +1,14 @@
 import React from 'react'
 import Header from '../components/Header'
-import { site } from '../mocks/data'
+import { site, getHtmlMock } from '../services/mockApi'
+import HtmlMockRenderer from '../components/HtmlMockRenderer'
+import { useNavigate } from 'react-router-dom'
 
 export default function Profile() {
+  const navigate = useNavigate();
+  const mock = getHtmlMock('profile.html')
+  if (mock) return <HtmlMockRenderer html={mock} navigate={navigate} />
+
   return (
     <div className="min-h-screen bg-gray-50 font-sans text-gray-800">
       <Header />
