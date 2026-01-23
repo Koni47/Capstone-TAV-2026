@@ -468,7 +468,7 @@ export const htmlMocks: Record<string, string> = {
 <section class="relative min-h-[650px] flex items-center pt-20 pb-20">
     
 <img 
-  src="assets/img/hero.jpg" 
+  src="https://images.unsplash.com/photo-1449824913935-59a10b8d2000?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80" 
   alt="Vista Pasajero Carretera" 
   class="absolute inset-0 w-full h-full object-cover"
 >
@@ -739,7 +739,7 @@ export const htmlMocks: Record<string, string> = {
             </a>
             <div class="hidden md:block">
               <div class="ml-10 flex items-baseline space-x-4">
-                <a id="dashboardLink" href="#" onclick="redirectToDashboard(event)" class="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Dashboard</a>
+                <a id="dashboardLink" onclick="__redirect('/AdminDashboard')" class="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Dashboard</a>
                 <a href="service-request.html" class="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Solicitudes</a>
                             
                 <a href="users.html" class="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">
@@ -1103,88 +1103,8 @@ export const htmlMocks: Record<string, string> = {
       </div>
     </footer>`,
 
-    'company-edit.html': `<!DOCTYPE html>
-  <html lang="es">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Editar Empresa | El Loa</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>tailwind.config = { theme: { extend: { colors: { primary: '#003366', secondary: '#FF6600' }, fontFamily: { sans: ['Inter','sans-serif'] } } } }</script>
-    <link rel="stylesheet" href="assets/css/tailwind.css" />
-    <link rel="stylesheet" href="assets/css/custom.css" />    <script src="assets/js/auth-helper.js"></script></head>
-  <body class="bg-surface font-sans text-gray-800">
-    <script>
-      // Proteger esta página - redirigir al login si no está autenticado
-      // protectPage();
-    </script>
-     <nav class="bg-primary text-white shadow-lg w-full sticky top-0 z-40">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between h-16">
-          <div class="flex items-center">
-            <a href="index.html" class="flex-shrink-0 text-white flex items-center gap-2 font-bold text-xl cursor-pointer">
-              <span class="material-icons text-secondary">local_shipping</span> EL LOA
-            </a>
-          </div>
-        </div>
-      </div>
-    </nav>
 
-    <main class="flex-grow flex flex-col lg:flex-row w-full min-h-[calc(100vh-4rem)]">
-        
-      <!-- Decorative Image Section (Left) -->
-      <div class="relative lg:w-5/12 hidden lg:block">
-        <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80" alt="Office Placeholder" class="absolute inset-0 w-full h-full object-cover">
-        <div class="absolute inset-0 bg-primary/80 mix-blend-multiply"></div>
-        <div class="absolute bottom-0 left-0 p-12 text-white">
-          <blockquote class="border-l-4 border-secondary pl-4 mb-4">
-             <p class="text-xl font-medium italic">"Gestión eficiente para relaciones duraderas."</p>
-          </blockquote>
-          <h2 class="text-3xl font-bold">Servicios Corporativos</h2>
-          <p class="text-blue-200 mt-2">Administración centralizada de clientes y convenios.</p>
-        </div>
-      </div>
 
-      <!-- Form Section (Right) -->
-      <div class="flex-1 flex flex-col justify-center p-6 md:p-12 bg-gray-50 overflow-y-auto">
-        <div class="max-w-2xl w-full mx-auto">
-          <div class="mb-8">
-            <h1 class="text-3xl font-bold text-gray-900 mb-2">Editar Empresa</h1>
-            <p class="text-gray-600">Actualice la información comercial y puntos de contacto.</p>
-          </div>
-          <form class="space-y-8 bg-white p-8 rounded-xl shadow-sm border border-gray-200">
-            <div class="space-y-6">
-              <div class="border-b border-gray-100 pb-2">
-                <h2 class="text-lg font-bold text-primary flex items-center gap-2">
-                  <span class="material-icons text-secondary text-base">domain</span> Información Corporativa
-                </h2>
-              </div>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="md:col-span-2">
-                  <label class="block text-sm font-medium text-gray-700 mb-1">Razón Social</label>
-                  <input type="text" value="Minera Escondida Ltda." class="w-full rounded-lg border-gray-300 border p-2.5 focus:ring-2 focus:ring-primary outline-none transition font-medium">
-                </div>
-              </div>
-            </div>
-          </form>
-        </div>
-      </div>
-    </main>
-
-    <footer class="bg-[#002244] text-gray-300 border-t-4 border-secondary mt-auto">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          <div class="space-y-4">
-            <div class="flex items-center gap-2 text-white">
-              <span class="material-icons text-secondary text-3xl">local_shipping</span>
-              <span class="font-bold text-xl tracking-wide">Servicios El Loa</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </footer>`,
 
     'complaints.html': `<!DOCTYPE html>
   <html lang="es">
@@ -1327,7 +1247,7 @@ export const htmlMocks: Record<string, string> = {
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-20 items-center">
                 <div class="flex items-center gap-3 cursor-pointer">
-                    <div class="w-10 h-10 bg-white rounded-md flex items-center justify-center text-primary font-bold text-xl">EL</div>
+                    <span class="material-icons text-secondary">local_shipping</span>
                     <span class="font-bold text-xl tracking-wide">Dashboard Administrador</span>
                 </div>
 
@@ -1349,7 +1269,7 @@ export const htmlMocks: Record<string, string> = {
                             <p class="text-xs text-blue-300 user-role">Admin</p>
                         </div>
                         <div class="h-8 w-8 rounded-full bg-secondary flex items-center justify-center text-white text-xs font-bold ring-2 ring-blue-900 user-initials">US</div>
-                        <a onclick="__redirect('/logout')" class="ml-2 text-sm font-semibold hover:text-gray-300 cursor-pointer">Salir</a>
+                        <a onclick="__redirect('logout.html')" class="ml-2 text-sm font-semibold hover:text-gray-300 cursor-pointer">Salir</a>
                     </div>
                 </div>
             </div>
@@ -1678,7 +1598,7 @@ export const htmlMocks: Record<string, string> = {
                 <div>
                     <h3 class="text-white font-bold uppercase tracking-wider text-sm mb-4 border-b border-blue-800 pb-2 inline-block">Navegación</h3>
                     <ul class="space-y-3 text-sm">
-                        <li><a onclick="__redirect('index.html')" class="hover:text-secondary transition flex items-center gap-2 cursor-pointer"><span class="material-icons text-xs">chevron_right</span> Inicio</a></li>
+                        <li><a onclick="__redirect('/')" class="hover:text-secondary transition flex items-center gap-2 cursor-pointer"><span class="material-icons text-xs">chevron_right</span> Inicio</a></li>
                         <li><a onclick="__redirect('service-request.html')" class="hover:text-secondary transition flex items-center gap-2 cursor-pointer"><span class="material-icons text-xs">chevron_right</span> Solicitudes</a></li>
                         <li><a onclick="__redirect('companies.html')" class="hover:text-secondary transition flex items-center gap-2 cursor-pointer"><span class="material-icons text-xs">chevron_right</span> Clientes</a></li>
                         <li><a onclick="__redirect('portal-choferes.html')" class="hover:text-secondary transition flex items-center gap-2 cursor-pointer"><span class="material-icons text-xs">chevron_right</span> Portal Choferes</a></li>
@@ -1749,95 +1669,112 @@ export const htmlMocks: Record<string, string> = {
     </footer>
 
     <script>
-        // Chart: Ingresos por Tipo de Servicio
-        const ctxServicios = document.getElementById('chartServicios').getContext('2d');
-        new Chart(ctxServicios, {
-            type: 'bar',
-            data: {
-                labels: ['Transporte Personal', 'Corporativo', 'Turismo', 'Otros'],
-                datasets: [{
-                    label: 'Ingresos ($)',
-                    data: [450000, 520000, 180000, 95000],
-                    backgroundColor: ['#003366', '#FF6600', '#0066CC', '#66BB6A'],
-                    borderRadius: 8,
-                    borderSkipped: false,
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        display: false
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: function(value) {
-                                return '$' + value.toLocaleString();
+        // Función para inicializar gráficos con delay
+        function initCharts() {
+            // Chart: Ingresos por Tipo de Servicio
+            const ctxServicios = document.getElementById('chartServicios');
+            if (ctxServicios) {
+                new Chart(ctxServicios.getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: ['Transporte Personal', 'Corporativo', 'Turismo', 'Otros'],
+                        datasets: [{
+                            label: 'Ingresos ($)',
+                            data: [450000, 520000, 180000, 95000],
+                            backgroundColor: ['#003366', '#FF6600', '#0066CC', '#66BB6A'],
+                            borderRadius: 8,
+                            borderSkipped: false,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function(value) {
+                                        return '$' + value.toLocaleString();
+                                    }
+                                }
                             }
                         }
                     }
-                }
+                });
             }
-        });
 
-        // Chart: Viajes por Mes
-        const ctxViajes = document.getElementById('chartViajes').getContext('2d');
-        new Chart(ctxViajes, {
-            type: 'line',
-            data: {
-                labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio'],
-                datasets: [{
-                    label: 'Viajes Realizados',
-                    data: [180, 195, 210, 225, 235, 245],
-                    borderColor: '#003366',
-                    backgroundColor: 'rgba(0, 51, 102, 0.1)',
-                    borderWidth: 3,
-                    fill: true,
-                    tension: 0.4,
-                    pointRadius: 5,
-                    pointBackgroundColor: '#FF6600',
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        display: false
+            // Chart: Viajes por Mes
+            const ctxViajes = document.getElementById('chartViajes');
+            if (ctxViajes) {
+                new Chart(ctxViajes.getContext('2d'), {
+                    type: 'line',
+                    data: {
+                        labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio'],
+                        datasets: [{
+                            label: 'Viajes Realizados',
+                            data: [180, 195, 210, 225, 235, 245],
+                            borderColor: '#003366',
+                            backgroundColor: 'rgba(0, 51, 102, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4,
+                            pointRadius: 5,
+                            pointBackgroundColor: '#FF6600',
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
                     }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
+                });
             }
-        });
 
-        // Chart: Ocupación de Vehículos
-        const ctxOcupacion = document.getElementById('chartOcupacion').getContext('2d');
-        new Chart(ctxOcupacion, {
-            type: 'doughnut',
-            data: {
-                labels: ['Ocupados', 'Disponibles', 'Mantenimiento'],
-                datasets: [{
-                    data: [12, 6, 2],
-                    backgroundColor: ['#66BB6A', '#FFA726', '#EF5350'],
-                    borderColor: '#fff',
-                    borderWidth: 2
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'bottom'
+            // Chart: Ocupación de Vehículos
+            const ctxOcupacion = document.getElementById('chartOcupacion');
+            if (ctxOcupacion) {
+                new Chart(ctxOcupacion.getContext('2d'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Ocupados', 'Disponibles', 'Mantenimiento'],
+                        datasets: [{
+                            data: [12, 6, 2],
+                            backgroundColor: ['#66BB6A', '#FFA726', '#EF5350'],
+                            borderColor: '#fff',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            }
+                        }
                     }
-                }
+                });
             }
-        });
+        }
+
+        // Intentar inicializar inmediatamente
+        initCharts();
+
+        // Si no funciona, intentar con delay
+        setTimeout(initCharts, 100);
+        setTimeout(initCharts, 500);
+        setTimeout(initCharts, 1000);
     </script>
 
     </body>
@@ -1947,22 +1884,6 @@ export const htmlMocks: Record<string, string> = {
                       </div>
                   </div>
 
-                  <!-- Select Rol (Estilizado) -->
-                  <div>
-                      <label for="userRole" class="block text-sm font-semibold text-gray-700 mb-2">Perfil de Acceso</label>
-                      <div class="relative">
-                          <span class="material-icons absolute left-3 top-3.5 text-gray-400 text-xl">badge</span>
-                          <select id="userRole" name="userRole" class="w-full pl-11 pr-10 py-3 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary focus:outline-none transition-all duration-200 appearance-none cursor-pointer text-gray-600" required>
-                              <option value="" disabled selected>Selecciona tu rol...</option>
-                              <option value="admin">Administrador</option>
-                              <option value="cliente">Cliente Empresa / Particular</option>
-                              <option value="chofer">Conductor / Operador</option>
-                          </select>
-                          <span class="material-icons absolute right-3 top-3.5 text-gray-400 pointer-events-none text-xl">expand_more</span>
-                      </div>
-                  </div>
-
-                  <!-- Botón Login -->
                    <button type="submit" class="w-full bg-primary hover:bg-[#002244] text-white font-bold py-3.5 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5 mt-2 flex items-center justify-center gap-2">
                       <span>Iniciar Sesión</span>
                       <span class="material-icons text-sm">login</span>
@@ -1988,44 +1909,24 @@ export const htmlMocks: Record<string, string> = {
               // Obtener los valores del formulario
               const email = document.getElementById('email').value;
               const password = document.getElementById('password').value;
-              const userRole = document.getElementById('userRole').value;
             
               // Validar que todos los campos estén completos
-              if (!email || !password || !userRole) {
+              if (!email || !password) {
                   alert('Por favor completa todos los campos');
                   return;
               }
             
-              // Guardar el rol del usuario en localStorage
-              localStorage.setItem('userRole', userRole);
+              // Guardar el rol del usuario en localStorage (siempre admin)
+              localStorage.setItem('userRole', 'admin');
               localStorage.setItem('userEmail', email);
               localStorage.setItem('loginTime', new Date().toISOString());
             
-              // Aquí iría la validación real del backend
-              // Por ahora, redirigimos según el rol seleccionado
-            
-              let redirectUrl = 'index.html'; // URL por defecto
-            
-              switch(userRole.toLowerCase()) {
-                  case 'admin':
-                      redirectUrl = 'dashboard_adm.html';
-                      break;
-                  case 'cliente':
-                      redirectUrl = 'dashboard-cli.html';
-                      break;
-                  case 'chofer':
-                      redirectUrl = 'dashboard-chof.html';
-                      break;
-                  default:
-                      redirectUrl = 'index.html';
-              }
-            
-              // Mostrar mensaje de éxito y redirigir
+              // Redirigir directamente al AdminDashboard
               alert('¡Bienvenido! Redirigiendo al dashboard...');
               if (window.__redirect) {
-                  window.__redirect(redirectUrl);
+                  window.__redirect('/admindashboard');
               } else {
-                  window.location.href = redirectUrl;
+                  window.location.href = '/admindashboard';
               }
           });
       </script>
@@ -2110,7 +2011,7 @@ export const htmlMocks: Record<string, string> = {
       <!-- Lado Derecho: Formulario de Registro -->
       <div class="w-full lg:w-7/12 flex flex-col justify-center items-center p-6 lg:p-12 bg-white relative overflow-y-auto h-screen">
           <!-- Botón Volver Absoluto -->
-          <a onclick="__redirect('index.html')" class="absolute top-6 right-6 lg:top-10 lg:right-10 text-gray-400 hover:text-primary transition flex items-center gap-2 text-sm font-medium group z-20 cursor-pointer">
+          <a onclick="__redirect('/')" class="absolute top-6 right-6 lg:top-10 lg:right-10 text-gray-400 hover:text-primary transition flex items-center gap-2 text-sm font-medium group z-20 cursor-pointer">
               <span class="group-hover:-translate-x-1 transition-transform duration-200">Volver al inicio</span> 
               <span class="material-icons text-lg">arrow_forward</span>
           </a>
@@ -2292,12 +2193,12 @@ export const htmlMocks: Record<string, string> = {
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <div class="flex items-center">
-                    <a onclick="__redirect('index.html')" class="flex-shrink-0 text-white flex items-center gap-2 font-bold text-xl cursor-pointer">
+                    <a onclick="__redirect('/')" class="flex-shrink-0 text-white flex items-center gap-2 font-bold text-xl cursor-pointer">
                         <span class="material-icons text-secondary">local_shipping</span> EL LOA
                     </a>
                     <div class="hidden md:block">
                         <div class="ml-10 flex items-baseline space-x-4">
-                            <a id="dashboardLink" onclick="redirectToDashboard(event)" class="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition cursor-pointer">Dashboard</a>
+                            <a id="dashboardLink" onclick="__redirect('/AdminDashboard')" class="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition cursor-pointer">Dashboard</a>
                             <a onclick="__redirect('service-request.html')" class="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition cursor-pointer">Solicitudes</a>
                             
                             <a onclick="__redirect('users.html')" class="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition cursor-pointer">
@@ -2333,7 +2234,7 @@ export const htmlMocks: Record<string, string> = {
             <div class="flex-1 min-w-0">
                 <nav class="flex text-sm text-gray-500 mb-1" aria-label="Breadcrumb">
                     <ol class="flex items-center space-x-2">
-                        <li><a onclick="__redirect('index.html')" class="hover:text-primary transition cursor-pointer">Inicio</a></li>
+                        <li><a onclick="__redirect('/')" class="hover:text-primary transition cursor-pointer">Inicio</a></li>
                         <li><span class="text-gray-400">/</span></li>
                         <li class="text-gray-800 font-medium">Gestión de Clientes</li>
                     </ol>
@@ -2600,7 +2501,7 @@ export const htmlMocks: Record<string, string> = {
                 <div>
                     <h3 class="text-white font-bold uppercase tracking-wider text-sm mb-4 border-b border-blue-800 pb-2 inline-block">Navegación</h3>
                     <ul class="space-y-3 text-sm">
-                        <li><a onclick="__redirect('index.html')" class="hover:text-secondary transition flex items-center gap-2 cursor-pointer"><span class="material-icons text-xs">chevron_right</span> Inicio</a></li>
+                        <li><a onclick="__redirect('/')" class="hover:text-secondary transition flex items-center gap-2 cursor-pointer"><span class="material-icons text-xs">chevron_right</span> Inicio</a></li>
                         <li><a onclick="__redirect('service-request.html')" class="hover:text-secondary transition flex items-center gap-2 cursor-pointer"><span class="material-icons text-xs">chevron_right</span> Solicitudes</a></li>
                         <li><a onclick="__redirect('companies.html')" class="hover:text-secondary transition flex items-center gap-2 cursor-pointer"><span class="material-icons text-xs">chevron_right</span> Clientes</a></li>
                         <li><a onclick="__redirect('portal-choferes.html')" class="hover:text-secondary transition flex items-center gap-2 cursor-pointer"><span class="material-icons text-xs">chevron_right</span> Portal Choferes</a></li>
@@ -2683,7 +2584,7 @@ export const htmlMocks: Record<string, string> = {
             switch(userRole.toLowerCase()) {
                 case 'admin':
                 case 'administrador':
-                    dashboardUrl = 'dashboard_adm.html';
+                    dashboardUrl = '/AdminDashboard';
                     break;
                 case 'cliente':
                     dashboardUrl = 'dashboard-cli.html';
@@ -2876,7 +2777,7 @@ export const htmlMocks: Record<string, string> = {
                   </p>
               </div>
               <div class="mt-4 flex md:mt-0 md:ml-4">
-                  <button onclick="showNewUserModal()" class="ml-3 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-secondary hover:bg-orange-700 focus:outline-none transition cursor-pointer">
+                  <button data-navigate="/register" class="ml-3 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-secondary hover:bg-orange-700 focus:outline-none transition cursor-pointer">
                       <span class="material-icons text-sm mr-2">person_add</span>
                       Nuevo Usuario
                   </button>
@@ -3317,12 +3218,12 @@ export const htmlMocks: Record<string, string> = {
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <div class="flex items-center">
-                    <a onclick="__redirect('index.html')" class="flex-shrink-0 text-white flex items-center gap-2 font-bold text-xl cursor-pointer">
+                    <a onclick="__redirect('/')" class="flex-shrink-0 text-white flex items-center gap-2 font-bold text-xl cursor-pointer">
                         <span class="material-icons text-secondary">local_shipping</span> EL LOA
                     </a>
                     <div class="hidden md:block">
                         <div class="ml-10 flex items-baseline space-x-4">
-                            <a id="dashboardLink" onclick="redirectToDashboard(event)" class="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition cursor-pointer">Dashboard</a>
+                            <a id="dashboardLink" onclick="__redirect('/AdminDashboard')" class="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition cursor-pointer">Dashboard</a>
                             <a onclick="__redirect('service-request.html')" class="bg-blue-900 text-white px-3 py-2 rounded-md text-sm font-medium border-b-4 border-secondary h-16 flex items-center pt-1 cursor-pointer">Solicitudes</a>
                             
                             <a onclick="__redirect('trips.html')" class="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition cursor-pointer">Viajes</a>
@@ -3356,7 +3257,7 @@ export const htmlMocks: Record<string, string> = {
             <div class="flex-1 min-w-0">
                 <nav class="flex text-sm text-gray-500 mb-1" aria-label="Breadcrumb">
                     <ol class="flex items-center space-x-2">
-                        <li><a onclick="__redirect('index.html')" class="hover:text-primary transition cursor-pointer">Inicio</a></li>
+                        <li><a onclick="__redirect('/')" class="hover:text-primary transition cursor-pointer">Inicio</a></li>
                         <li><span class="text-gray-400">/</span></li>
                         <li class="text-gray-800 font-medium">Solicitudes de Servicio</li>
                     </ol>
@@ -3649,7 +3550,7 @@ export const htmlMocks: Record<string, string> = {
                 <div>
                     <h3 class="text-white font-bold uppercase tracking-wider text-sm mb-4 border-b border-blue-800 pb-2 inline-block">Navegación</h3>
                     <ul class="space-y-3 text-sm">
-                        <li><a onclick="__redirect('index.html')" class="hover:text-secondary transition flex items-center gap-2 cursor-pointer"><span class="material-icons text-xs">chevron_right</span> Inicio</a></li>
+                        <li><a onclick="__redirect('/')" class="hover:text-secondary transition flex items-center gap-2 cursor-pointer"><span class="material-icons text-xs">chevron_right</span> Inicio</a></li>
                         <li><a onclick="__redirect('service-request.html')" class="hover:text-secondary transition flex items-center gap-2 cursor-pointer"><span class="material-icons text-xs">chevron_right</span> Solicitudes</a></li>
                         <li><a onclick="__redirect('companies.html')" class="hover:text-secondary transition flex items-center gap-2 cursor-pointer"><span class="material-icons text-xs">chevron_right</span> Clientes</a></li>
                         <li><a onclick="__redirect('portal-choferes.html')" class="hover:text-secondary transition flex items-center gap-2 cursor-pointer"><span class="material-icons text-xs">chevron_right</span> Portal Choferes</a></li>
@@ -3732,7 +3633,7 @@ export const htmlMocks: Record<string, string> = {
             switch(userRole.toLowerCase()) {
                 case 'admin':
                 case 'administrador':
-                    dashboardUrl = 'dashboard_adm.html';
+                    dashboardUrl = '/AdminDashboard';
                     break;
                 case 'cliente':
                     dashboardUrl = 'dashboard-cli.html';
@@ -3755,167 +3656,1564 @@ export const htmlMocks: Record<string, string> = {
   </body>
   </html>`,
 
-  };
+  'company-edit.html': `<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Editar Empresa | El Loa</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = { theme: { extend: { colors: { primary: '#003366', secondary: '#FF6600' }, fontFamily: { sans: ['Inter','sans-serif'] } } } }</script>
+  <link rel="stylesheet" href="assets/css/tailwind.css" />
+  <link rel="stylesheet" href="assets/css/custom.css" />    <script src="assets/js/auth-helper.js"></script></head>
+<body class="bg-surface font-sans text-gray-800">
+    <script>
+        // Proteger esta página - redirigir al login si no está autenticado
+        // protectPage();
+    </script>
+   <nav class="bg-primary text-white shadow-lg w-full sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <a href="index.html" class="flex-shrink-0 text-white flex items-center gap-2 font-bold text-xl cursor-pointer">
+                        <span class="material-icons text-secondary">local_shipping</span> EL LOA
+                    </a>
+                    <div class="hidden md:block">
+                        <div class="ml-10 flex items-baseline space-x-4">
+                            <a href="index.html" class="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Dashboard</a>
+                            <a href="service-request.html" class="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Solicitudes</a>
+                            
+                            <a href="users.html" class="bg-blue-900 text-white px-3 py-2 rounded-md text-sm font-medium border-b-4 border-secondary h-16 flex items-center pt-1">
+                                Usuarios
+                            </a>
+                            
+                            <a href="companies.html" class="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Clientes</a>
+                            <a href="vehicles.html" class="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Flota</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <button class="bg-primary p-1 rounded-full text-gray-400 hover:text-white transition">
+                        <span class="material-icons">notifications</span>
+                    </button>
+                    <div class="flex items-center gap-3 pl-4 border-l border-blue-800">
+                        <div class="text-right hidden sm:block">
+                            <p class="text-sm font-bold leading-none user-name">Usuario</p>
+                            <p class="text-xs text-blue-300 user-role">Admin</p>
+                        </div>
+                        <div class="h-8 w-8 rounded-full bg-secondary flex items-center justify-center text-white text-xs font-bold ring-2 ring-blue-900 user-initials">US</div>
+                        <a href="logout.html" class="ml-2 text-sm font-semibold hover:text-gray-300">Salir</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
 
-  export function getHtmlMock(name: string) {
-    return htmlMocks[name] || null
-  }
+    <main class="flex-grow flex flex-col lg:flex-row w-full min-h-[calc(100vh-4rem)]">
+        
+        <!-- Decorative Image Section (Left) -->
+        <div class="relative lg:w-5/12 hidden lg:block">
+            <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80" alt="Office Placeholder" class="absolute inset-0 w-full h-full object-cover">
+            <div class="absolute inset-0 bg-primary/80 mix-blend-multiply"></div>
+            <div class="absolute bottom-0 left-0 p-12 text-white">
+                <blockquote class="border-l-4 border-secondary pl-4 mb-4">
+                     <p class="text-xl font-medium italic">"Gestión eficiente para relaciones duraderas."</p>
+                </blockquote>
+                <h2 class="text-3xl font-bold">Servicios Corporativos</h2>
+                <p class="text-blue-200 mt-2">Administración centralizada de clientes y convenios.</p>
+            </div>
+        </div>
 
-// Note: keep single default export (`site`) earlier in this file.
+        <!-- Form Section (Right) -->
+        <div class="flex-1 flex flex-col justify-center p-6 md:p-12 bg-gray-50 overflow-y-auto">
+            <div class="max-w-2xl w-full mx-auto">
+                
+                <!-- Breadcrumb -->
+                <nav class="flex text-sm text-gray-500 mb-6" aria-label="Breadcrumb">
+                    <ol class="flex items-center space-x-2">
+                        <li><a href="index.html" class="hover:text-primary transition">Inicio</a></li>
+                        <li><span class="text-gray-400">/</span></li>
+                        <li><a href="companies.html" class="hover:text-primary transition">Clientes</a></li>
+                        <li><span class="text-gray-400">/</span></li>
+                        <li class="text-gray-800 font-medium">Editar Empresa</li>
+                    </ol>
+                </nav>
 
-export const termsMockData = {
-  title: 'Términos y Condiciones',
-  pageTitle: 'Términos y Condiciones',
-  content: 'Contenido de términos y condiciones...',
+                <div class="mb-8">
+                    <h1 class="text-3xl font-bold text-gray-900 mb-2">Editar Empresa</h1>
+                    <p class="text-gray-600">Actualice la información comercial y puntos de contacto.</p>
+                </div>
+
+                <form class="space-y-8 bg-white p-8 rounded-xl shadow-sm border border-gray-200">
+                    
+                    <!-- Section: Datos Empresa -->
+                    <div class="space-y-6">
+                        <div class="border-b border-gray-100 pb-2">
+                            <h2 class="text-lg font-bold text-primary flex items-center gap-2">
+                                <span class="material-icons text-secondary text-base">domain</span> Información Corporativa
+                            </h2>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Razón Social</label>
+                                <input type="text" value="Minera Escondida Ltda." class="w-full rounded-lg border-gray-300 border p-2.5 focus:ring-2 focus:ring-primary outline-none transition font-medium">
+                            </div>
+                             <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">RUT</label>
+                                <input type="text" value="76.123.456-K" class="w-full rounded-lg border-gray-300 border p-2.5 focus:ring-2 focus:ring-primary outline-none transition bg-gray-50 text-gray-500 cursor-not-allowed" readonly>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Rubro</label>
+                                <select class="w-full rounded-lg border-gray-300 border p-2.5 focus:ring-2 focus:ring-primary outline-none transition bg-white">
+                                    <option selected>Minería</option>
+                                    <option>Transporte</option>
+                                    <option>Industrial</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section: Contacto -->
+                    <div class="space-y-6">
+                        <div class="border-b border-gray-100 pb-2">
+                            <h2 class="text-lg font-bold text-primary flex items-center gap-2">
+                                <span class="material-icons text-secondary text-base">contacts</span> Contacto & Ubicación
+                            </h2>
+                        </div>
+
+                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Nombre Contacto</label>
+                                <div class="relative">
+                                    <span class="material-icons absolute left-3 top-2.5 text-gray-400 text-sm">person</span>
+                                    <input type="text" value="Roberto Díaz" class="pl-9 w-full rounded-lg border-gray-300 border p-2.5 focus:ring-2 focus:ring-primary outline-none transition">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
+                                <div class="relative">
+                                    <span class="material-icons absolute left-3 top-2.5 text-gray-400 text-sm">phone</span>
+                                    <input type="tel" value="+56 55 212 3456" class="pl-9 w-full rounded-lg border-gray-300 border p-2.5 focus:ring-2 focus:ring-primary outline-none transition">
+                                </div>
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Email Corporativo</label>
+                                <div class="relative">
+                                    <span class="material-icons absolute left-3 top-2.5 text-gray-400 text-sm">email</span>
+                                    <input type="email" value="rdiaz@escondida.cl" class="pl-9 w-full rounded-lg border-gray-300 border p-2.5 focus:ring-2 focus:ring-primary outline-none transition">
+                                </div>
+                            </div>
+                            
+                            <div class="md:col-span-2 grid grid-cols-3 gap-4">
+                                <div class="col-span-2">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Dirección</label>
+                                    <input type="text" value="Av. La Minería 500" class="w-full rounded-lg border-gray-300 border p-2.5 focus:ring-2 focus:ring-primary outline-none transition">
+                                </div>
+                                 <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Ciudad</label>
+                                    <input type="text" value="Antofagasta" class="w-full rounded-lg border-gray-300 border p-2.5 focus:ring-2 focus:ring-primary outline-none transition">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="flex items-center justify-between pt-6 border-t border-gray-100">
+                        <button type="button" class="text-red-500 hover:text-red-700 text-sm font-medium flex items-center gap-1">
+                            <span class="material-icons text-sm">delete</span> Eliminar
+                        </button>
+                        <div class="flex gap-3">
+                            <a href="company-detail.html" data-navigate="/company-detail" class="px-5 py-2.5 rounded-lg border border-gray-300 text-gray-700 hover:bg-white hover:text-primary transition font-medium bg-white">Cancelar</a>
+                            <button type="submit" class="px-6 py-2.5 rounded-lg bg-primary text-white hover:bg-blue-900 transition font-medium shadow-md hover:shadow-lg flex items-center gap-2">
+                                <span class="material-icons text-sm">save</span> Guardar
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+<footer class="bg-[#002244] text-gray-300 border-t-4 border-secondary mt-auto">
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                
+                <div class="space-y-4">
+                    <div class="flex items-center gap-2 text-white">
+                        <span class="material-icons text-secondary text-3xl">local_shipping</span>
+                        <span class="font-bold text-xl tracking-wide">Servicios El Loa</span>
+                    </div>
+                    <p class="text-sm leading-relaxed text-gray-400">
+                        Líderes en transporte corporativo y privado en la región de Antofagasta. Seguridad, puntualidad y tecnología al servicio de la minería.
+                    </p>
+                    <div class="flex gap-4 pt-2">
+                        <a href="https://facebook.com" target="_blank" class="w-8 h-8 rounded-full bg-blue-900 flex items-center justify-center hover:bg-secondary transition text-white">
+                            <span class="material-icons text-sm">facebook</span>
+                        </a>
+                        <a href="https://elloa.cl" target="_blank" class="w-8 h-8 rounded-full bg-blue-900 flex items-center justify-center hover:bg-secondary transition text-white">
+                            <span class="material-icons text-sm">public</span> </a>
+                        <a href="https://instagram.com" target="_blank" class="w-8 h-8 rounded-full bg-blue-900 flex items-center justify-center hover:bg-secondary transition text-white">
+                            <span class="material-icons text-sm">photo_camera</span> </a>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-white font-bold uppercase tracking-wider text-sm mb-4 border-b border-blue-800 pb-2 inline-block">Navegación</h3>
+                    <ul class="space-y-3 text-sm">
+                        <li><a href="index.html" data-navigate="/" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Inicio</a></li>
+                        <li><a href="service-request.html" data-navigate="/service-request" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Solicitudes</a></li>
+                        <li><a href="companies.html" data-navigate="/companies" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Clientes</a></li>
+                        <li><a href="portal-choferes.html" data-navigate="/portal-choferes" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Portal Choferes</a></li>
+                        <li><a href="contacto.html" data-navigate="/contact" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Contáctanos</a></li>
+                        <li><a href="trabaja-nosotros.html" data-navigate="/work-with-us" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Trabaja con Nosotros</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-white font-bold uppercase tracking-wider text-sm mb-4 border-b border-blue-800 pb-2 inline-block">Contacto Central</h3>
+                    <ul class="space-y-4 text-sm">
+                        <li class="flex items-start gap-3">
+                            <span class="material-icons text-secondary text-sm mt-1">location_on</span>
+                            <span>Av. Granaderos 2550, Of. 304<br>Calama, Región de Antofagasta</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <span class="material-icons text-secondary text-sm">phone</span>
+                            <span>+56 55 234 5678</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <span class="material-icons text-secondary text-sm">email</span>
+                            <span>operaciones@elloa.cl</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <span class="material-icons text-secondary text-sm">access_time</span>
+                            <span>24/7 Soporte en Ruta</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-white font-bold uppercase tracking-wider text-sm mb-4 border-b border-blue-800 pb-2 inline-block">Descarga la App</h3>
+                    <p class="text-xs text-gray-400 mb-4">Gestiona tus viajes y monitorea la ruta en tiempo real.</p>
+                    
+                    <div class="space-y-3">
+                        <button class="w-full bg-gray-800 hover:bg-gray-700 border border-gray-600 rounded-lg p-2 flex items-center gap-3 transition">
+                            <span class="material-icons text-3xl">apple</span>
+                            <div class="text-left">
+                                <div class="text-[10px] uppercase">Disponible en</div>
+                                <div class="font-bold text-sm text-white">App Store</div>
+                            </div>
+                        </button>
+                        <button class="w-full bg-gray-800 hover:bg-gray-700 border border-gray-600 rounded-lg p-2 flex items-center gap-3 transition">
+                            <span class="material-icons text-3xl">android</span>
+                            <div class="text-left">
+                                <div class="text-[10px] uppercase">Disponible en</div>
+                                <div class="font-bold text-sm text-white">Google Play</div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="bg-[#001a33] py-6 border-t border-blue-900/50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="text-xs text-gray-500 text-center md:text-left">
+                    &copy; 2026 Servicios de Transporte El Loa SpA. Todos los derechos reservados.
+                </div>
+                <div class="flex gap-6 text-xs text-gray-400 font-medium">
+                    <a href="terms.html" data-navigate="/terms" class="hover:text-white transition">Términos y Condiciones</a>
+                    <a href="privacy.html" data-navigate="/privacy" class="hover:text-white transition">Política de Privacidad</a>
+                    <a href="complaints.html" data-navigate="/complaints" class="hover:text-white transition">Portal de Denuncias</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>`,
+  'vehicles.html': `<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <title>Gestión de Vehículos | Servicios de Transporte El Loa</title>
+
+    <!-- Responsive -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { theme: { extend: { colors: { primary: '#003366', secondary: '#FF6600' }, fontFamily: { sans: ['Inter','sans-serif'] } } } }
+    </script>
+    <link rel="stylesheet" href="assets/css/tailwind.css" />
+    <link rel="stylesheet" href="assets/css/custom.css" />
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#003366',    /* Azul Corporativo */
+                        secondary: '#FF6600',  /* Naranja Acción */
+                        surface: '#F3F4F6',
+                        success: '#10B981',
+                        warning: '#F59E0B',
+                        danger: '#EF4444',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <script src="assets/js/auth-helper.js"></script>
+</head>
+<body class="bg-surface font-sans text-gray-800">
+    <script>
+        // Proteger esta página - redirigir al login si no está autenticado
+        protectPage();
+    </script>
+
+   <nav class="bg-primary text-white shadow-lg w-full sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <a href="index.html" data-navigate="/" class="flex-shrink-0 text-white flex items-center gap-2 font-bold text-xl cursor-pointer">
+                        <span class="material-icons text-secondary">local_shipping</span> EL LOA
+                    </a>
+                    <div class="hidden md:block">
+                        <div class="ml-10 flex items-baseline space-x-4">
+                            <a id="dashboardLink" href="#" onclick="redirectToDashboard(event)" class="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Dashboard</a>
+                            <a href="service-request.html" data-navigate="/service-request" class="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Solicitudes</a>
+                            
+                            <a href="users.html" data-navigate="/users" class="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">
+                                Usuarios
+                            </a>
+                            
+                            <a href="companies.html" data-navigate="/companies" class="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Clientes</a>
+                            <a href="vehicles.html" data-navigate="/vehicles" class="bg-blue-900 text-white px-3 py-2 rounded-md text-sm font-medium border-b-4 border-secondary h-16 flex items-center pt-1">Flota</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <button class="bg-primary p-1 rounded-full text-gray-400 hover:text-white transition">
+                        <span class="material-icons">notifications</span>
+                    </button>
+                    <div class="flex items-center gap-3 pl-4 border-l border-blue-800">
+                        <div class="text-right hidden sm:block">
+                            <p class="text-sm font-bold leading-none user-name">Usuario</p>
+                            <p class="text-xs text-blue-300 user-role">Admin</p>
+                        </div>
+                        <div class="h-8 w-8 rounded-full bg-secondary flex items-center justify-center text-white text-xs font-bold ring-2 ring-blue-900 user-initials">US</div>
+                        <a href="logout.html" data-navigate="/logout" class="ml-2 text-sm font-semibold hover:text-gray-300">Salir</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+        
+        <!-- Breadcrumb & Header -->
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div class="flex-1 min-w-0">
+                <nav class="flex text-sm text-gray-500 mb-1" aria-label="Breadcrumb">
+                    <ol class="flex items-center space-x-2">
+                        <li><a href="index.html" data-navigate="/" class="hover:text-primary transition">Inicio</a></li>
+                        <li><span class="text-gray-400">/</span></li>
+                        <li class="text-gray-800 font-medium">Gestión de Flota</li>
+                    </ol>
+                </nav>
+                <h2 class="text-2xl font-bold leading-7 text-primary sm:text-3xl sm:truncate flex items-center gap-2">
+                    <span class="material-icons">directions_bus</span> Flota de Vehículos
+                </h2>
+                <p class="mt-1 text-sm text-gray-500">Administra la flota, mantenciones y documentación.</p>
+            </div>
+            <div class="mt-4 flex md:mt-0 md:ml-4">
+                <a href="vehicle-add.html" data-navigate="/vehicle-add" class="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary hover:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition shadow-md">
+                    <span class="material-icons mr-2 text-sm">add</span>
+                    Nuevo Vehículo
+                </a>
+            </div>
+        </div>
+
+        <!-- KPI Cards -->
+        <div class="grid grid-cols-1 gap-5 sm:grid-cols-4">
+            <div class="bg-white overflow-hidden shadow-md rounded-xl border border-gray-100 hover:shadow-lg transition">
+                <div class="p-5 flex items-center justify-between">
+                     <div>
+                        <dt class="text-sm font-medium text-gray-500 truncate uppercase tracking-wide">Total Flota</dt>
+                        <dd class="mt-1 text-3xl font-bold text-gray-900">12</dd>
+                    </div>
+                     <div class="bg-blue-50 p-2 rounded-full text-primary">
+                        <span class="material-icons">local_shipping</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white overflow-hidden shadow-md rounded-xl border border-gray-100 hover:shadow-lg transition">
+                <div class="p-5 flex items-center justify-between">
+                     <div>
+                        <dt class="text-sm font-medium text-gray-500 truncate uppercase tracking-wide">Disponibles</dt>
+                        <dd class="mt-1 text-3xl font-bold text-green-600">8</dd>
+                    </div>
+                     <div class="bg-green-50 p-2 rounded-full text-green-600">
+                        <span class="material-icons">check_circle</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white overflow-hidden shadow-md rounded-xl border border-gray-100 hover:shadow-lg transition">
+                 <div class="p-5 flex items-center justify-between">
+                     <div>
+                        <dt class="text-sm font-medium text-gray-500 truncate uppercase tracking-wide">En Ruta</dt>
+                        <dd class="mt-1 text-3xl font-bold text-blue-600">3</dd>
+                    </div>
+                     <div class="bg-blue-50 p-2 rounded-full text-blue-600">
+                        <span class="material-icons">map</span>
+                    </div>
+                </div>
+            </div>
+
+             <div class="bg-white overflow-hidden shadow-md rounded-xl border border-gray-100 hover:shadow-lg transition">
+                <div class="p-5 flex items-center justify-between">
+                     <div>
+                        <dt class="text-sm font-medium text-gray-500 truncate uppercase tracking-wide">Taller / Mant.</dt>
+                        <dd class="mt-1 text-3xl font-bold text-orange-600">1</dd>
+                    </div>
+                     <div class="bg-orange-50 p-2 rounded-full text-orange-600">
+                        <span class="material-icons">build</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filters & Actions -->
+        <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 flex flex-col sm:flex-row gap-4 items-center justify-between">
+            <div class="relative w-full sm:w-96">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <span class="material-icons text-gray-400">search</span>
+                </div>
+                <input type="text" class="focus:ring-primary focus:border-primary block w-full pl-10 sm:text-sm border-gray-300 rounded-lg p-2.5 transition" placeholder="Buscar por patente, modelo...">
+            </div>
+            <div class="flex gap-2 w-full sm:w-auto">
+                <select class="focus:ring-primary focus:border-primary block w-full sm:w-auto sm:text-sm border-gray-300 rounded-lg p-2.5 bg-white cursor-pointer hover:border-blue-400 transition">
+                    <option value="">Estado: Todos</option>
+                    <option value="DISPONIBLE">Disponible</option>
+                    <option value="EN_RUTA">En Ruta</option>
+                    <option value="MANTENCION">En Mantención</option>
+                </select>
+                <button class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none transition">
+                    <span class="material-icons text-gray-500 text-sm mr-2">filter_list</span> Filtrar
+                </button>
+            </div>
+        </div>
+
+        <!-- Table Card -->
+        <div class="bg-white shadow-md rounded-xl border border-gray-100 overflow-hidden">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vehículo</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Patente / Año</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Prox. Mantención</th>
+                        <th scope="col" class="relative px-6 py-3"><span class="sr-only">Acciones</span></th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    
+                    <tr class="hover:bg-gray-50 transition duration-150">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 h-10 w-10 bg-gray-100 rounded-full flex items-center justify-center">
+                                    <span class="material-icons text-gray-500">directions_bus</span> </div>
+                                <div class="ml-4">
+                                    <div class="text-sm font-bold text-gray-900">Mercedes-Benz Sprinter</div>
+                                    <div class="text-xs text-gray-500">Van Ejecutiva (19 Pax)</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-mono font-bold text-gray-900 bg-gray-100 px-2 py-0.5 rounded inline-block border border-gray-300">LHYT-88</div>
+                            <div class="text-xs text-gray-500 mt-1">Año 2024</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 border border-green-200">
+                                Disponible
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">15 Mar 2026</div>
+                            <div class="text-xs text-green-600">Al día</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <a href="vehicle-detail.html" data-navigate="/vehicle-detail" class="text-primary hover:text-blue-900 hover:underline flex items-center justify-end gap-1">Ver <span class="material-icons text-sm">arrow_forward</span></a>
+                        </td>
+                    </tr>
+
+                    <tr class="hover:bg-gray-50 transition duration-150">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 h-10 w-10 bg-gray-100 rounded-full flex items-center justify-center">
+                                    <span class="material-icons text-gray-500">directions_car</span>
+                                </div>
+                                <div class="ml-4">
+                                    <div class="text-sm font-bold text-gray-900">Toyota Hilux 4x4</div>
+                                    <div class="text-xs text-gray-500">Camioneta Minera</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-mono font-bold text-gray-900 bg-gray-100 px-2 py-0.5 rounded inline-block border border-gray-300">KJSD-22</div>
+                            <div class="text-xs text-gray-500 mt-1">Año 2023</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800 border border-blue-200">
+                                En Ruta
+                            </span>
+                            <div class="text-[10px] text-gray-500 mt-1">Chofer: Juan P.</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">20 Feb 2026</div>
+                            <div class="text-xs text-green-600">Al día</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <a href="vehicle-detail.html" data-navigate="/vehicle-detail" class="text-primary hover:text-blue-900 hover:underline flex items-center justify-end gap-1">Ver <span class="material-icons text-sm">arrow_forward</span></a>
+                        </td>
+                    </tr>
+
+                    <tr class="bg-red-50 hover:bg-red-100 transition duration-150">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 h-10 w-10 bg-white rounded-full flex items-center justify-center border border-red-200">
+                                    <span class="material-icons text-danger">build</span>
+                                </div>
+                                <div class="ml-4">
+                                    <div class="text-sm font-bold text-gray-900">Hyundai H1</div>
+                                    <div class="text-xs text-gray-500">Van Pasajeros</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-mono font-bold text-gray-900 bg-white px-2 py-0.5 rounded inline-block border border-gray-300">BB-CL-99</div>
+                            <div class="text-xs text-gray-500 mt-1">Año 2020</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800 border border-yellow-200">
+                                En Taller
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-danger font-bold">19 Ene 2026</div>
+                            <div class="text-xs text-danger flex items-center gap-1">
+                                <span class="material-icons text-[10px]">warning</span> Vencida hoy
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <a href="vehicle-detail.html" data-navigate="/vehicle-detail" class="text-secondary hover:text-orange-900 mr-3 font-bold">Finalizar</a>
+                            <a href="vehicle-edit.html" data-navigate="/vehicle-edit" class="text-gray-400 hover:text-gray-600"><span class="material-icons text-sm">edit</span></a>
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+            
+            <div class="bg-gray-50 px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+                <div class="flex-1 flex justify-between sm:hidden">
+                    <a href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                        Anterior
+                    </a>
+                    <a href="#" class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                        Siguiente
+                    </a>
+                </div>
+                <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                    <div>
+                        <p class="text-sm text-gray-700">
+                            Mostrando <span class="font-medium">1</span> a <span class="font-medium">3</span> de <span class="font-medium">12</span> vehículos
+                        </p>
+                    </div>
+                    <div>
+                        <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                            <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                <span class="sr-only">Anterior</span>
+                                <span class="material-icons text-sm">chevron_left</span>
+                            </a>
+                            <a href="#" aria-current="page" class="z-10 bg-primary border-primary text-white relative inline-flex items-center px-4 py-2 border text-sm font-medium">
+                                1
+                            </a>
+                            <a href="#" class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium">
+                                2
+                            </a>
+                             <a href="#" class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium">
+                                3
+                            </a>
+                            <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                <span class="sr-only">Siguiente</span>
+                                <span class="material-icons text-sm">chevron_right</span>
+                            </a>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+
+    <div id="vehicleModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" onclick="toggleModal('vehicleModal')"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+            <div class="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
+                
+                <div class="flex justify-between items-start mb-4">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">Registrar Nuevo Vehículo</h3>
+                    <button onclick="toggleModal('vehicleModal')" class="text-gray-400 hover:text-gray-500"><span class="material-icons">close</span></button>
+                </div>
+
+                <form class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Patente</label>
+                            <input type="text" placeholder="ABCD-12" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm uppercase">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Año</label>
+                            <input type="number" placeholder="2024" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Marca y Modelo</label>
+                        <input type="text" placeholder="Ej: Toyota Hilux 4x4" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Tipo</label>
+                        <select class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm">
+                            <option>Van Pasajeros (Sprinter/H1)</option>
+                            <option>Camioneta (Pickup)</option>
+                            <option>SUV / Auto</option>
+                            <option>Bus</option>
+                        </select>
+                    </div>
+
+                    <div class="mt-5 sm:mt-6 sm:grid sm:grid-cols-2 sm:gap-3 sm:grid-flow-row-dense">
+                        <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary text-base font-medium text-white hover:bg-blue-800 focus:outline-none sm:col-start-2 sm:text-sm">
+                            Guardar
+                        </button>
+                        <button type="button" onclick="toggleModal('vehicleModal')" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:col-start-1 sm:text-sm">
+                            Cancelar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleModal(modalID) {
+            document.getElementById(modalID).classList.toggle("hidden");
+        }
+    </script>
+<footer class="bg-[#002244] text-gray-300 border-t-4 border-secondary mt-auto">
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                
+                <div class="space-y-4">
+                    <div class="flex items-center gap-2 text-white">
+                        <span class="material-icons text-secondary text-3xl">local_shipping</span>
+                        <span class="font-bold text-xl tracking-wide">Servicios El Loa</span>
+                    </div>
+                    <p class="text-sm leading-relaxed text-gray-400">
+                        Líderes en transporte corporativo y privado en la región de Antofagasta. Seguridad, puntualidad y tecnología al servicio de la minería.
+                    </p>
+                    <div class="flex gap-4 pt-2">
+                        <a href="https://facebook.com" target="_blank" class="w-8 h-8 rounded-full bg-blue-900 flex items-center justify-center hover:bg-secondary transition text-white">
+                            <span class="material-icons text-sm">facebook</span>
+                        </a>
+                        <a href="https://elloa.cl" target="_blank" class="w-8 h-8 rounded-full bg-blue-900 flex items-center justify-center hover:bg-secondary transition text-white">
+                            <span class="material-icons text-sm">public</span> </a>
+                        <a href="https://instagram.com" target="_blank" class="w-8 h-8 rounded-full bg-blue-900 flex items-center justify-center hover:bg-secondary transition text-white">
+                            <span class="material-icons text-sm">photo_camera</span> </a>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-white font-bold uppercase tracking-wider text-sm mb-4 border-b border-blue-800 pb-2 inline-block">Navegación</h3>
+                    <ul class="space-y-3 text-sm">
+                        <li><a href="index.html" data-navigate="/" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Inicio</a></li>
+                        <li><a href="service-request.html" data-navigate="/service-request" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Solicitudes</a></li>
+                        <li><a href="companies.html" data-navigate="/companies" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Clientes</a></li>
+                        <li><a href="portal-choferes.html" data-navigate="/portal-choferes" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Portal Choferes</a></li>
+                        <li><a href="portal-choferes.html" data-navigate="/contacto" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Contáctanos</a></li>
+                        <li><a href="portal-choferes.html" data-navigate="/trabaja-nosotros" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Trabaja con Nosotoros</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-white font-bold uppercase tracking-wider text-sm mb-4 border-b border-blue-800 pb-2 inline-block">Contacto Central</h3>
+                    <ul class="space-y-4 text-sm">
+                        <li class="flex items-start gap-3">
+                            <span class="material-icons text-secondary text-sm mt-1">location_on</span>
+                            <span>Av. Granaderos 2550, Of. 304<br>Calama, Región de Antofagasta</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <span class="material-icons text-secondary text-sm">phone</span>
+                            <span>+56 55 234 5678</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <span class="material-icons text-secondary text-sm">email</span>
+                            <span>operaciones@elloa.cl</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <span class="material-icons text-secondary text-sm">access_time</span>
+                            <span>24/7 Soporte en Ruta</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-white font-bold uppercase tracking-wider text-sm mb-4 border-b border-blue-800 pb-2 inline-block">Descarga la App</h3>
+                    <p class="text-xs text-gray-400 mb-4">Gestiona tus viajes y monitorea la ruta en tiempo real.</p>
+                    
+                    <div class="space-y-3">
+                        <button class="w-full bg-gray-800 hover:bg-gray-700 border border-gray-600 rounded-lg p-2 flex items-center gap-3 transition">
+                            <span class="material-icons text-3xl">apple</span>
+                            <div class="text-left">
+                                <div class="text-[10px] uppercase">Disponible en</div>
+                                <div class="font-bold text-sm text-white">App Store</div>
+                            </div>
+                        </button>
+                        <button class="w-full bg-gray-800 hover:bg-gray-700 border border-gray-600 rounded-lg p-2 flex items-center gap-3 transition">
+                            <span class="material-icons text-3xl">android</span>
+                            <div class="text-left">
+                                <div class="text-[10px] uppercase">Disponible en</div>
+                                <div class="font-bold text-sm text-white">Google Play</div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="bg-[#001a33] py-6 border-t border-blue-900/50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="text-xs text-gray-500 text-center md:text-left">
+                    &copy; 2026 Servicios de Transporte El Loa SpA. Todos los derechos reservados.
+                </div>
+                <div class="flex gap-6 text-xs text-gray-400 font-medium">
+                    <a href="terms.html" data-navigate="/terms" class="hover:text-white transition">Términos y Condiciones</a>
+                    <a href="privacy.html" data-navigate="/privacy" class="hover:text-white transition">Política de Privacidad</a>
+                    <a href="complaints.html" data-navigate="/complaints" class="hover:text-white transition">Portal de Denuncias</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Redirección dinámica al Dashboard según el rol del usuario
+        function redirectToDashboard(event) {
+            event.preventDefault();
+            
+            // Obtener el rol del usuario del localStorage o sessionStorage
+            const userRole = localStorage.getItem('userRole') || sessionStorage.getItem('userRole') || 'cliente';
+            
+            let dashboardUrl = 'dashboard.html'; // URL por defecto
+            
+            switch(userRole.toLowerCase()) {
+                case 'admin':
+                case 'administrador':
+                    dashboardUrl = 'dashboard_adm.html';
+                    break;
+                case 'cliente':
+                    dashboardUrl = 'dashboard-cli.html';
+                    break;
+                case 'chofer':
+                    dashboardUrl = 'dashboard-chof.html';
+                    break;
+                default:
+                    dashboardUrl = 'dashboard.html';
+            }
+            
+            // Redirigir a la URL correspondiente
+            window.location.href = dashboardUrl;
+        }
+    </script>
+</body>
+</html>`,
+  'vehicle-add.html': `<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <title>Agregar Nuevo Vehículo | Servicios de Transporte El Loa</title>
+
+    <!-- Responsive -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { theme: { extend: { colors: { primary: '#003366', secondary: '#FF6600' }, fontFamily: { sans: ['Inter','sans-serif'] } } } }
+    </script>
+    <link rel="stylesheet" href="assets/css/tailwind.css" />
+    <link rel="stylesheet" href="assets/css/custom.css" />
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#003366',    /* Azul Corporativo */
+                        secondary: '#FF6600',  /* Naranja Acción */
+                        surface: '#F3F4F6',
+                        success: '#10B981',
+                        warning: '#F59E0B',
+                        danger: '#EF4444',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <script src="assets/js/auth-helper.js"></script>
+</head>
+<body class="bg-surface font-sans text-gray-800">
+    <script>
+        // Proteger esta página - redirigir al login si no está autenticado
+        protectPage();
+    </script>
+
+   <nav class="bg-primary text-white shadow-lg w-full sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <a href="index.html" data-navigate="/" class="flex-shrink-0 text-white flex items-center gap-2 font-bold text-xl cursor-pointer">
+                        <span class="material-icons text-secondary">local_shipping</span> EL LOA
+                    </a>
+                    <div class="hidden md:block">
+                        <div class="ml-10 flex items-baseline space-x-4">
+                            <a id="dashboardLink" href="#" onclick="redirectToDashboard(event)" class="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Dashboard</a>
+                            <a href="service-request.html" data-navigate="/service-request" class="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Solicitudes</a>
+
+                            <a href="users.html" data-navigate="/users" class="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">
+                                Usuarios
+                            </a>
+
+                            <a href="companies.html" data-navigate="/companies" class="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Clientes</a>
+                            <a href="vehicles.html" data-navigate="/vehicles" class="bg-blue-900 text-white px-3 py-2 rounded-md text-sm font-medium border-b-4 border-secondary h-16 flex items-center pt-1">Flota</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <button class="bg-primary p-1 rounded-full text-gray-400 hover:text-white transition">
+                        <span class="material-icons">notifications</span>
+                    </button>
+                    <div class="flex items-center gap-3 pl-4 border-l border-blue-800">
+                        <div class="text-right hidden sm:block">
+                            <p class="text-sm font-bold leading-none user-name">Usuario</p>
+                            <p class="text-xs text-blue-300 user-role">Admin</p>
+                        </div>
+                        <div class="h-8 w-8 rounded-full bg-secondary flex items-center justify-center text-white text-xs font-bold ring-2 ring-blue-900 user-initials">US</div>
+                        <a href="logout.html" data-navigate="/logout" class="ml-2 text-sm font-semibold hover:text-gray-300">Salir</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Breadcrumb -->
+        <nav class="flex text-sm text-gray-500 mb-6" aria-label="Breadcrumb">
+            <ol class="flex items-center space-x-2">
+                <li><a href="index.html" data-navigate="/" class="hover:text-primary transition">Inicio</a></li>
+                <li><span class="text-gray-400">/</span></li>
+                <li><a href="vehicles.html" data-navigate="/vehicles" class="hover:text-primary transition">Flota</a></li>
+                <li><span class="text-gray-400">/</span></li>
+                <li class="text-gray-800 font-medium">Agregar Vehículo</li>
+            </ol>
+        </nav>
+
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold leading-7 text-primary flex items-center gap-3">
+                <span class="material-icons text-4xl">add_circle</span>
+                Agregar Nuevo Vehículo
+            </h1>
+            <p class="mt-2 text-lg text-gray-600">Complete la información del nuevo vehículo para agregarlo a la flota.</p>
+        </div>
+
+        <!-- Form Card -->
+        <div class="bg-white shadow-xl rounded-xl border border-gray-100 overflow-hidden">
+            <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
+                <h2 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                    <span class="material-icons text-primary">directions_car</span>
+                    Información del Vehículo
+                </h2>
+            </div>
+
+            <form id="vehicleForm" class="p-6 space-y-6" onsubmit="handleSubmit(event)">
+                <!-- Información Básica -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Patente *</label>
+                        <input
+                            type="text"
+                            id="patente"
+                            name="patente"
+                            placeholder="ABCD-12"
+                            class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm uppercase font-mono"
+                            required
+                            maxlength="8"
+                        >
+                        <p class="mt-1 text-xs text-gray-500">Formato: ABCD-12 o ABC-123</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Año *</label>
+                        <input
+                            type="number"
+                            id="anio"
+                            name="anio"
+                            placeholder="2024"
+                            min="1990"
+                            max="2026"
+                            class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
+                            required
+                        >
+                    </div>
+                </div>
+
+                <!-- Marca y Modelo -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Marca *</label>
+                        <select
+                            id="marca"
+                            name="marca"
+                            class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
+                            required
+                        >
+                            <option value="">Seleccionar marca</option>
+                            <option value="Mercedes-Benz">Mercedes-Benz</option>
+                            <option value="Toyota">Toyota</option>
+                            <option value="Hyundai">Hyundai</option>
+                            <option value="Volkswagen">Volkswagen</option>
+                            <option value="Chevrolet">Chevrolet</option>
+                            <option value="Ford">Ford</option>
+                            <option value="Nissan">Nissan</option>
+                            <option value="Mitsubishi">Mitsubishi</option>
+                            <option value="Iveco">Iveco</option>
+                            <option value="Scania">Scania</option>
+                            <option value="Otra">Otra</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Modelo *</label>
+                        <input
+                            type="text"
+                            id="modelo"
+                            name="modelo"
+                            placeholder="Ej: Sprinter 515 CDI"
+                            class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
+                            required
+                        >
+                    </div>
+                </div>
+
+                <!-- Tipo y Capacidad -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Tipo de Vehículo *</label>
+                        <select
+                            id="tipo"
+                            name="tipo"
+                            class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
+                            required
+                        >
+                            <option value="">Seleccionar tipo</option>
+                            <option value="Van Pasajeros">Van Pasajeros (Sprinter/H1)</option>
+                            <option value="Camioneta">Camioneta (Pickup)</option>
+                            <option value="SUV">SUV / Auto</option>
+                            <option value="Bus">Bus</option>
+                            <option value="Camión">Camión</option>
+                            <option value="Otro">Otro</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Capacidad (Pasajeros)</label>
+                        <input
+                            type="number"
+                            id="capacidad"
+                            name="capacidad"
+                            placeholder="19"
+                            min="1"
+                            max="50"
+                            class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
+                        >
+                    </div>
+                </div>
+
+                <!-- Información Técnica -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Color</label>
+                        <input
+                            type="text"
+                            id="color"
+                            name="color"
+                            placeholder="Blanco"
+                            class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
+                        >
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Kilometraje Actual</label>
+                        <input
+                            type="number"
+                            id="kilometraje"
+                            name="kilometraje"
+                            placeholder="0"
+                            min="0"
+                            class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
+                        >
+                        <p class="mt-1 text-xs text-gray-500">En kilómetros</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Combustible</label>
+                        <select
+                            id="combustible"
+                            name="combustible"
+                            class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
+                        >
+                            <option value="">Seleccionar</option>
+                            <option value="Diésel">Diésel</option>
+                            <option value="Gasolina">Gasolina</option>
+                            <option value="Eléctrico">Eléctrico</option>
+                            <option value="Híbrido">Híbrido</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Documentación -->
+                <div class="border-t border-gray-200 pt-6">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4 flex items-center gap-2">
+                        <span class="material-icons text-primary">description</span>
+                        Documentación
+                    </h3>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Fecha de Compra</label>
+                            <input
+                                type="date"
+                                id="fechaCompra"
+                                name="fechaCompra"
+                                class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
+                            >
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Fecha Vencimiento Revisión Técnica</label>
+                            <input
+                                type="date"
+                                id="fechaRevision"
+                                name="fechaRevision"
+                                class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
+                            >
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Observaciones</label>
+                        <textarea
+                            id="observaciones"
+                            name="observaciones"
+                            rows="3"
+                            placeholder="Información adicional sobre el vehículo..."
+                            class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
+                        ></textarea>
+                    </div>
+                </div>
+
+                <!-- Botones de Acción -->
+                <div class="flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-200">
+                    <button
+                        type="submit"
+                        class="inline-flex justify-center items-center px-6 py-3 border border-transparent rounded-lg shadow-sm text-base font-medium text-white bg-primary hover:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition duration-150"
+                    >
+                        <span class="material-icons mr-2">save</span>
+                        Registrar Vehículo
+                    </button>
+
+                    <a
+                        href="vehicles.html"
+                        data-navigate="/vehicles"
+                        class="inline-flex justify-center items-center px-6 py-3 border border-gray-300 rounded-lg shadow-sm text-base font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition duration-150"
+                    >
+                        <span class="material-icons mr-2">arrow_back</span>
+                        Cancelar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="fixed inset-0 z-50 overflow-y-auto" style="display: none;" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+            <div class="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full sm:p-6">
+                <div class="text-center">
+                    <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100">
+                        <span class="material-icons text-green-600 text-2xl">check_circle</span>
+                    </div>
+                    <h3 class="text-lg leading-6 font-medium text-gray-900 mt-4" id="modal-title">¡Vehículo Registrado!</h3>
+                    <div class="mt-2">
+                        <p class="text-sm text-gray-500">
+                            El vehículo ha sido registrado correctamente en el sistema.
+                        </p>
+                        <div class="mt-3 p-3 bg-gray-50 rounded-lg">
+                            <p class="text-sm font-medium text-gray-900" id="vehicleInfo"></p>
+                        </div>
+                    </div>
+                    <div class="mt-5 sm:mt-6">
+                        <button
+                            type="button"
+                            onclick="closeSuccessModal()"
+                            class="inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary text-base font-medium text-white hover:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary sm:text-sm"
+                        >
+                            Aceptar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Validación de patente chilena
+        function validatePatente(patente) {
+            const pattern = /^[A-Z]{2,4}-[0-9]{1,3}$|^[A-Z]{3,4}[0-9]{3}$/;
+            return pattern.test(patente.toUpperCase());
+        }
+
+        // Formatear patente
+        function formatPatente(input) {
+            let value = input.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+            if (value.length <= 4) {
+                // Para patentes antiguas o nuevas sin guión
+                input.value = value;
+            } else if (value.length <= 7) {
+                // Insertar guión antes de los últimos 1-3 dígitos
+                const letters = value.slice(0, -3);
+                const numbers = value.slice(-3);
+                input.value = letters + '-' + numbers;
+            }
+        }
+
+        // Manejar envío del formulario
+        function handleSubmit(event) {
+            event.preventDefault();
+            console.log('handleSubmit called');
+
+            const form = event.target;
+            const formData = new FormData(form);
+
+            // Validar patente
+            const patente = formData.get('patente');
+            console.log('Patente:', patente);
+            if (!validatePatente(patente)) {
+                alert('Formato de patente inválido. Use formato ABCD-12 o ABC-123');
+                return;
+            }
+
+            // Validar campos requeridos
+            const requiredFields = ['patente', 'anio', 'marca', 'modelo', 'tipo'];
+            let isValid = true;
+
+            requiredFields.forEach(field => {
+                const element = document.getElementById(field);
+                if (!formData.get(field)) {
+                    element.classList.add('border-red-500');
+                    isValid = false;
+                } else {
+                    element.classList.remove('border-red-500');
+                }
+            });
+
+            if (!isValid) {
+                alert('Por favor complete todos los campos requeridos.');
+                return;
+            }
+
+            console.log('Form validation passed, showing modal');
+
+            // Simular registro (aquí iría la llamada a la API)
+            const vehicleData = {
+                patente: formData.get('patente').toUpperCase(),
+                anio: formData.get('anio'),
+                marca: formData.get('marca'),
+                modelo: formData.get('modelo'),
+                tipo: formData.get('tipo'),
+                capacidad: formData.get('capacidad') || 'N/A',
+                color: formData.get('color') || 'N/A',
+                kilometraje: formData.get('kilometraje') || '0',
+                combustible: formData.get('combustible') || 'N/A',
+                fechaCompra: formData.get('fechaCompra') || 'N/A',
+                fechaRevision: formData.get('fechaRevision') || 'N/A',
+                observaciones: formData.get('observaciones') || ''
+            };
+
+            // Mostrar modal de éxito
+            showSuccessModal(vehicleData);
+
+            // Limpiar formulario
+            form.reset();
+        }
+
+        // Mostrar modal de éxito
+        function showSuccessModal(vehicleData) {
+            console.log('showSuccessModal called with:', vehicleData);
+            const modal = document.getElementById('successModal');
+            const vehicleInfo = document.getElementById('vehicleInfo');
+
+            if (!modal) {
+                console.error('Modal element not found');
+                return;
+            }
+
+            vehicleInfo.textContent = \`\${vehicleData.marca} \${vehicleData.modelo} - Patente: \${vehicleData.patente}\`;
+
+            modal.style.display = 'block';
+            console.log('Modal displayed');
+        }
+
+        // Cerrar modal de éxito
+        function closeSuccessModal() {
+            const modal = document.getElementById('successModal');
+            modal.style.display = 'none';
+
+            // Redirigir a la lista de vehículos usando la función de navegación de React
+            if (window.__redirect) {
+                window.__redirect('vehicles.html');
+            } else {
+                window.location.href = 'vehicles.html';
+            }
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            const patenteInput = document.getElementById('patente');
+            patenteInput.addEventListener('input', function() {
+                formatPatente(this);
+            });
+
+            // Auto-fill año actual si está vacío
+            const anioInput = document.getElementById('anio');
+            anioInput.addEventListener('focus', function() {
+                if (!this.value) {
+                    this.value = new Date().getFullYear();
+                }
+            });
+        });
+
+        // Redirección dinámica al Dashboard según el rol del usuario
+        function redirectToDashboard(event) {
+            event.preventDefault();
+
+            // Obtener el rol del usuario del localStorage o sessionStorage
+            const userRole = localStorage.getItem('userRole') || sessionStorage.getItem('userRole') || 'cliente';
+
+            let dashboardUrl = 'dashboard.html'; // URL por defecto
+
+            switch(userRole.toLowerCase()) {
+                case 'admin':
+                case 'administrador':
+                    dashboardUrl = 'dashboard_adm.html';
+                    break;
+                case 'cliente':
+                    dashboardUrl = 'dashboard-cli.html';
+                    break;
+                case 'chofer':
+                    dashboardUrl = 'dashboard-chof.html';
+                    break;
+                default:
+                    dashboardUrl = 'dashboard.html';
+            }
+
+            // Redirigir a la URL correspondiente
+            window.location.href = dashboardUrl;
+        }
+    </script>
+
+<footer class="bg-[#002244] text-gray-300 border-t-4 border-secondary mt-auto">
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+
+                <div class="space-y-4">
+                    <div class="flex items-center gap-2 text-white">
+                        <span class="material-icons text-secondary text-3xl">local_shipping</span>
+                        <span class="font-bold text-xl tracking-wide">Servicios El Loa</span>
+                    </div>
+                    <p class="text-sm leading-relaxed text-gray-400">
+                        Líderes en transporte corporativo y privado en la región de Antofagasta. Seguridad, puntualidad y tecnología al servicio de la minería.
+                    </p>
+                    <div class="flex gap-4 pt-2">
+                        <a href="https://facebook.com" target="_blank" class="w-8 h-8 rounded-full bg-blue-900 flex items-center justify-center hover:bg-secondary transition text-white">
+                            <span class="material-icons text-sm">facebook</span>
+                        </a>
+                        <a href="https://elloa.cl" target="_blank" class="w-8 h-8 rounded-full bg-blue-900 flex items-center justify-center hover:bg-secondary transition text-white">
+                            <span class="material-icons text-sm">public</span> </a>
+                        <a href="https://instagram.com" target="_blank" class="w-8 h-8 rounded-full bg-blue-900 flex items-center justify-center hover:bg-secondary transition text-white">
+                            <span class="material-icons text-sm">photo_camera</span> </a>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-white font-bold uppercase tracking-wider text-sm mb-4 border-b border-blue-800 pb-2 inline-block">Navegación</h3>
+                    <ul class="space-y-3 text-sm">
+                        <li><a href="index.html" data-navigate="/" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Inicio</a></li>
+                        <li><a href="service-request.html" data-navigate="/service-request" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Solicitudes</a></li>
+                        <li><a href="companies.html" data-navigate="/companies" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Clientes</a></li>
+                        <li><a href="portal-choferes.html" data-navigate="/portal-choferes" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Portal Choferes</a></li>
+                        <li><a href="portal-choferes.html" data-navigate="/contacto" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Contáctanos</a></li>
+                        <li><a href="portal-choferes.html" data-navigate="/trabaja-nosotros" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Trabaja con Nosotoros</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-white font-bold uppercase tracking-wider text-sm mb-4 border-b border-blue-800 pb-2 inline-block">Contacto Central</h3>
+                    <ul class="space-y-4 text-sm">
+                        <li class="flex items-start gap-3">
+                            <span class="material-icons text-secondary text-sm mt-1">location_on</span>
+                            <span>Av. Granaderos 2550, Of. 304<br>Calama, Región de Antofagasta</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <span class="material-icons text-secondary text-sm">phone</span>
+                            <span>+56 55 234 5678</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <span class="material-icons text-secondary text-sm">email</span>
+                            <span>operaciones@elloa.cl</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <span class="material-icons text-secondary text-sm">access_time</span>
+                            <span>24/7 Soporte en Ruta</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-white font-bold uppercase tracking-wider text-sm mb-4 border-b border-blue-800 pb-2 inline-block">Descarga la App</h3>
+                    <p class="text-xs text-gray-400 mb-4">Gestiona tus viajes y monitorea la ruta en tiempo real.</p>
+                    <div class="space-y-3">
+                        <button class="w-full bg-gray-800 hover:bg-gray-700 border border-gray-600 rounded-lg p-2 flex items-center gap-3 transition">
+                            <span class="material-icons text-3xl">apple</span>
+                            <div class="text-left">
+                                <div class="text-[10px] uppercase">Disponible en</div>
+                                <div class="font-bold text-sm text-white">App Store</div>
+                            </div>
+                        </button>
+                        <button class="w-full bg-gray-800 hover:bg-gray-700 border border-gray-600 rounded-lg p-2 flex items-center gap-3 transition">
+                            <span class="material-icons text-3xl">android</span>
+                            <div class="text-left">
+                                <div class="text-[10px] uppercase">Disponible en</div>
+                                <div class="font-bold text-sm text-white">Google Play</div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="bg-[#001a33] py-6 border-t border-blue-900/50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="text-xs text-gray-500 text-center md:text-left">
+                    &copy; 2026 Servicios de Transporte El Loa SpA. Todos los derechos reservados.
+                </div>
+                <div class="flex gap-6 text-xs text-gray-400 font-medium">
+                    <a href="terms.html" data-navigate="/terms" class="hover:text-white transition">Términos y Condiciones</a>
+                    <a href="privacy.html" data-navigate="/privacy" class="hover:text-white transition">Política de Privacidad</a>
+                    <a href="complaints.html" data-navigate="/complaints" class="hover:text-white transition">Portal de Denuncias</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>`,};
+
+// Export individual mock data for backward compatibility with mockApi.ts
+export const usersMockData = {
+  stats: {
+    totalUsers: 45,
+    activeUsers: 38,
+    pendingUsers: 7,
+  },
+  users: [
+    {
+      id: 1,
+      name: 'Juan Pérez',
+      email: 'juan.perez@mineraabc.cl',
+      role: 'Cliente',
+      status: 'Activo',
+      lastLogin: '2026-01-20',
+      company: 'Minera ABC'
+    },
+    {
+      id: 2,
+      name: 'María García',
+      email: 'maria.garcia@xyz.cl',
+      role: 'Cliente',
+      status: 'Activo',
+      lastLogin: '2026-01-19',
+      company: 'Constructora XYZ'
+    }
+  ]
 };
 
-export const tripsMockData = {
-  trips: [
+export const usersPage2MockData = {
+  stats: {
+    totalUsers: 45,
+    activeUsers: 38,
+    pendingUsers: 7,
+  },
+  users: [
     {
-      id: 'VJ-2601',
-      title: 'Traslado Turno B',
-      date: '22 Ene',
-      time: '08:30',
-      origin: 'Aeropuerto',
-      dest: 'Faena Minera Gaby',
-      client: 'Minera ABC',
-      driver: 'Juan Pérez',
-      fare: 85000,
-      status: 'En ruta',
-    },
-  ],
+      id: 3,
+      name: 'Carlos López',
+      email: 'carlos.lopez@norte.cl',
+      role: 'Chofer',
+      status: 'Activo',
+      lastLogin: '2026-01-18',
+      company: 'Transportes Norte'
+    }
+  ]
 };
 
 export const userDetailMockData = {
   user: {
+    id: 1,
     name: 'Juan Pérez',
-    email: 'juan@empresa.cl',
+    email: 'juan.perez@mineraabc.cl',
     role: 'Cliente',
-    phone: '+56 9 1234 5678',
     status: 'Activo',
-  },
+    phone: '+56 9 8765 4321',
+    company: 'Minera ABC',
+    lastLogin: '2026-01-20 14:30',
+    createdAt: '2025-03-15'
+  }
 };
 
 export const userEditMockData = {
   user: {
+    id: 1,
     name: 'Juan Pérez',
-    email: 'juan@empresa.cl',
+    email: 'juan.perez@mineraabc.cl',
     role: 'Cliente',
-    phone: '+56 9 1234 5678',
-  },
-  roles: ['Administrador', 'Cliente', 'Chofer'],
+    phone: '+56 9 8765 4321',
+    company: 'Minera ABC'
+  }
 };
 
-export const usersMockData = {
-  stats: [
-    { label: 'Total Usuarios', value: 125, color: 'blue', icon: 'groups' },
-    { label: 'Activos', value: 98, color: 'green', icon: 'check_circle' },
-    { label: 'Inactivos', value: 27, color: 'red', icon: 'cancel' },
-  ],
-  users: [
+export const vehiclesMockData = {
+  stats: {
+    totalVehicles: 20,
+    activeVehicles: 18,
+    maintenanceVehicles: 2,
+  },
+  vehicles: [
     {
       id: 1,
-      name: 'Juan Pérez',
-      email: 'juan@empresa.cl',
-      role: 'Cliente',
-      roleColor: 'blue',
+      patente: 'ABCD-12',
+      marca: 'Mercedes-Benz',
+      modelo: 'Sprinter 515 CDI',
+      tipo: 'Van Pasajeros',
+      capacidad: 19,
       status: 'Activo',
-      statusColor: 'green',
-      lastLogin: '2026-01-20',
-      initials: 'JP',
-      extraInfo: 'Cliente Corporativo',
-      lastAccess: 'Hace 2 horas',
+      color: 'Blanco',
+      kilometraje: 125000
     },
-  ],
-  pagination: {
-    showing: {
-      from: 1,
-      to: 10,
-    },
-    total: 125,
-  },
-};
-
-export const usersPage2MockData = {
-  pagination: {
-    current: 1,
-    total: 5,
-  },
-  users: [
     {
-      id: 1,
-      name: 'Juan Pérez',
-      email: 'juan@empresa.cl',
-      role: 'Cliente',
+      id: 2,
+      patente: 'EFGH-34',
+      marca: 'Toyota',
+      modelo: 'Hiace',
+      tipo: 'Van Pasajeros',
+      capacidad: 15,
       status: 'Activo',
-    },
-  ],
+      color: 'Azul',
+      kilometraje: 98000
+    }
+  ]
 };
 
 export const vehicleDetailMockData = {
   vehicle: {
-    id: 'VH-001',
-    model: 'Toyota Hilux',
-    plate: 'ABC-123',
-    capacity: 4,
+    id: 1,
+    patente: 'ABCD-12',
+    marca: 'Mercedes-Benz',
+    modelo: 'Sprinter 515 CDI',
+    tipo: 'Van Pasajeros',
+    capacidad: 19,
     status: 'Activo',
-  },
-  history: [
-    {
-      date: '2026-01-20',
-      trip: 'VJ-2601',
-      driver: 'Carlos López',
-      mileage: 150,
-      description: 'Traslado aeropuerto-faena',
-    },
-  ],
+    color: 'Blanco',
+    kilometraje: 125000,
+    anio: 2020,
+    combustible: 'Diésel',
+    fechaCompra: '2020-05-15',
+    fechaRevision: '2025-12-01',
+    observaciones: 'Vehículo en excelente estado'
+  }
 };
 
 export const vehicleEditMockData = {
   vehicle: {
-    id: 'VH-001',
-    model: 'Toyota Hilux',
-    plate: 'ABC-123',
-    capacity: 4,
-    status: 'Activo',
-  },
-  statuses: ['Disponible', 'En Ruta', 'En Mantención'],
+    id: 1,
+    patente: 'ABCD-12',
+    marca: 'Mercedes-Benz',
+    modelo: 'Sprinter 515 CDI',
+    tipo: 'Van Pasajeros',
+    capacidad: 19,
+    color: 'Blanco',
+    kilometraje: 125000,
+    anio: 2020,
+    combustible: 'Diésel',
+    fechaCompra: '2020-05-15',
+    fechaRevision: '2025-12-01',
+    observaciones: 'Vehículo en excelente estado'
+  }
 };
 
-export const vehiclesMockData = {
-  stats: [
-    { label: 'Total Vehículos', value: 20, borderColor: 'primary' },
-    { label: 'Activos', value: 18, borderColor: 'success' },
-    { label: 'En Mantenimiento', value: 2, borderColor: 'warning' },
-  ],
-  vehicles: [
-    {
-      model: 'Toyota Hilux',
-      type: 'Camioneta 4x4',
-      plate: 'ABC-123',
-      year: 2022,
-      status: 'Disponible',
-      statusColor: 'green',
-      icon: 'local_shipping',
-      driver: 'Carlos López',
-      maintenanceDate: '20/02/2026',
-      maintenanceColor: 'green',
-      maintenanceStatus: 'Al día',
-    },
-    {
-      model: 'Hyundai H1',
-      type: 'Van Pasajeros',
-      plate: 'XYZ-987',
-      year: 2021,
-      status: 'En Taller',
-      statusColor: 'red',
-      icon: 'minor_crash',
-      driver: 'Miguel González',
-      maintenanceDate: '15/01/2026',
-      maintenanceColor: 'red',
-      maintenanceStatus: 'Vencida',
-    },
-  ],
+export const tripsMockData = site.tripsMockData;
+export const termsMockData = {
+  pageTitle: 'Términos y Condiciones',
+  description: 'Lee nuestros términos y condiciones de servicio.'
 };
 
-export default site;
+export const loginMockData = site.loginMockData;
+export const homeMockData = site;
+export const contactMockData = {
+  pageTitle: 'Contáctanos',
+  description: 'Estamos aquí para ayudarte. Ponte en contacto con nuestro equipo.'
+};
+
+export const companiesMockRaw = companiesMockData;

@@ -1,7 +1,7 @@
-import siteDefault, * as mocks from '../mocks/data';
+import * as mocks from '../mocks/data';
 
 // Re-export structured mocks for backward compatibility
-export const site = mocks.site || siteDefault;
+export const site = mocks.site;
 export const companiesMockData = (mocks as any).companiesMockData;
 export const companiesPage2MockData = (mocks as any).companiesPage2MockData;
 export const companyDetailMockData = (mocks as any).companyDetailMockData;

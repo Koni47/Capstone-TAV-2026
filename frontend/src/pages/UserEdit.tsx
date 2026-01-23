@@ -9,7 +9,7 @@ const UserEdit = () => {
 
   const htmlMock = getHtmlMock('user-edit.html');
   if (htmlMock) {
-    return <HtmlMockRenderer html={htmlMock} />;
+    return <HtmlMockRenderer html={htmlMock} navigate={navigate} />;
   }
 
   const [formData, setFormData] = useState({

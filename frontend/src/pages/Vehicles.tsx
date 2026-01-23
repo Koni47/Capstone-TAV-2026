@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { vehiclesMockData } from "../services/mockApi";
+import { vehiclesMockData, getHtmlMock } from "../services/mockApi";
+import HtmlMockRenderer from '../components/HtmlMockRenderer'
 import Header from '../components/Header';
 
 const Vehicles = () => {
   const navigate = useNavigate();
+  const mock = getHtmlMock('vehicles.html')
+  if (mock) return <HtmlMockRenderer html={mock} navigate={navigate} />
   const [showModal, setShowModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
