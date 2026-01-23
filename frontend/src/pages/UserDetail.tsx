@@ -5,10 +5,9 @@ import HtmlMockRenderer from '../components/HtmlMockRenderer'
 import Header from '../components/Header';
 
 const UserDetail = () => {
-  const mock = getHtmlMock('user-detail.html')
-  if (mock) return <HtmlMockRenderer html={mock} />
-
   const navigate = useNavigate();
+  const mock = getHtmlMock('user-detail.html')
+  if (mock) return <HtmlMockRenderer html={mock} navigate={navigate} />
 
   return (
     <div className="min-h-screen bg-gray-50">

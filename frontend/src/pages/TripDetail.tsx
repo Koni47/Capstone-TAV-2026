@@ -5,11 +5,11 @@ import HtmlMockRenderer from '../components/HtmlMockRenderer'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 
 export default function TripDetail() {
+  const navigate = useNavigate()
   const mock = getHtmlMock('trip-detail.html')
-  if (mock) return <HtmlMockRenderer html={mock} />
+  if (mock) return <HtmlMockRenderer html={mock} navigate={navigate} />
 
   const { id } = useParams()
-  const navigate = useNavigate()
   const trip = tripsMockData.trips.find((t: any) => t.id === id) || tripsMockData.trips[0]
 
   return (

@@ -22,7 +22,9 @@ export default function HtmlMockRenderer({ html, navigate }: Props) {
       // make absolute
       const fixed = p.startsWith('/') ? p : `/${p}`
       // convert /something.html -> /something
-      return fixed.replace(/\.html$/i, '')
+      const result = fixed.replace(/\.html$/i, '')
+      // Special case: index -> /
+      return result === '/index' ? '/' : result
     }
 
     // Rewrite anchors
@@ -75,14 +77,16 @@ export default function HtmlMockRenderer({ html, navigate }: Props) {
         document.body.appendChild(script)
         injected.push(script)
       } else if (s.textContent) {
-        // Inline script - execute it
-        try {
-          // Use Function constructor to execute in global scope
-          const func = new Function(s.textContent)
-          func()
-        } catch (error) {
-          console.error('Error executing inline script:', error)
-        }
+        // Inline script - execute it with delay for DOM-dependent code
+        setTimeout(() => {
+          try {
+            // Use Function constructor to execute in global scope
+            const func = new Function(s.textContent)
+            func()
+          } catch (error) {
+            console.error('Error executing inline script:', error)
+          }
+        }, 100) // Small delay to ensure DOM is ready
       }
     })
 
@@ -90,6 +94,22 @@ export default function HtmlMockRenderer({ html, navigate }: Props) {
     if (navigate) {
       function handleClick(e: Event) {
         const target = e.target as HTMLElement
+        
+        // Check if clicked element or any parent has data-navigate
+        let element = target
+        let navigatePath = null
+        while (element && !navigatePath) {
+          navigatePath = element.getAttribute('data-navigate')
+          element = element.parentElement as HTMLElement
+        }
+        
+        if (navigatePath) {
+          e.preventDefault()
+          navigate!(navigatePath)
+          return
+        }
+        
+        // Original link handling
         let link = target
         while (link && link.tagName !== 'A') {
           link = link.parentElement as HTMLElement
@@ -102,6 +122,8 @@ export default function HtmlMockRenderer({ html, navigate }: Props) {
           }
         }
       }
+      
+      // Register click handler on the container after HTML is injected
       if (containerRef.current) {
         containerRef.current.addEventListener('click', handleClick)
       }
@@ -109,7 +131,9 @@ export default function HtmlMockRenderer({ html, navigate }: Props) {
       // Define global redirect function for scripts
       (window as any).__redirect = (url: string) => {
         const route = '/' + url.replace(/\.html$/, '').replace(/^\//, '')
-        navigate!(route)
+        // Special case: index -> /
+        const finalRoute = route === '/index' ? '/' : route
+        navigate!(finalRoute)
       }
 
       // Cleanup
