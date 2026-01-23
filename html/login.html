@@ -177,7 +177,11 @@
             
             // Mostrar mensaje de éxito y redirigir
             alert('¡Bienvenido! Redirigiendo al dashboard...');
-            window.location.href = redirectUrl;
+            if (window.__redirect) {
+                window.__redirect(redirectUrl);
+            } else {
+                window.location.href = redirectUrl;
+            }
         });
     </script>
 </body>
