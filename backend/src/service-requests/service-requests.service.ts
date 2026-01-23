@@ -1,24 +1,83 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
+import { CreateServiceRequestDto } from './dto/create-service-request.dto';
 
 @Injectable()
 export class ServiceRequestsService {
-  create(data: any) {
-    return data;
+  constructor(private prisma: PrismaService) {}
+
+  async create(createDto: CreateServiceRequestDto, userId: number) {
+    return this.prisma.serviceRequest.create({
+      data: {
+        origin: createDto.origin,
+        destination: createDto.destination,
+        passengerCount: createDto.passengers,
+        requestedAt: new Date(createDto.requestedDate),
+        estimatedFare: createDto.estimatedFare,
+        notes: createDto.notes,
+        clientId: userId.toString(),
+        status: 'PENDIENTE',
+      },
+    });
   }
 
-  findAll() {
-    return [];
+  async findAll(page = 1, limit = 10) {
+    const skip = (page - 1) * limit;
+    const [requests, total] = await Promise.all([
+      this.prisma.serviceRequest.findMany({
+        skip,
+        take: limit,
+        include: {
+          client: { select: { fullName: true, email: true } },
+        },
+        orderBy: { createdAt: 'desc' },
+      }),
+      this.prisma.serviceRequest.count(),
+    ]);
+
+    return {
+      requests,
+      pagination: {
+        currentPage: page,
+        totalPages: Math.ceil(total / limit),
+        totalResults: total,
+      },
+    };
   }
 
-  findOne(id: string) {
-    return { id };
+  async findOne(id: number) {
+    const request = await this.prisma.serviceRequest.findUnique({
+      where: { id: id.toString() },
+      include: {
+        client: true,
+      },
+    });
+
+    if (!request) {
+      throw new NotFoundException(`Solicitud #${id} no encontrada`);
+    }
+
+    return request;
   }
 
-  assign(id: string, data: any) {
-    return { id, ...data, status: 'AGENDADO' };
+  async assignDriver(id: number, driverId: number) {
+    return this.prisma.serviceRequest.update({
+      where: { id: id.toString() },
+      data: {
+        driverId: driverId.toString(),
+        status: 'ASIGNADO',
+      },
+    });
   }
 
-  cancel(id: string) {
-    return { id, status: 'CANCELADO' };
+  async getStats() {
+    const pending = await this.prisma.serviceRequest.count({
+      where: { status: 'PENDIENTE' },
+    });
+    const inRoute = await this.prisma.serviceRequest.count({
+      where: { status: 'EN_RUTA' },
+    });
+
+    return { pending, inRoute };
   }
 }
