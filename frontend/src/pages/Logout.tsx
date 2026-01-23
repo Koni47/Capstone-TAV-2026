@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { logoutMockData } from '../mocks/data'
+import { logoutMockData } from '../services/mockApi'
 
 export default function Logout() {
   const navigate = useNavigate()

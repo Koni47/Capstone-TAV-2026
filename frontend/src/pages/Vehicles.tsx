@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { vehiclesMockData } from "../mocks/data";
+import { vehiclesMockData, getHtmlMock } from "../services/mockApi";
+import HtmlMockRenderer from '../components/HtmlMockRenderer'
 import Header from '../components/Header';
 
 const Vehicles = () => {
   const navigate = useNavigate();
+  const mock = getHtmlMock('vehicles.html')
+  if (mock) return <HtmlMockRenderer html={mock} navigate={navigate} />
   const [showModal, setShowModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
@@ -34,7 +37,7 @@ const Vehicles = () => {
     });
   };
 
-  const filteredVehicles = vehiclesMockData.vehicles.filter((vehicle) => {
+  const filteredVehicles = vehiclesMockData.vehicles.filter((vehicle: any) => {
     const matchesSearch =
       vehicle.plate.toLowerCase().includes(searchTerm.toLowerCase()) ||
       vehicle.model.toLowerCase().includes(searchTerm.toLowerCase());
@@ -78,7 +81,7 @@ const Vehicles = () => {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-4 mb-8">
-          {vehiclesMockData.stats.map((stat, idx) => (
+          {vehiclesMockData.stats.map((stat: any, idx: number) => (
             <div
               key={idx}
               className={`bg-white overflow-hidden shadow rounded-lg border-l-4 border-${stat.borderColor}`}
@@ -150,7 +153,7 @@ const Vehicles = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {filteredVehicles.map((vehicle, idx) => (
+              {filteredVehicles.map((vehicle: any, idx: number) => (
                 <tr
                   key={idx}
                   className={`hover:bg-gray-50 transition ${
