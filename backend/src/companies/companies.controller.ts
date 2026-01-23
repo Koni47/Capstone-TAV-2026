@@ -1,32 +1,39 @@
-import { Controller, Get, Post, Param, Body } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Query, ParseIntPipe } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
 import { CompaniesService } from './companies.service';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { CreateCompanyDto } from './dto/create-company.dto';
 
-@ApiTags('Companies')
+@ApiTags('Empresas/Clientes')
 @Controller('companies')
 export class CompaniesController {
   constructor(private readonly companiesService: CompaniesService) {}
 
-  @Get()
-  @ApiOperation({ summary: 'Listar Clientes' })
-  @ApiResponse({ status: 200, description: 'Lista de clientes.' })
-  findAll() {
-    return this.companiesService.findAll();
-  }
-
   @Post()
-  @ApiOperation({ summary: 'Crear Cliente' })
-  @ApiResponse({ status: 201, description: 'Cliente creado.' })
-  @ApiResponse({ status: 400, description: 'Datos inválidos.' })
-  create(@Body() createCompanyDto: any) {
+  @ApiOperation({ summary: 'Crear una nueva empresa' })
+  @ApiResponse({ status: 201, description: 'Empresa creada' })
+  async create(@Body() createCompanyDto: CreateCompanyDto) {
     return this.companiesService.create(createCompanyDto);
   }
 
-  @Get(':id/stats')
-  @ApiOperation({ summary: 'Estadísticas Cliente' })
-  @ApiResponse({ status: 200, description: 'Estadísticas del cliente.' })
-  @ApiResponse({ status: 404, description: 'Cliente no encontrado.' })
-  getStats(@Param('id') id: string) {
-    return this.companiesService.getStats(id);
+  @Get()
+  @ApiOperation({ summary: 'Listar todas las empresas' })
+  @ApiQuery({ name: 'page', required: false, example: 1 })
+  @ApiQuery({ name: 'limit', required: false, example: 10 })
+  async findAll(@Query('page') page?: string, @Query('limit') limit?: string) {
+    return this.companiesService.findAll(Number(page) || 1, Number(limit) || 10);
+  }
+
+  @Get('stats')
+  @ApiOperation({ summary: 'Obtener estadísticas de empresas' })
+  async getStats() {
+    return this.companiesService.getStats();
+  }
+
+  @Get(':id')
+  @ApiOperation({ summary: 'Obtener detalle de una empresa' })
+  @ApiResponse({ status: 200, description: 'Detalle de la empresa' })
+  @ApiResponse({ status: 404, description: 'Empresa no encontrada' })
+  async findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.companiesService.findOne(id);
   }
 }
