@@ -32,7 +32,7 @@ export default function Header() {
 
   const current = typeof window !== 'undefined' ? window.location.pathname : '/'
 
-  // Define navigation - same menu for all roles
+  // Define navigation based on user role
   const getNavigation = () => {
     const getDashboardLink = () => {
       if (userRole === 'ADMIN') return '/dashboard/admin';
@@ -41,13 +41,26 @@ export default function Header() {
       return '/dashboard/admin';
     };
 
-    return [
+    // Common menu items for all roles
+    const commonItems = [
       { label: 'Dashboard', href: getDashboardLink() },
       { label: 'Viajes', href: '/trips' },
-      { label: 'Vehículos', href: '/vehicles' },
-      { label: 'Usuarios', href: '/users' },
-      { label: 'Clientes', href: '/companies' }
+      { label: 'Solicitudes', href: '/service-request' },
     ];
+
+    // Admin-only menu items
+    if (userRole === 'ADMIN') {
+      return [
+        ...commonItems,
+        { label: 'Vehículos', href: '/vehicles' },
+        { label: 'Usuarios', href: '/users' },
+        { label: 'Clientes', href: '/companies' },
+        { label: 'Reportes', href: '/reports' }
+      ];
+    }
+
+    // Chofer and Cliente see basic menu
+    return commonItems;
   }
 
   const navigation = getNavigation()

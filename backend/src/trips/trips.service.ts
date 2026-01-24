@@ -35,6 +35,7 @@ export class TripsService {
         include: {
           client: true,
           driver: true,
+          vehicle: true,
         },
         orderBy: { scheduledDate: 'desc' },
       }),

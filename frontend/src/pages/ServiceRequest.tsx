@@ -1,15 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import { useNavigate } from 'react-router-dom';
-import { site, getHtmlMock } from '../services/mockApi';
-import { htmlMocks } from '../mocks/data';
-import HtmlMockRenderer from '../components/HtmlMockRenderer';
+import { getServiceRequests } from '../services/api';
 
 export default function ServiceRequest() {
   const navigate = useNavigate();
-  const mock = htmlMocks['service-request.html'];
-  console.log('ServiceRequest mock:', mock?.length || 'null');
-  if (mock) return <HtmlMockRenderer html={mock} navigate={navigate} />;
+  const [requests, setRequests] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchRequests = async () => {
+      try {
+        setLoading(true);
+        const data: any = await getServiceRequests();
+        // Manejar si viene paginado o array directo
+        setRequests(data.requests || data || []);
+        setError(null);
+      } catch (err) {
+        console.error('Error fetching service requests:', err);
+        setError('Error al cargar solicitudes');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchRequests();
+  }, []);
   return (
     <div className="bg-surface font-sans text-gray-800 min-h-screen">
       <Header />
@@ -20,41 +36,99 @@ export default function ServiceRequest() {
             Volver
           </button>
         </div>
-        <h1 className="text-3xl font-bold text-primary mb-6">Solicitud de Servicio</h1>
+        <h1 className="text-3xl font-bold text-primary mb-6 flex items-center gap-3">
+          <span className="material-icons text-3xl">description</span>
+          Solicitudes de Servicio
+        </h1>
         
-        <div className="bg-white rounded-lg shadow-lg p-8">
-          <p className="text-gray-600 mb-8">Complete el siguiente formulario para solicitar un nuevo traslado. Nuestro equipo validará la disponibilidad a la brevedad.</p>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="space-y-4">
-              <label className="block">
-                <span className="text-sm font-bold text-gray-700">Origen</span>
-                <input type="text" className="form-input mt-1 block w-full border border-gray-300 rounded-md px-4 py-2 focus:ring-2 focus:ring-primary" placeholder="Ej: Calama" />
-              </label>
-              <label className="block">
-                <span className="text-sm font-bold text-gray-700">Destino</span>
-                <input type="text" className="form-input mt-1 block w-full border border-gray-300 rounded-md px-4 py-2 focus:ring-2 focus:ring-primary" placeholder="Ej: Minera Gaby" />
-              </label>
-            </div>
-            <div className="space-y-4">
-              <label className="block">
-                <span className="text-sm font-bold text-gray-700">Fecha y Hora</span>
-                <input type="datetime-local" className="form-input mt-1 block w-full border border-gray-300 rounded-md px-4 py-2 focus:ring-2 focus:ring-primary" />
-              </label>
-              <label className="block">
-                <span className="text-sm font-bold text-gray-700">Pasajeros</span>
-                <input type="number" min="1" className="form-input mt-1 block w-full border border-gray-300 rounded-md px-4 py-2 focus:ring-2 focus:ring-primary" placeholder="1" />
-              </label>
+        {loading && (
+          <div className="flex justify-center items-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+          </div>
+        )}
+
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
+            {error}
+          </div>
+        )}
+
+        {!loading && !error && requests.length === 0 && (
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
+            <span className="material-icons text-gray-300 text-6xl mb-4">description</span>
+            <h3 className="text-xl font-bold text-gray-700 mb-2">No hay solicitudes registradas</h3>
+            <p className="text-gray-500 mb-6">Las solicitudes de servicio aparecerán aquí cuando se creen.</p>
+            <button className="bg-secondary hover:bg-orange-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-all flex items-center gap-2 mx-auto">
+              <span className="material-icons">add</span>
+              Nueva Solicitud
+            </button>
+          </div>
+        )}
+
+        {!loading && !error && requests.length > 0 && (
+        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+          <div className="p-6 bg-gray-50 border-b">
+            <div className="flex justify-between items-center">
+              <div>
+                <p className="text-sm text-gray-600">Total de solicitudes</p>
+                <p className="text-2xl font-bold text-primary">{requests.length}</p>
+              </div>
+              <button className="bg-secondary hover:bg-orange-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-all flex items-center gap-2">
+                <span className="material-icons">add</span>
+                Nueva Solicitud
+              </button>
             </div>
           </div>
 
-          <div className="mt-10 flex justify-end">
-            <button className="bg-secondary hover:bg-orange-700 text-white font-bold py-3 px-10 rounded-lg shadow-lg transition-all transform hover:scale-105 flex items-center gap-2">
-              <span className="material-icons">send</span>
-              Enviar Solicitud
-            </button>
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">ID</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Cliente</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ruta</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fecha</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Estado</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Acciones</th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {requests.map((request: any) => (
+                  <tr key={request.id} className="hover:bg-gray-50 transition">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-500">#{request.id}</td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm font-bold text-gray-900">
+                        {request.company?.name || request.client?.fullName || 'N/A'}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="text-sm text-gray-900">{request.origin}</div>
+                      <div className="text-xs text-gray-500">→ {request.destination}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {new Date(request.requestedAt).toLocaleDateString('es-CL')}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`px-2 py-1 text-xs font-bold rounded-full ${
+                        request.status === 'AGENDADO' ? 'bg-green-100 text-green-800' :
+                        request.status === 'CANCELADO' ? 'bg-red-100 text-red-800' :
+                        'bg-yellow-100 text-yellow-800'
+                      }`}>
+                        {request.status}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                      <button className="text-primary hover:text-blue-900 font-medium">
+                        Ver detalle
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
+        )}
       </main>
     </div>
   );

@@ -29,6 +29,7 @@ export class ServiceRequestsService {
         take: limit,
         include: {
           client: { select: { fullName: true, email: true } },
+          company: { select: { name: true, rut: true } },
         },
         orderBy: { createdAt: 'desc' },
       }),

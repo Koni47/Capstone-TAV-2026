@@ -126,4 +126,9 @@ export const createServiceRequest = (requestData: any) =>
   apiClient.post('/service-requests', requestData);
 
 // Reports
-export const getReports = () => apiClient.get('/reports');
+export const getReports = () => apiClient.get('/reports/dashboard');
+export const getBillingReport = (month?: string, clientId?: number) => 
+  apiClient.get(`/reports/billing${month ? `?month=${month}` : ''}${clientId ? `&clientId=${clientId}` : ''}`);
+export const getTripsReport = (startDate?: string, endDate?: string) =>
+  apiClient.get(`/reports/trips${startDate ? `?startDate=${startDate}` : ''}${endDate ? `&endDate=${endDate}` : ''}`);
+export const getRevenueReport = () => apiClient.get('/reports/revenue');
