@@ -7,7 +7,11 @@ export class DriversService {
 
   async findAll() {
     return this.prisma.user.findMany({
-      where: { role: 'CHOFER' },
+      where: { 
+        role: {
+          nombre: 'CHOFER'
+        }
+      },
       select: {
         id: true,
         fullName: true,
@@ -20,7 +24,12 @@ export class DriversService {
 
   async findOne(id: number) {
     const driver = await this.prisma.user.findFirst({
-      where: { id: id.toString(), role: 'CHOFER' },
+      where: { 
+        id: id.toString(), 
+        role: {
+          nombre: 'CHOFER'
+        }
+      },
       select: {
         id: true,
         fullName: true,

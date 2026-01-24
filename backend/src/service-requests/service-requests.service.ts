@@ -65,17 +65,17 @@ export class ServiceRequestsService {
       where: { id: id.toString() },
       data: {
         driverId: driverId.toString(),
-        status: 'ASIGNADO',
+        status: 'AGENDADO' as any,
       },
     });
   }
 
   async getStats() {
     const pending = await this.prisma.serviceRequest.count({
-      where: { status: 'PENDIENTE' },
+      where: { status: 'PENDIENTE' as any },
     });
     const inRoute = await this.prisma.serviceRequest.count({
-      where: { status: 'EN_RUTA' },
+      where: { status: 'AGENDADO' as any },
     });
 
     return { pending, inRoute };

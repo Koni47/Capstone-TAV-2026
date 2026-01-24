@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { site } from '../mocks/data'
 import { Link, useNavigate } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 
 export default function Header() {
   const navigate = useNavigate()
+  const { logout } = useAuth()
   const [userEmail, setUserEmail] = useState<string | null>(null)
   const [userRole, setUserRole] = useState<string | null>(null)
   const [notifications, setNotifications] = useState<number>(0)
@@ -16,10 +18,8 @@ export default function Header() {
   }, [])
 
   const handleLogout = () => {
-    localStorage.removeItem('userRole')
-    localStorage.removeItem('userEmail')
-    localStorage.removeItem('loginTime')
-    navigate('/login')
+    logout()
+    navigate('/login', { replace: true })
   }
 
   const getInitials = () => {
@@ -32,18 +32,22 @@ export default function Header() {
 
   const current = typeof window !== 'undefined' ? window.location.pathname : '/'
 
-  // Define navigation based on user role
+  // Define navigation - same menu for all roles
   const getNavigation = () => {
-    if (userRole === 'admin') {
-      return [
-        { label: 'Dashboard', href: '/dashboard/admin' },
-        { label: 'Solicitudes', href: '/service-request' },
-        { label: 'Usuarios', href: '/users' },
-        { label: 'Clientes', href: '/companies' },
-        { label: 'Flota', href: '/vehicles' }
-      ]
-    }
-    return site?.nav || []
+    const getDashboardLink = () => {
+      if (userRole === 'ADMIN') return '/dashboard/admin';
+      if (userRole === 'CHOFER') return '/dashboard/driver';
+      if (userRole === 'CLIENTE') return '/dashboard/client';
+      return '/dashboard/admin';
+    };
+
+    return [
+      { label: 'Dashboard', href: getDashboardLink() },
+      { label: 'Viajes', href: '/trips' },
+      { label: 'Vehículos', href: '/vehicles' },
+      { label: 'Usuarios', href: '/users' },
+      { label: 'Clientes', href: '/companies' }
+    ];
   }
 
   const navigation = getNavigation()
@@ -53,7 +57,7 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/')}> 
-            <div className="w-10 h-10 bg-white rounded-md flex items-center justify-center text-primary font-bold text-xl">EL</div>
+            <span className="material-icons text-secondary text-3xl">local_shipping</span>
             <span className="font-bold text-xl tracking-wide">Servicios El Loa</span>
           </div>
 

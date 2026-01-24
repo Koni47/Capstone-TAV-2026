@@ -10,14 +10,12 @@ export class VehiclesService {
     return this.prisma.vehicle.create({
       data: {
         licensePlate: createDto.plate,
-        brand: createDto.brand,
         model: createDto.model,
         type: createDto.type,
         capacity: createDto.capacity,
         color: createDto.color,
         year: createDto.year || new Date().getFullYear(),
         mileage: createDto.mileage,
-        fuel: createDto.fuel,
         status: (createDto.status || VehicleStatus.DISPONIBLE) as any,
       },
     });
