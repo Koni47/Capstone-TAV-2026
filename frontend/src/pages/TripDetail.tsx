@@ -67,58 +67,127 @@ export default function TripDetail() {
             Volver a la lista
           </button>
         </div>
-        <h1 className="text-3xl font-bold text-primary mb-6">Detalle del Viaje #{trip.id}</h1>
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold text-primary">Detalle del Viaje</h1>
+          <span className="text-xs text-gray-400 font-mono">ID: #{trip.id.substring(0, 8)}</span>
+        </div>
         
         <div className="bg-white rounded-lg shadow-lg overflow-hidden">
           <div className="p-8">
+            {/* Título del viaje */}
+            <div className="mb-6 pb-6 border-b">
+              <h2 className="text-2xl font-bold text-gray-800 mb-2">{trip.title || 'Traslado'}</h2>
+              <div className="flex items-center gap-3">
+                <span className={`px-3 py-1 rounded-full text-sm font-bold ${
+                  trip.status === 'FINALIZADO' ? 'bg-green-100 text-green-800 border border-green-200' :
+                  trip.status === 'EN_RUTA' ? 'bg-blue-100 text-blue-800 border border-blue-200' :
+                  trip.status === 'ASIGNADO' ? 'bg-yellow-100 text-yellow-800 border border-yellow-200' :
+                  'bg-gray-100 text-gray-800 border border-gray-200'
+                }`}>
+                  {trip.status?.replace('_', ' ')}
+                </span>
+                {trip.fare && (
+                  <span className="text-xl font-bold text-primary">
+                    ${trip.fare.toLocaleString('es-CL')}
+                  </span>
+                )}
+              </div>
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
               <div className="space-y-4">
                 <h3 className="text-lg font-bold text-gray-700 border-b pb-2 flex items-center gap-2">
                   <span className="material-icons text-primary">person</span> Participantes
                 </h3>
-                <p><strong>Cliente:</strong> {trip.empresaCliente?.nombre_comercial || 'N/A'}</p>
-                <p><strong>Chofer:</strong> {trip.conductor?.nombre || 'No asignado'}</p>
-                <p><strong>Vehículo:</strong> {trip.vehiculo?.patente || 'N/A'} - {trip.vehiculo?.marca} {trip.vehiculo?.modelo}</p>
-                <p><strong>Pasajeros:</strong> {trip.cantidad_pasajeros || 0}</p>
+                <div className="space-y-3">
+                  <div className="flex items-start gap-2">
+                    <span className="material-icons text-sm text-gray-400 mt-0.5">business</span>
+                    <div>
+                      <p className="text-xs text-gray-500">Cliente</p>
+                      <p className="font-bold">{trip.client?.name || 'N/A'}</p>
+                      {trip.client?.rut && <p className="text-xs text-gray-500">{trip.client.rut}</p>}
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="material-icons text-sm text-gray-400 mt-0.5">badge</span>
+                    <div>
+                      <p className="text-xs text-gray-500">Chofer</p>
+                      <p className="font-bold">{trip.driver?.fullName || trip.driver?.name || 'No asignado'}</p>
+                      {trip.driver?.email && <p className="text-xs text-gray-500">{trip.driver.email}</p>}
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="material-icons text-sm text-gray-400 mt-0.5">directions_car</span>
+                    <div>
+                      <p className="text-xs text-gray-500">Vehículo</p>
+                      <p className="font-bold">{trip.vehicle?.licensePlate || 'N/A'}</p>
+                      {trip.vehicle && <p className="text-sm text-gray-600">{trip.vehicle.model} ({trip.vehicle.year}) - Cap: {trip.vehicle.capacity} pax</p>}
+                    </div>
+                  </div>
+                </div>
               </div>
               <div className="space-y-4">
                 <h3 className="text-lg font-bold text-gray-700 border-b pb-2 flex items-center gap-2">
                   <span className="material-icons text-secondary">location_on</span> Trayecto
                 </h3>
-                <p><strong>Origen:</strong> {trip.origen}</p>
-                <p><strong>Destino:</strong> {trip.destino}</p>
-                <p><strong>Tipo:</strong> {trip.tipo_servicio || 'Traslado'}</p>
+                <div className="space-y-3">
+                  <div className="flex items-start gap-2">
+                    <span className="material-icons text-sm text-green-500 mt-0.5">trip_origin</span>
+                    <div>
+                      <p className="text-xs text-gray-500">Origen</p>
+                      <p className="font-bold">{trip.origin || 'N/A'}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="material-icons text-sm text-red-500 mt-0.5">place</span>
+                    <div>
+                      <p className="text-xs text-gray-500">Destino</p>
+                      <p className="font-bold">{trip.destination || 'N/A'}</p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
-            <div className="bg-gray-50 p-6 rounded-lg flex flex-col md:flex-row justify-between items-center gap-4">
-              <div className="flex items-center gap-4">
-                <div className="p-3 bg-white rounded-full shadow-sm">
-                  <span className="material-icons text-primary">event</span>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-500 uppercase font-bold">Fecha y Hora</p>
-                  <p className="text-lg font-bold">
-                    {new Date(trip.fecha_hora_inicio).toLocaleDateString('es-CL')} — {new Date(trip.fecha_hora_inicio).toLocaleTimeString('es-CL', {hour: '2-digit', minute: '2-digit'})}
-                  </p>
-                </div>
+            <div className="bg-gray-50 p-6 rounded-lg space-y-4">
+              <h3 className="text-lg font-bold text-gray-700 flex items-center gap-2">
+                <span className="material-icons text-primary">schedule</span> Información de Tiempos
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {trip.scheduledDate && (
+                  <div>
+                    <p className="text-xs text-gray-500 uppercase font-bold mb-1">Fecha Programada</p>
+                    <p className="font-bold">
+                      {new Date(trip.scheduledDate).toLocaleDateString('es-CL')}
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      {new Date(trip.scheduledDate).toLocaleTimeString('es-CL', {hour: '2-digit', minute: '2-digit'})}
+                    </p>
+                  </div>
+                )}
+                {trip.startTime && (
+                  <div>
+                    <p className="text-xs text-gray-500 uppercase font-bold mb-1">Hora de Inicio</p>
+                    <p className="font-bold text-blue-700">
+                      {new Date(trip.startTime).toLocaleTimeString('es-CL', {hour: '2-digit', minute: '2-digit'})}
+                    </p>
+                  </div>
+                )}
+                {trip.endTime && (
+                  <div>
+                    <p className="text-xs text-gray-500 uppercase font-bold mb-1">Hora de Fin</p>
+                    <p className="font-bold text-green-700">
+                      {new Date(trip.endTime).toLocaleTimeString('es-CL', {hour: '2-digit', minute: '2-digit'})}
+                    </p>
+                  </div>
+                )}
               </div>
-
-              <div className="flex items-center gap-4">
-                <div className="p-3 bg-white rounded-full shadow-sm">
-                  <span className="material-icons text-success">check_circle</span>
+              {trip.comment && (
+                <div className="mt-4 pt-4 border-t">
+                  <p className="text-xs text-gray-500 uppercase font-bold mb-1">Comentarios</p>
+                  <p className="text-gray-700">{trip.comment}</p>
                 </div>
-                <div>
-                  <p className="text-xs text-gray-500 uppercase font-bold">Estado del Servicio</p>
-                  <span className={`px-3 py-1 rounded-full text-sm font-bold ${
-                    trip.estado === 'FINALIZADO' ? 'bg-success/10 text-success border border-success/20' :
-                    trip.estado === 'EN_CURSO' ? 'bg-blue-100 text-blue-800 border border-blue-200' :
-                    'bg-yellow-100 text-yellow-800 border border-yellow-200'
-                  }`}>
-                    {trip.estado.replace('_', ' ')}
-                  </span>
-                </div>
-              </div>
+              )}
             </div>
 
             <div className="mt-8 flex justify-end">
