@@ -59,27 +59,26 @@ CREATE TABLE vehiculos (
 -- 4. TABLAS DE USUARIOS Y SEGURIDAD
 -- ----------------------------------------------------------------------------
 
--- Tabla: USUARIOS
--- Centraliza Choferes, Admins y Clientes
-CREATE TABLE usuarios (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    rut VARCHAR(20) NOT NULL UNIQUE,
-    email VARCHAR(100) NOT NULL UNIQUE,
-    password_hash VARCHAR(255) NOT NULL,
-    nombre_completo VARCHAR(150) NOT NULL,
-    activo BOOLEAN DEFAULT TRUE,
-    
-    -- Relaciones
-    rol_id INT NOT NULL,
-    empresa_id UUID, -- Nullable: Solo los clientes pertenecen a una empresa
-    
-    -- Auditoría
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW(),
 
-    -- Constraints
-    CONSTRAINT fk_usuarios_rol FOREIGN KEY (rol_id) REFERENCES roles(id) ON DELETE RESTRICT,
-    CONSTRAINT fk_usuarios_empresa FOREIGN KEY (empresa_id) REFERENCES empresas_cliente(id) ON DELETE SET NULL
+-- Tabla: USERS (compatible con Prisma y backend)
+CREATE TYPE user_role_enum AS ENUM ('ADMIN', 'CLIENTE', 'CHOFER');
+CREATE TYPE user_status_enum AS ENUM ('ACTIVO', 'PENDIENTE', 'INACTIVO');
+
+CREATE TABLE users (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    email VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    fullName VARCHAR(150) NOT NULL,
+    name VARCHAR(150) NOT NULL DEFAULT '',
+    role user_role_enum NOT NULL DEFAULT 'CLIENTE',
+    phone VARCHAR(30),
+    status user_status_enum NOT NULL DEFAULT 'ACTIVO',
+    lastLogin TIMESTAMPTZ,
+    createdAt TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updatedAt TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    companyId UUID,
+    -- Relaciones
+    CONSTRAINT fk_users_company FOREIGN KEY (companyId) REFERENCES empresas_cliente(id) ON DELETE SET NULL
 );
 
 -- ----------------------------------------------------------------------------
@@ -131,8 +130,7 @@ CREATE TABLE viajes_asignado (
 
     -- Constraints
     CONSTRAINT fk_viaje_solicitud FOREIGN KEY (solicitud_id) REFERENCES solicitudes_servicio(id) ON DELETE CASCADE,
-    CONSTRAINT fk_viaje_chofer FOREIGN KEY (chofer_id) REFERENCES usuarios(id) ON DELETE RESTRICT,
-    CONSTRAINT fk_viaje_vehiculo FOREIGN KEY (vehiculo_id) REFERENCES vehiculos(id) ON DELETE RESTRICT,
+    CONSTRAINT fk_viaje_chofer FOREIGN KEY (chofer_id) REFERENCES users(id) ON DELETE RESTRICT,    CONSTRAINT fk_viaje_vehiculo FOREIGN KEY (vehiculo_id) REFERENCES vehiculos(id) ON DELETE RESTRICT,
     
     -- Validación lógica: Fin no puede ser antes que inicio
     CONSTRAINT chk_tiempos_viaje CHECK (hora_fin_real >= hora_inicio_real)
@@ -142,7 +140,7 @@ CREATE TABLE viajes_asignado (
 -- 6. ÍNDICES (Performance Tuning)
 -- ----------------------------------------------------------------------------
 -- Índices para claves foráneas (Postgres no los crea automáticamente)
-CREATE INDEX idx_usuarios_empresa_id ON usuarios(empresa_id);
+CREATE INDEX idx_users_companyId ON users(companyId);
 CREATE INDEX idx_solicitudes_empresa_id ON solicitudes_servicio(empresa_id);
 CREATE INDEX idx_viajes_chofer_id ON viajes_asignado(chofer_id);
 CREATE INDEX idx_viajes_vehiculo_id ON viajes_asignado(vehiculo_id);
@@ -150,7 +148,7 @@ CREATE INDEX idx_viajes_vehiculo_id ON viajes_asignado(vehiculo_id);
 -- Índices para búsquedas frecuentes
 CREATE INDEX idx_solicitudes_fecha ON solicitudes_servicio(fecha_hora_requerida);
 CREATE INDEX idx_solicitudes_estado ON solicitudes_servicio(estado);
-CREATE INDEX idx_usuarios_email ON usuarios(email);
+CREATE INDEX idx_users_email ON users(email);
 
 -- ----------------------------------------------------------------------------
 -- 7. TRIGGER PARA UPDATED_AT AUTOMÁTICO
@@ -167,6 +165,6 @@ $$ language 'plpgsql';
 -- Aplicar el trigger a todas las tablas relevantes
 CREATE TRIGGER trg_empresas_updated_at BEFORE UPDATE ON empresas_cliente FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER trg_vehiculos_updated_at BEFORE UPDATE ON vehiculos FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-CREATE TRIGGER trg_usuarios_updated_at BEFORE UPDATE ON usuarios FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER trg_users_updated_at BEFORE UPDATE ON users FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER trg_solicitudes_updated_at BEFORE UPDATE ON solicitudes_servicio FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER trg_viajes_updated_at BEFORE UPDATE ON viajes_asignado FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
