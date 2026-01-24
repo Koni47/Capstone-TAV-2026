@@ -13,106 +13,117 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id              String           @id @default(uuid())
-  email           String           @unique
-  password        String
-  fullName        String
-  role            Role             @default(CLIENTE)
-  phone           String?
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
-  companyId       String?
-  serviceRequests ServiceRequest[] @relation("ClientRequests")
-  tripsAsDriver   Trip[]           @relation("DriverTrips")
-  company         Company?         @relation(fields: [companyId], references: [id])
+model UserRoleModel {
+  id          Int     @id @default(autoincrement())
+  nombre      String  @unique
+  permisos    Json?   @default("{}")
+  descripcion String?
+  users       User[]
 
-  @@map("users")
+  @@map("roles")
 }
 
 model Company {
-  id              String           @id @default(uuid())
-  rut             String           @unique
-  name            String
-  costCenter      String
-  address         String?
-  contactEmail    String?
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
-  serviceRequests ServiceRequest[]
-  users           User[]
+  id                  String   @id @default(uuid())
+  razonSocial         String   @map("razon_social")
+  rutEmpresa          String   @unique @map("rut_empresa")
+  centroCosto         String?  @map("centro_costo")
+  contactoComercial   String?  @map("contacto_comercial")
+  createdAt           DateTime @default(now()) @map("created_at")
+  updatedAt           DateTime @updatedAt @map("updated_at")
+  serviceRequests     ServiceRequest[]
+  users               User[]
 
-  @@map("companies")
+  @@map("empresas_cliente")
 }
 
 model Vehicle {
   id                  String        @id @default(uuid())
-  licensePlate        String        @unique
-  model               String
-  year                Int
-  status              VehicleStatus @default(DISPONIBLE)
-  technicalReviewDate DateTime?
-  createdAt           DateTime      @default(now())
-  updatedAt           DateTime      @updatedAt
+  patente             String        @unique @map("patente")
+  marca               String        @map("marca")
+  modelo              String        @map("modelo")
+  capacidadPax        Int           @map("capacidad_pax")
+  estado              VehicleStatus @default(DISPONIBLE) @map("estado")
+  vencimientoRevTec   DateTime?     @map("vencimiento_rev_tec")
+  createdAt           DateTime      @default(now()) @map("created_at")
+  updatedAt           DateTime      @updatedAt @map("updated_at")
   trips               Trip[]
 
-  @@map("vehicles")
+  @@map("vehiculos")
+}
+
+model User {
+  id              String           @id @default(uuid())
+  rut             String           @unique
+  email           String           @unique
+  password        String           @map("password_hash")
+  nombreCompleto  String           @map("nombre_completo")
+  activo          Boolean          @default(true) @map("activo")
+  rolId           Int              @map("rol_id")
+  empresaId       String?          @map("empresa_id")
+  createdAt       DateTime         @default(now()) @map("created_at")
+  updatedAt       DateTime         @updatedAt @map("updated_at")
+  role            UserRoleModel   @relation(fields: [rolId], references: [id])
+  company         Company?         @relation(fields: [empresaId], references: [id])
+  tripsAsDriver   Trip[]           @relation("DriverTrips")
+
+  @@map("usuarios")
 }
 
 model ServiceRequest {
   id             String   @id @default(uuid())
-  origin         String
-  destination    String
-  passengerCount Int
-  requestedAt    DateTime @default(now())
-  notes          String?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  clientId       String
-  companyId      String?
-  client         User     @relation("ClientRequests", fields: [clientId], references: [id])
-  company        Company? @relation(fields: [companyId], references: [id])
+  empresaId      String   @map("empresa_id")
+  fechaHoraRequerida DateTime @map("fecha_hora_requerida")
+  origenDireccion String @map("origen_direccion")
+  destinoDireccion String @map("destino_direccion")
+  cantidadPasajeros Int @map("cantidad_pasajeros")
+  nominaPasajeros String? @map("nomina_pasajeros")
+  estado         RequestStatus @default(PENDIENTE) @map("estado")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+  company        Company  @relation(fields: [empresaId], references: [id])
   trip           Trip?
 
-  @@map("service_requests")
+  @@map("solicitudes_servicio")
 }
 
 model Trip {
   id               String         @id @default(uuid())
-  status           TripStatus     @default(PENDIENTE)
-  startTime        DateTime?
-  endTime          DateTime?
-  rating           Int?
-  comment          String?
-  createdAt        DateTime       @default(now())
-  updatedAt        DateTime       @updatedAt
-  serviceRequestId String         @unique
-  driverId         String?
-  vehicleId        String?
-  driver           User?          @relation("DriverTrips", fields: [driverId], references: [id])
-  serviceRequest   ServiceRequest @relation(fields: [serviceRequestId], references: [id])
-  vehicle          Vehicle?       @relation(fields: [vehicleId], references: [id])
+  solicitudId      String         @unique @map("solicitud_id")
+  choferId         String         @map("chofer_id")
+  vehiculoId       String         @map("vehiculo_id")
+  horaInicioReal   DateTime?      @map("hora_inicio_real")
+  horaFinReal      DateTime?      @map("hora_fin_real")
+  estadoActual     TripStatus     @default(EN_RUTA) @map("estado_actual")
+  observaciones    String?        @map("observaciones")
+  createdAt        DateTime       @default(now()) @map("created_at")
+  updatedAt        DateTime       @updatedAt @map("updated_at")
+  serviceRequest   ServiceRequest @relation(fields: [solicitudId], references: [id])
+  driver           User           @relation("DriverTrips", fields: [choferId], references: [id])
+  vehicle          Vehicle        @relation(fields: [vehiculoId], references: [id])
 
-  @@map("trips")
-}
-
-enum Role {
-  ADMIN
-  CHOFER
-  CLIENTE
+  @@map("viajes_asignado")
 }
 
 enum VehicleStatus {
   DISPONIBLE
-  EN_RUTA
   MANTENCION
-  FUERA_DE_SERVICIO
+  EN_RUTA
+}
+
+enum RequestStatus {
+  PENDIENTE
+  AGENDADO
+  CANCELADO
 }
 
 enum TripStatus {
-  PENDIENTE
-  ASIGNADO
   EN_RUTA
   FINALIZADO
-  CANCELADO
+}
+
+enum UserRole {
+  ADMIN
+  CHOFER
+  CLIENTE
 }

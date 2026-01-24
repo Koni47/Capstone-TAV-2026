@@ -8,6 +8,11 @@ export enum UserRole {
 }
 
 export class CreateUserDto {
+  @ApiProperty({ example: '12345678-9' })
+  @IsString()
+  @IsNotEmpty()
+  rut: string;
+
   @ApiProperty({ example: 'juan@elloa.cl' })
   @IsEmail()
   email: string;
@@ -20,20 +25,15 @@ export class CreateUserDto {
   @ApiProperty({ example: 'Juan Perez' })
   @IsString()
   @IsNotEmpty()
-  fullName: string;
+  nombreCompleto: string;
 
   @ApiProperty({ enum: UserRole, default: UserRole.CLIENTE })
   @IsEnum(UserRole)
   @IsOptional()
   role?: UserRole;
 
-  @ApiProperty({ example: '+56912345678', required: false })
-  @IsString()
-  @IsOptional()
-  phone?: string;
-
   @ApiProperty({ example: 'uuid-company', required: false })
   @IsString()
   @IsOptional()
-  companyId?: string;
+  empresaId?: string;
 }
