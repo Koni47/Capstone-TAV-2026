@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Header from '../components/Header';
 import { getTrips } from '../services/api';
+import { useAuth } from '../context/AuthContext';
 
 const Trips: React.FC = () => {
+  const { user } = useAuth();
   const [showEvidenceModal, setShowEvidenceModal] = useState(false);
   const [trips, setTrips] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -14,18 +16,27 @@ const Trips: React.FC = () => {
       try {
         setLoading(true);
         const data: any = await getTrips();
-        // Backend devuelve { trips, pagination }
+        // Backend ya filtra según rol del usuario autenticado
         setTrips(data.trips || data || []);
         setError(null);
-      } catch (err) {
+      } catch (err: any) {
         console.error('Error fetching trips:', err);
-        setError('Error al cargar los viajes');
+        if (err.message?.includes('401')) {
+          setError('Sesión expirada. Por favor inicia sesión nuevamente.');
+        } else if (err.message?.includes('403')) {
+          setError('No tienes permisos para ver los viajes.');
+        } else {
+          setError('Error al cargar los viajes');
+        }
       } finally {
         setLoading(false);
       }
     };
-    fetchTrips();
-  }, []);
+    
+    if (user) {
+      fetchTrips();
+    }
+  }, [user]);
 
   const toggleModal = () => {
     setShowEvidenceModal(!showEvidenceModal);
@@ -179,7 +190,7 @@ const Trips: React.FC = () => {
                     <span className="truncate">{trip.origin} &rarr; {trip.destination}</span>
                   </div>
 
-                  <Link to={`/trip-detail/${trip.id}`} className="w-full bg-secondary hover:bg-orange-600 text-white font-bold py-2 rounded-lg shadow-sm flex justify-center items-center gap-2 text-sm transition group-hover:shadow-md">
+                  <Link to={`/trip/${trip.id}`} className="w-full bg-secondary hover:bg-orange-600 text-white font-bold py-2 rounded-lg shadow-sm flex justify-center items-center gap-2 text-sm transition group-hover:shadow-md">
                     <span className="material-icons text-sm">visibility</span> VER DETALLE
                   </Link>
                 </div>

@@ -56,6 +56,9 @@ services:
       REDIS_HOST: redis_cache
       REDIS_PORT: 6379
       NODE_ENV: ${NODE_ENV:-development}
+      JWT_SECRET: ${JWT_SECRET:-super-secret-key-change-this}
+      JWT_EXPIRATION: ${JWT_EXPIRATION:-24h}
+      PORT: 3001
     depends_on:
       - postgres_db
       - redis_cache

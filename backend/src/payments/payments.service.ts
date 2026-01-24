@@ -1,5 +1,11 @@
-import { Injectable, InternalServerErrorException, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
-import { WebpayPlus, Options, IntegrationCommerceCodes, IntegrationApiKeys, Environment } from 'transbank-sdk';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
+// TODO: Instalar transbank-sdk correctamente en Docker
+// import { WebpayPlus, Options, IntegrationCommerceCodes, IntegrationApiKeys, Environment } from 'transbank-sdk';
 import { PrismaService } from '../prisma/prisma.service'; // Ajusta la ruta a tu PrismaService
 
 @Injectable()
@@ -8,8 +14,13 @@ export class PaymentsService {
 
   /**
    * Inicializa la transacción en Webpay Plus
+   * TODO: Descomentar cuando transbank-sdk esté instalado
    */
   async initiateWEBPay(amount: number, buyOrder: string, sessionId: string) {
+    // Temporalmente deshabilitado hasta instalar transbank-sdk correctamente
+    throw new InternalServerErrorException('Servicio de pago no disponible temporalmente');
+
+    /* 
     try {
       // Configuración para entorno de Integración (Testing)
       const tx = new WebpayPlus.Transaction(
@@ -39,12 +50,17 @@ export class PaymentsService {
       console.error('Error iniciando Webpay:', error);
       throw new InternalServerErrorException('No se pudo iniciar la transacción con Transbank');
     }
+    */
   }
 
   /**
    * Confirma la transacción y actualiza la BD si es exitosa
+   * TODO: Descomentar cuando transbank-sdk esté instalado
    */
   async commitWEBPay(token: string) {
+    throw new InternalServerErrorException('Servicio de pago no disponible temporalmente');
+
+    /*
     try {
       const tx = new WebpayPlus.Transaction(
         new Options(
@@ -100,12 +116,16 @@ export class PaymentsService {
       
       throw new InternalServerErrorException('Error al confirmar la transacción con Transbank');
     }
+    */
   }
 
   /**
    * Consulta el estado de una transacción
+   * TODO: Descomentar cuando transbank-sdk esté instalado
    */
   async checkStatus(token: string) {
+    throw new InternalServerErrorException('Servicio de pago no disponible temporalmente');
+    /*
     try {
       const tx = new WebpayPlus.Transaction(
         new Options(
@@ -128,12 +148,16 @@ export class PaymentsService {
       console.error('Error consultando estado Webpay:', error);
       throw new InternalServerErrorException('Error al consultar el estado de la transacción');
     }
+    */
   }
 
   /**
    * Anula o reembolsa una transacción
+   * TODO: Descomentar cuando transbank-sdk esté instalado
    */
   async refundTransaction(token: string, amount: number) {
+    throw new InternalServerErrorException('Servicio de pago no disponible temporalmente');
+    /*
     try {
       const tx = new WebpayPlus.Transaction(
         new Options(
@@ -164,6 +188,7 @@ export class PaymentsService {
       console.error('Error reembolsando Webpay:', error);
       throw new InternalServerErrorException('Error al procesar el reembolso');
     }
+    */
   }
 
   private async updateTripStatus(paramId: string, status: string) {
@@ -171,17 +196,17 @@ export class PaymentsService {
     // Si buy_order es "orden-123", quizás debas parsearlo.
     // Aquí se asume que mapea directo a un ID de Prisma.
     try {
-        // Ejemplo de implementación real (descomentar y ajustar modelo):
-        /*
+      // Ejemplo de implementación real (descomentar y ajustar modelo):
+      /*
         await this.prisma.trip.update({
             where: { id: reqId },
             data: { status: 'PAID' } // Usar enum de Prisma si existe
         });
         */
-       console.log(`[SIMULACIÓN] Actualizando DB: ID ${paramId} a estado ${status}`);
+      console.log(`[SIMULACIÓN] Actualizando DB: ID ${paramId} a estado ${status}`);
     } catch (dbError) {
-        console.error('Error actualizando estado en DB:', dbError);
-        // No lanzamos error aquí para no romper la respuesta al usuario, pero se debe loguear
+      console.error('Error actualizando estado en DB:', dbError);
+      // No lanzamos error aquí para no romper la respuesta al usuario, pero se debe loguear
     }
   }
 }
