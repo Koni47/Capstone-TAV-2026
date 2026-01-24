@@ -55,7 +55,7 @@ export class ReportsService {
       where: whereClause,
       include: {
         client: { select: { name: true } },
-        driver: { select: { name: true } },
+        driver: { select: { fullName: true } },
       },
       orderBy: { scheduledDate: 'desc' },
     });
@@ -70,7 +70,7 @@ export class ReportsService {
           client: trip.client?.name || 'N/A',
           trip: `VJ-${trip.id}`,
           trips: 1,
-          driver: trip.driver?.name || 'Sin asignar',
+          driver: trip.driver?.fullName || 'Sin asignar',
           fare: trip.fare,
           kilometers: 150, // TODO: Calcular desde origen/destino
           total: trip.fare,
@@ -95,7 +95,7 @@ export class ReportsService {
       where: whereClause,
       include: {
         client: { select: { name: true } },
-        driver: { select: { name: true } },
+        driver: { select: { fullName: true } },
       },
       orderBy: { scheduledDate: 'desc' },
     });

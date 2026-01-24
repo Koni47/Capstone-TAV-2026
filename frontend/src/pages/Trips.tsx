@@ -1,56 +1,44 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import Header from '../components/Header';
+import { getTrips } from '../services/api';
 
 const Trips: React.FC = () => {
   const [showEvidenceModal, setShowEvidenceModal] = useState(false);
+  const [trips, setTrips] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchTrips = async () => {
+      try {
+        setLoading(true);
+        const data: any = await getTrips();
+        // Backend devuelve { trips, pagination }
+        setTrips(data.trips || data || []);
+        setError(null);
+      } catch (err) {
+        console.error('Error fetching trips:', err);
+        setError('Error al cargar los viajes');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchTrips();
+  }, []);
 
   const toggleModal = () => {
     setShowEvidenceModal(!showEvidenceModal);
   };
 
-  const redirectToDashboard = (event: React.MouseEvent) => {
-    event.preventDefault();
-    // This would normally check user role and redirect accordingly
-    // For now, just redirect to a default dashboard
-    window.location.href = '/AdminDashboard';
-  };
+  // Filtrar viajes por estado
+  const activeTrip = trips.find((t) => t.status === 'EN_RUTA');
+  const upcomingTrips = trips.filter((t) => t.status === 'ASIGNADO' || t.status === 'PENDIENTE');
+  const completedTrips = trips.filter((t) => t.status === 'FINALIZADO');
 
   return (
-    <div className="bg-gray-100 font-sans text-gray-800 pb-24 md:pb-0">
-      {/* Navbar */}
-      <nav className="bg-primary text-white shadow-lg w-full sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center">
-              <Link to="/" className="flex-shrink-0 text-white flex items-center gap-2 font-bold text-xl cursor-pointer">
-                <span className="material-icons text-secondary">local_shipping</span> EL LOA
-              </Link>
-              <div className="hidden md:block">
-                <div className="ml-10 flex items-baseline space-x-4">
-                  <a href="#" onClick={redirectToDashboard} className="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Dashboard</a>
-                  <Link to="/service-request" className="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Solicitudes</Link>
-                  <Link to="/users" className="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Usuarios</Link>
-                  <Link to="/companies" className="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Clientes</Link>
-                  <Link to="/vehicles" className="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Flota</Link>
-                </div>
-              </div>
-            </div>
-            <div className="flex items-center gap-4">
-              <button className="bg-primary p-1 rounded-full text-gray-400 hover:text-white transition">
-                <span className="material-icons">notifications</span>
-              </button>
-              <div className="flex items-center gap-3 pl-4 border-l border-blue-800">
-                <div className="text-right hidden sm:block">
-                  <p className="text-sm font-bold leading-none user-name">Usuario</p>
-                  <p className="text-xs text-blue-300 user-role">Chofer</p>
-                </div>
-                <div className="h-8 w-8 rounded-full bg-secondary flex items-center justify-center text-white text-xs font-bold ring-2 ring-blue-900 user-initials">US</div>
-                <Link to="/logout" className="ml-2 text-sm font-semibold hover:text-gray-300">Salir</Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      </nav>
+    <div className="bg-gray-100 font-sans text-gray-800 pb-24 md:pb-0 min-h-screen">
+      <Header />
 
       {/* Main Content */}
       <main className="max-w-6xl mx-auto p-4 md:p-8">
@@ -68,11 +56,36 @@ const Trips: React.FC = () => {
           </div>
         </div>
 
+        {loading && (
+          <div className="flex justify-center items-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+          </div>
+        )}
+
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
+            {error}
+          </div>
+        )}
+
+        {!loading && !error && trips.length === 0 && (
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
+            <span className="material-icons text-gray-300 text-6xl mb-4">local_shipping</span>
+            <h3 className="text-xl font-bold text-gray-700 mb-2">No hay viajes registrados</h3>
+            <p className="text-gray-500 mb-6">Cuando se creen viajes, aparecerán aquí.</p>
+            <button className="bg-secondary hover:bg-orange-700 text-white font-bold py-2 px-6 rounded-lg transition">
+              Crear primer viaje
+            </button>
+          </div>
+        )}
+
+        {!loading && !error && trips.length > 0 && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 items-start">
           {/* Active Trip Section */}
           <section className="lg:col-span-2">
             <h2 className="text-xs font-bold text-gray-500 uppercase mb-2 ml-1 md:mb-4">En Curso Ahora</h2>
 
+            {activeTrip ? (
             <div className="bg-white rounded-xl shadow-lg overflow-hidden border-2 border-green-500 relative transition hover:shadow-xl">
               <div className="absolute top-4 right-4 flex items-center gap-1 bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold">
                 <span className="relative flex h-2 w-2 mr-1">
@@ -83,14 +96,18 @@ const Trips: React.FC = () => {
               </div>
 
               <div className="p-6 md:p-8">
-                <div className="text-xs text-gray-400 mb-1 font-mono">ID: #TRIP-101</div>
+                <div className="text-xs text-gray-400 mb-1 font-mono">ID: #{activeTrip.id}</div>
                 <div className="flex items-center gap-3 mb-6">
                   <div className="p-2 bg-blue-50 rounded-lg text-primary">
                     <span className="material-icons text-2xl">groups</span>
                   </div>
                   <div>
-                    <span className="font-bold text-xl md:text-2xl text-gray-900 block">Traslado Turno B</span>
-                    <span className="text-sm text-gray-500">Minera Gaby &bull; 4 Pax</span>
+                    <span className="font-bold text-xl md:text-2xl text-gray-900 block">
+                      {activeTrip.title || 'Traslado'}
+                    </span>
+                    <span className="text-sm text-gray-500">
+                      {activeTrip.client?.name || 'Cliente'} &bull; {activeTrip.vehicle?.capacity || 0} Pax
+                    </span>
                   </div>
                 </div>
 
@@ -98,18 +115,20 @@ const Trips: React.FC = () => {
                   <div className="flex gap-4 mb-8 relative">
                     <div className="absolute -left-[21px] top-1 w-3 h-3 rounded-full bg-gray-300 border-2 border-white shadow"></div>
                     <div>
-                      <p className="text-xs text-gray-400 font-bold uppercase tracking-wider">08:30 • Origen</p>
-                      <p className="font-bold text-gray-800 text-base md:text-lg">Aeropuerto El Loa</p>
-                      <p className="text-sm text-gray-500">Sector Llegadas Nacionales</p>
+                      <p className="text-xs text-gray-400 font-bold uppercase tracking-wider">
+                        {activeTrip.startTime ? new Date(activeTrip.startTime).toLocaleTimeString('es-CL', {hour: '2-digit', minute: '2-digit'}) : new Date(activeTrip.scheduledDate).toLocaleTimeString('es-CL', {hour: '2-digit', minute: '2-digit'})} • Origen
+                      </p>
+                      <p className="font-bold text-gray-800 text-base md:text-lg">{activeTrip.origin}</p>
                     </div>
                   </div>
 
                   <div className="flex gap-4 relative">
                     <div className="absolute -left-[21px] top-1 w-3 h-3 rounded-full bg-secondary border-2 border-white shadow ring-2 ring-orange-100"></div>
                     <div>
-                      <p className="text-xs text-gray-400 font-bold uppercase tracking-wider">Estimado 10:00 • Destino</p>
-                      <p className="font-bold text-gray-800 text-base md:text-lg">Faena Minera Gaby</p>
-                      <p className="text-sm text-gray-500">Garita Principal de Acceso</p>
+                      <p className="text-xs text-gray-400 font-bold uppercase tracking-wider">
+                        {activeTrip.endTime ? new Date(activeTrip.endTime).toLocaleTimeString('es-CL', {hour: '2-digit', minute: '2-digit'}) : 'Estimado'} • Destino
+                      </p>
+                      <p className="font-bold text-gray-800 text-base md:text-lg">{activeTrip.destination}</p>
                     </div>
                   </div>
                 </div>
@@ -124,6 +143,12 @@ const Trips: React.FC = () => {
                 </div>
               </div>
             </div>
+            ) : (
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 text-center">
+                <span className="material-icons text-gray-300 text-5xl mb-3">local_shipping</span>
+                <p className="text-gray-500">No hay viajes en curso</p>
+              </div>
+            )}
           </section>
 
           {/* Upcoming Trips Section */}
@@ -131,43 +156,54 @@ const Trips: React.FC = () => {
             <h2 className="text-xs font-bold text-gray-500 uppercase mb-2 ml-1 md:mb-4">Próximos Viajes</h2>
 
             <div className="space-y-4">
-              <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100 hover:border-secondary transition group">
+              {upcomingTrips.slice(0, 2).map((trip) => (
+              <div key={trip.id} className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100 hover:border-secondary transition group">
                 <div className="p-4">
                   <div className="flex justify-between items-start mb-3">
-                    <div className="text-xs text-gray-400 font-mono">#TRIP-102</div>
+                    <div className="text-xs text-gray-400 font-mono">#{trip.id}</div>
                     <span className="bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide">Asignado</span>
                   </div>
 
                   <div className="flex items-center gap-2 mb-3">
-                    <span className="text-xl font-bold text-primary">14:00</span>
+                    <span className="text-xl font-bold text-primary">
+                      {trip.startTime ? new Date(trip.startTime).toLocaleTimeString('es-CL', {hour: '2-digit', minute: '2-digit'}) : new Date(trip.scheduledDate).toLocaleTimeString('es-CL', {hour: '2-digit', minute: '2-digit'})}
+                    </span>
                     <span className="h-4 w-px bg-gray-300"></span>
-                    <span className="text-sm font-medium text-gray-700 truncate">Minera Escondida</span>
+                    <span className="text-sm font-medium text-gray-700 truncate">
+                      {trip.client?.name || 'Cliente'}
+                    </span>
                   </div>
 
                   <div className="text-sm text-gray-600 mb-4 flex items-center gap-2 bg-gray-50 p-2 rounded">
                     <span className="material-icons text-xs text-gray-400">route</span>
-                    <span className="truncate">Hotel Diego &rarr; Aeropuerto</span>
+                    <span className="truncate">{trip.origin} &rarr; {trip.destination}</span>
                   </div>
 
-                  <button className="w-full bg-secondary hover:bg-orange-600 text-white font-bold py-2 rounded-lg shadow-sm flex justify-center items-center gap-2 text-sm transition group-hover:shadow-md">
-                    <span className="material-icons text-sm">play_arrow</span> INICIAR RUTA
-                  </button>
+                  <Link to={`/trip-detail/${trip.id}`} className="w-full bg-secondary hover:bg-orange-600 text-white font-bold py-2 rounded-lg shadow-sm flex justify-center items-center gap-2 text-sm transition group-hover:shadow-md">
+                    <span className="material-icons text-sm">visibility</span> VER DETALLE
+                  </Link>
                 </div>
               </div>
+              ))}
 
+              {completedTrips.length > 0 && (
               <div className="bg-gray-50 rounded-xl border border-gray-200 overflow-hidden opacity-75 hover:opacity-100 transition">
                 <div className="p-4">
                   <div className="flex justify-between items-center mb-2">
                     <span className="bg-gray-200 text-gray-600 px-2 py-0.5 rounded text-[10px] font-bold uppercase">Finalizado</span>
-                    <span className="text-xs text-gray-400">Ayer</span>
+                    <span className="text-xs text-gray-400">
+                      {new Date(completedTrips[0].endTime || completedTrips[0].startTime || completedTrips[0].scheduledDate).toLocaleDateString('es-CL')}
+                    </span>
                   </div>
-                  <div className="text-sm font-bold text-gray-700">Traslado Ejecutivo</div>
-                  <div className="text-xs text-gray-500">Centro &rarr; Aeropuerto</div>
+                  <div className="text-sm font-bold text-gray-700">{completedTrips[0].title || 'Traslado'}</div>
+                  <div className="text-xs text-gray-500">{completedTrips[0].origin} &rarr; {completedTrips[0].destination}</div>
                 </div>
               </div>
+              )}
             </div>
           </section>
         </div>
+        )}
       </main>
 
       {/* Evidence Modal */}

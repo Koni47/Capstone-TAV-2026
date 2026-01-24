@@ -9,24 +9,28 @@ export class UsersService {
 
   async create(createDto: CreateUserDto) {
     const hashedPassword = await bcrypt.hash(createDto.password, 10);
-    
+
+    // Buscar el rol por nombre
+    const role = await this.prisma.role.findUnique({
+      where: { nombre: createDto.role.toUpperCase() },
+    });
+
+    if (!role) {
+      throw new NotFoundException('Rol no encontrado');
+    }
+
     return this.prisma.user.create({
       data: {
         email: createDto.email,
         password: hashedPassword,
         fullName: createDto.name,
-        role: createDto.role.toUpperCase() as any,
+        name: createDto.name,
+        roleId: role.id,
         phone: createDto.phone,
         companyId: createDto.companyId?.toString(),
       },
-      select: {
-        id: true,
-        fullName: true,
-        email: true,
+      include: {
         role: true,
-        phone: true,
-        companyId: true,
-        createdAt: true,
       },
     });
   }
@@ -37,16 +41,9 @@ export class UsersService {
       this.prisma.user.findMany({
         skip,
         take: limit,
-        select: {
-          id: true,
-          fullName: true,
-          email: true,
+        include: {
           role: true,
-          phone: true,
-          status: true,
-          lastLogin: true,
           company: { select: { name: true } },
-          createdAt: true,
         },
         orderBy: { createdAt: 'desc' },
       }),
@@ -54,9 +51,10 @@ export class UsersService {
     ]);
 
     return {
-      users: users.map(user => ({
+      users: users.map((user) => ({
         ...user,
-        name: user.fullName, // Alias para frontend
+        name: user.fullName,
+        role: user.role.nombre,
       })),
       pagination: {
         currentPage: page,
@@ -69,16 +67,9 @@ export class UsersService {
   async findOne(id: number) {
     const user = await this.prisma.user.findUnique({
       where: { id: id.toString() },
-      select: {
-        id: true,
-        fullName: true,
-        email: true,
+      include: {
         role: true,
-        phone: true,
-        status: true,
-        lastLogin: true,
         company: { select: { name: true } },
-        createdAt: true,
       },
     });
 
@@ -88,7 +79,8 @@ export class UsersService {
 
     return {
       ...user,
-      name: user.fullName, // Alias para frontend
+      name: user.fullName,
+      role: user.role.nombre,
     };
   }
 

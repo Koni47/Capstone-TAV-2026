@@ -10,7 +10,7 @@ export class ComplaintsService {
     const complaint = await this.prisma.complaint.create({
       data: {
         ...createDto,
-        status: 'Pendiente',
+        status: 'PENDIENTE',
       },
     });
 
@@ -46,7 +46,7 @@ export class ComplaintsService {
 
   async findOne(id: number) {
     const complaint = await this.prisma.complaint.findUnique({
-      where: { id },
+      where: { id: id.toString() },
     });
 
     if (!complaint) {
@@ -58,8 +58,8 @@ export class ComplaintsService {
 
   async updateStatus(id: number, status: string) {
     return this.prisma.complaint.update({
-      where: { id },
-      data: { status },
+      where: { id: id.toString() },
+      data: { status: status as any },
     });
   }
 }

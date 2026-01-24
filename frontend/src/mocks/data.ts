@@ -90,8 +90,8 @@ export const site = {
   // Other mocks
   tripsMockData: {
     trips: [
-      { id: 'VJ-2601', title: 'Traslado Turno B', date: '22 Ene', time: '08:30', origin: 'Aeropuerto', dest: 'Faena Minera Gaby', client: 'Minera ABC', driver: 'Juan Pérez', fare: 85000, status: 'En ruta' },
-      { id: 'VJ-2602', title: 'Traslado Ejecutivo', date: '22 Ene', time: '10:00', origin: 'Hotel', dest: 'Aeropuerto', client: 'Empresa XYZ', driver: 'Carlos López', fare: 42000, status: 'Asignado' }
+      { id: 'uuid-trip-1', solicitudId: 'uuid-request-1', choferId: 'uuid-user-1', vehiculoId: 'uuid-vehicle-1', estadoActual: 'EN_RUTA', createdAt: '2026-01-22T08:30:00Z' },
+      { id: 'uuid-trip-2', solicitudId: 'uuid-request-2', choferId: 'uuid-user-2', vehiculoId: 'uuid-vehicle-2', estadoActual: 'FINALIZADO', createdAt: '2026-01-22T10:00:00Z' }
     ]
   },
 
@@ -146,56 +146,20 @@ export const companiesMockData = {
   },
   companies: [
     {
-      id: 1,
-      name: 'Minera ABC',
-      rut: '12.345.678-9',
-      avatarBgColor: 'indigo',
-      initials: 'MA',
-      costCenter: 'CC-001',
-      costCenterDesc: 'Centro de Costo Principal',
-      contact: {
-        name: 'Juan Pérez',
-        email: 'juan@mineraabc.cl',
-      },
-      status: 'Activo',
-      statusColor: 'green',
-      contractEnd: '2026-06-15',
-      tripsThisMonth: 45,
-      totalBilled: 1250000,
-    },    {
-      id: 2,
-      name: 'Transportes Norte',
-      rut: '76.543.210-K',
-      avatarBgColor: 'orange',
-      initials: 'TN',
-      costCenter: 'CC-002',
-      costCenterDesc: 'Logística',
-      contact: {
-        name: 'Ana María',
-        email: 'ana@norte.cl',
-      },
-      status: 'Activo',
-      statusColor: 'green',
-      contractEnd: '2025-12-01',
-      tripsThisMonth: 32,
-      totalBilled: 850000,
-    },    {
-      id: 2,
-      name: 'Constructora XYZ',
-      rut: '76.543.210-K',
-      avatarBgColor: 'orange',
-      initials: 'CX',
-      costCenter: 'CC-088',
-      costCenterDesc: 'Obra Calama Norte',
-      contact: {
-        name: 'María García',
-        email: 'mgarcia@xyz.cl',
-      },
-      status: 'Inactivo',
-      statusColor: 'red',
-      contractEnd: '2025-12-31',
-      tripsThisMonth: 0,
-      totalBilled: 850000,
+      id: 'uuid-company-1',
+      razonSocial: 'Minera ABC',
+      rutEmpresa: '12.345.678-9',
+      centroCosto: 'CC-001',
+      contactoComercial: 'Juan Pérez',
+      createdAt: '2026-01-01T00:00:00Z',
+    },
+    {
+      id: 'uuid-company-2',
+      razonSocial: 'Transportes Norte',
+      rutEmpresa: '76.543.210-K',
+      centroCosto: 'CC-002',
+      contactoComercial: 'Ana María',
+      createdAt: '2026-01-01T00:00:00Z',
     },
   ],
   pagination: {
@@ -408,22 +372,22 @@ export const usersMockData = {
   },
   users: [
     {
-      id: 1,
-      name: 'Juan Pérez',
+      id: 'uuid-1',
+      nombreCompleto: 'Juan Pérez',
       email: 'juan.perez@mineraabc.cl',
-      role: 'Cliente',
-      status: 'Activo',
-      lastLogin: '2026-01-20',
-      company: 'Minera ABC'
+      role: 'CLIENTE',
+      activo: true,
+      createdAt: '2026-01-20T00:00:00Z',
+      company: { razonSocial: 'Minera ABC' }
     },
     {
-      id: 2,
-      name: 'María García',
+      id: 'uuid-2',
+      nombreCompleto: 'María García',
       email: 'maria.garcia@xyz.cl',
-      role: 'Cliente',
-      status: 'Activo',
-      lastLogin: '2026-01-19',
-      company: 'Constructora XYZ'
+      role: 'CLIENTE',
+      activo: true,
+      createdAt: '2026-01-19T00:00:00Z',
+      company: { razonSocial: 'Constructora XYZ' }
     }
   ]
 };
@@ -449,13 +413,13 @@ export const usersPage2MockData = {
 
 export const userDetailMockData = {
   user: {
-    id: 1,
-    name: 'Juan Pérez',
+    id: 'uuid-1',
+    nombreCompleto: 'Juan Pérez',
     email: 'juan.perez@mineraabc.cl',
-    role: 'Cliente',
-    status: 'Activo',
+    role: 'CLIENTE',
+    activo: true,
     phone: '+56 9 8765 4321',
-    company: 'Minera ABC',
+    company: { razonSocial: 'Minera ABC' },
     lastLogin: '2026-01-20 14:30',
     createdAt: '2025-03-15'
   }
@@ -480,46 +444,38 @@ export const vehiclesMockData = {
   },
   vehicles: [
     {
-      id: 1,
+      id: 'uuid-vehicle-1',
       patente: 'ABCD-12',
       marca: 'Mercedes-Benz',
       modelo: 'Sprinter 515 CDI',
-      tipo: 'Van Pasajeros',
-      capacidad: 19,
-      status: 'Activo',
-      color: 'Blanco',
-      kilometraje: 125000
+      capacidadPax: 19,
+      estado: 'DISPONIBLE',
+      vencimientoRevTec: '2025-12-01T00:00:00Z',
+      createdAt: '2020-05-15T00:00:00Z',
     },
     {
-      id: 2,
+      id: 'uuid-vehicle-2',
       patente: 'EFGH-34',
       marca: 'Toyota',
       modelo: 'Hiace',
-      tipo: 'Van Pasajeros',
-      capacidad: 15,
-      status: 'Activo',
-      color: 'Azul',
-      kilometraje: 98000
+      capacidadPax: 15,
+      estado: 'DISPONIBLE',
+      vencimientoRevTec: '2025-12-01T00:00:00Z',
+      createdAt: '2020-05-15T00:00:00Z',
     }
   ]
 };
 
 export const vehicleDetailMockData = {
   vehicle: {
-    id: 1,
+    id: 'uuid-vehicle-1',
     patente: 'ABCD-12',
     marca: 'Mercedes-Benz',
     modelo: 'Sprinter 515 CDI',
-    tipo: 'Van Pasajeros',
-    capacidad: 19,
-    status: 'Activo',
-    color: 'Blanco',
-    kilometraje: 125000,
-    anio: 2020,
-    combustible: 'Diésel',
-    fechaCompra: '2020-05-15',
-    fechaRevision: '2025-12-01',
-    observaciones: 'Vehículo en excelente estado'
+    capacidadPax: 19,
+    estado: 'DISPONIBLE',
+    vencimientoRevTec: '2025-12-01T00:00:00Z',
+    createdAt: '2020-05-15T00:00:00Z',
   }
 };
 

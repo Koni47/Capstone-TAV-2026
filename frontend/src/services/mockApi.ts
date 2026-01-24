@@ -1,4 +1,7 @@
 import * as mocks from '../mocks/data';
+import { getUsers as apiGetUsers, getCompanies as apiGetCompanies, getCompanyById as apiGetCompanyById, getVehicles as apiGetVehicles, getVehicleById as apiGetVehicleById, getTrips as apiGetTrips, getTripById as apiGetTripById, getReports as apiGetReports } from './api';
+
+const USE_REAL_API = import.meta.env.VITE_USE_REAL_API === 'true';
 
 // Re-export structured mocks for backward compatibility
 export const site = mocks.site;
@@ -35,46 +38,70 @@ export async function getSite() {
 }
 
 export async function getCompanies() {
+  if (USE_REAL_API) {
+    const companies = await apiGetCompanies();
+    return { companies };
+  }
   await wait(100);
   return companiesMockData;
 }
 
 export async function getCompanyById(id: string) {
+  if (USE_REAL_API) return apiGetCompanyById(id);
   await wait(50);
   return companiesMockData.companies.find((c: any) => String(c.id) === String(id));
 }
 
 export async function getUsers() {
+  if (USE_REAL_API) {
+    const users = await apiGetUsers();
+    return { users };
+  }
   await wait(80);
   return usersMockData;
 }
 
 export async function getUserById(id: string) {
+  if (USE_REAL_API) {
+    const users = await apiGetUsers();
+    return users.users.find((u: any) => String(u.id) === String(id));
+  }
   await wait(50);
   return usersMockData.users.find((u: any) => String(u.id) === String(id));
 }
 
 export async function getVehicles() {
+  if (USE_REAL_API) {
+    const vehicles = await apiGetVehicles();
+    return { vehicles };
+  }
   await wait(80);
   return vehiclesMockData;
 }
 
 export async function getVehicleById(id: string) {
+  if (USE_REAL_API) return apiGetVehicleById(id);
   await wait(50);
   return vehicleDetailMockData; // simplified
 }
 
 export async function getTrips() {
+  if (USE_REAL_API) {
+    const trips = await apiGetTrips();
+    return { trips };
+  }
   await wait(90);
   return tripsMockData;
 }
 
 export async function getTripById(id: string) {
+  if (USE_REAL_API) return apiGetTripById(id);
   await wait(50);
   return tripsMockData.trips.find((t: any) => String(t.id) === String(id));
 }
 
 export async function getReports() {
+  // if (USE_REAL_API) return apiGetReports(); // Endpoint not implemented
   await wait(80);
   return reportsMockData;
 }

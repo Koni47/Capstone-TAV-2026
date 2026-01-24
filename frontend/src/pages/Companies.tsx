@@ -1,16 +1,34 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { companiesMockData, site, getHtmlMock } from '../services/mockApi';
-import HtmlMockRenderer from '../components/HtmlMockRenderer'
+import { getCompanies } from '../services/api';
 import Header from '../components/Header';
 
 export default function Companies() {
-  const navigate = useNavigate()
-  const mock = getHtmlMock('companies.html')
-  if (mock) return <HtmlMockRenderer html={mock} navigate={navigate} />
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('Todos los estados');
   const [currentPage, setCurrentPage] = useState(1);
+  const [companies, setCompanies] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {  
+    const fetchCompanies = async () => {
+      try {
+        setLoading(true);
+        const data: any = await getCompanies();
+        // Manejar si viene paginado o array directo
+        setCompanies(data.companies || data || []);
+        setError(null);
+      } catch (err) {
+        console.error('Error fetching companies:', err);
+        setError('Error al cargar empresas');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCompanies();
+  }, []);
 
   const getAvatarColors = (bgColor: string) => {
     const colors: Record<string, string> = {
@@ -61,20 +79,20 @@ export default function Companies() {
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-3 mb-8">
           <div className="bg-white overflow-hidden shadow rounded-lg border-l-4 border-primary">
             <div className="px-4 py-5 sm:p-6">
-              <dt className="text-sm font-medium text-gray-500 truncate">Total Empresas Activas</dt>
-              <dd className="mt-1 text-3xl font-bold text-gray-900">{companiesMockData.stats.totalCompanies}</dd>
+              <dt className="text-sm font-medium text-gray-500 truncate">Total Empresas</dt>
+              <dd className="mt-1 text-3xl font-bold text-gray-900">{companies.length}</dd>
             </div>
           </div>
           <div className="bg-white overflow-hidden shadow rounded-lg border-l-4 border-warning">
             <div className="px-4 py-5 sm:p-6">
-              <dt className="text-sm font-medium text-gray-500 truncate">Contratos por Vencer</dt>
-              <dd className="mt-1 text-3xl font-bold text-gray-900">{companiesMockData.stats.expiringContracts}</dd>
+              <dt className="text-sm font-medium text-gray-500 truncate">Empresas Activas</dt>
+              <dd className="mt-1 text-3xl font-bold text-gray-900">{companies.filter(c => c.status === 'ACTIVO').length}</dd>
             </div>
           </div>
           <div className="bg-white overflow-hidden shadow rounded-lg border-l-4 border-success">
             <div className="px-4 py-5 sm:p-6">
-              <dt className="text-sm font-medium text-gray-500 truncate">Viajes Facturados (Mes)</dt>
-              <dd className="mt-1 text-3xl font-bold text-gray-900">{companiesMockData.stats.billedTripsMonth}</dd>
+              <dt className="text-sm font-medium text-gray-500 truncate">Total Contratos</dt>
+              <dd className="mt-1 text-3xl font-bold text-gray-900">{companies.length}</dd>
             </div>
           </div>
         </div>
@@ -109,7 +127,32 @@ export default function Companies() {
           </div>
         </div>
 
+        {loading && (
+          <div className="flex justify-center items-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+          </div>
+        )}
+
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
+            {error}
+          </div>
+        )}
+
+        {!loading && !error && companies.length === 0 && (
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
+            <span className="material-icons text-gray-300 text-6xl mb-4">business</span>
+            <h3 className="text-xl font-bold text-gray-700 mb-2">No hay empresas registradas</h3>
+            <p className="text-gray-500 mb-6">Agrega tu primera empresa cliente para comenzar.</p>
+            <button className="bg-secondary hover:bg-orange-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-all flex items-center gap-2 mx-auto">
+              <span className="material-icons">add</span>
+              Nueva Empresa
+            </button>
+          </div>
+        )}
+
         {/* Companies Table */}
+        {!loading && !error && companies.length > 0 && (
         <div className="bg-white shadow overflow-hidden sm:rounded-lg">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
@@ -132,12 +175,14 @@ export default function Companies() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {companiesMockData.companies.map((company: any) => (
+              {companies.map((company: any) => {
+                const initials = company.name?.substring(0, 2).toUpperCase() || 'EM';
+                return (
                 <tr key={company.id} className="hover:bg-gray-50 transition">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
-                      <div className={`flex-shrink-0 h-10 w-10 rounded-full flex items-center justify-center font-bold ${getAvatarColors(company.avatarBgColor)}`}>
-                        {company.initials}
+                      <div className="flex-shrink-0 h-10 w-10 rounded-full flex items-center justify-center font-bold bg-indigo-100 text-indigo-600">
+                        {initials}
                       </div>
                       <div className="ml-4">
                         <div className="text-sm font-bold text-gray-900">{company.name}</div>
@@ -146,28 +191,29 @@ export default function Companies() {
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900 font-medium">{company.costCenter}</div>
-                    <div className="text-xs text-gray-500">{company.costCenterDesc}</div>
+                    <div className="text-sm text-gray-900 font-medium">{company.costCenter || 'N/A'}</div>
+                    <div className="text-xs text-gray-500">{company.costCenterDesc || company.name}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap hidden md:table-cell">
-                    <div className="text-sm text-gray-900">{company.contact.name}</div>
-                    <div className="text-xs text-gray-500">{company.contact.email}</div>
+                    <div className="text-sm text-gray-900">{company.contactEmail || company.contactName || 'N/A'}</div>
+                    <div className="text-xs text-gray-500">{company.phone || 'N/A'}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full border ${getStatusStyles(company.statusColor)}`}>
-                      {company.status}
+                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full border ${company.status === 'ACTIVO' ? 'bg-green-100 text-green-800 border-green-200' : 'bg-red-100 text-red-800 border-red-200'}`}>
+                      {company.status === 'ACTIVO' ? 'Activo' : 'Inactivo'}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <a href="/company-detail" className="text-primary hover:text-blue-900 mr-3">
-                      Editar
-                    </a>
-                    <a href="/company-detail" className="text-gray-400 hover:text-gray-600">
+                    <Link to={`/company-detail/${company.id}`} className="text-primary hover:text-blue-900 mr-3">
+                      Ver
+                    </Link>
+                    <button className="text-gray-400 hover:text-gray-600">
                       <span className="material-icons text-sm">more_vert</span>
-                    </a>
+                    </button>
                   </td>
                 </tr>
-              ))}
+              );
+              })}
             </tbody>
           </table>
 
@@ -176,9 +222,9 @@ export default function Companies() {
             <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
               <div>
                 <p className="text-sm text-gray-700">
-                  Mostrando <span className="font-medium">{companiesMockData.pagination.showingFrom}</span> a{' '}
-                  <span className="font-medium">{companiesMockData.pagination.showingTo}</span> de{' '}
-                  <span className="font-medium">{companiesMockData.pagination.totalResults}</span> resultados
+                  Mostrando <span className="font-medium">1</span> a{' '}
+                  <span className="font-medium">{Math.min(companies.length, 10)}</span> de{' '}
+                  <span className="font-medium">{companies.length}</span> resultados
                 </p>
               </div>
               <div>
@@ -213,6 +259,7 @@ export default function Companies() {
             </div>
           </div>
         </div>
+        )}
       </main>
 
       {/* Footer */}

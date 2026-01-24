@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { reportsMockData } from "../services/mockApi";
+import { getReports } from "../services/api";
 import Header from '../components/Header';
 
 const Reports = () => {
@@ -8,6 +8,28 @@ const Reports = () => {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [selectedClient, setSelectedClient] = useState("Todas");
+  const [reports, setReports] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchReports = async () => {
+      try {
+        setLoading(true);
+        // Cambiar a dashboard que tiene los KPIs
+        const data: any = await getReports(); 
+        // Si viene structure diferente, adaptamos
+        setReports(Array.isArray(data) ? data : []);
+        setError(null);
+      } catch (err) {
+        console.error('Error fetching reports:', err);
+        setError('Error al cargar reportes');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchReports();
+  }, []);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -82,7 +104,8 @@ const Reports = () => {
                 onChange={(e) => setSelectedClient(e.target.value)}
                 className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all appearance-none cursor-pointer"
               >
-                {reportsMockData.filters.clients.map((client: any) => (
+                <option value="Todas">Todas las empresas</option>
+                {Array.from(new Set(reports.map(r => r.empresaCliente?.nombre_comercial).filter(Boolean))).map((client: any) => (
                   <option key={client} value={client}>{client}</option>
                 ))}
               </select>
@@ -96,14 +119,27 @@ const Reports = () => {
           </form>
         </div>
 
+        {loading && (
+          <div className="flex justify-center items-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+          </div>
+        )}
+
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
+            {error}
+          </div>
+        )}
+
         {/* Results Section */}
+        {!loading && !error && (
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
           <div className="px-8 py-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
             <span className="font-bold text-slate-700">
-              Resultados: {reportsMockData.results.month}
+              Resultados: {new Date().toLocaleDateString('es-CL', {month: 'long', year: 'numeric'})}
             </span>
             <div className="text-sm font-bold text-primary bg-white px-3 py-1 rounded-lg border border-gray-200">
-              {reportsMockData.results.rows.length} Clientes analizados
+              {reports.length} Registros
             </div>
           </div>
 
@@ -118,24 +154,35 @@ const Reports = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {reportsMockData.results.rows.map((row: any, idx: number) => (
-                  <tr key={idx} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-8 py-5 font-bold text-slate-700">{row.client}</td>
-                    <td className="px-8 py-5 text-center text-slate-600 font-medium">{row.trips}</td>
-                    <td className="px-8 py-5 text-center text-slate-600 font-medium">{row.kilometers} km</td>
-                    <td className="px-8 py-5 text-right font-bold text-primary">{row.total}</td>
+                {reports.map((report: any, idx: number) => (
+                  <tr key={report.id || idx} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-8 py-5 font-bold text-slate-700">
+                      {report.empresaCliente?.nombre_comercial || 'Sin empresa'}
+                    </td>
+                    <td className="px-8 py-5 text-center text-slate-600 font-medium">
+                      {report.cantidad_viajes || 0}
+                    </td>
+                    <td className="px-8 py-5 text-center text-slate-600 font-medium">
+                      {report.total_kilometros || 0} km
+                    </td>
+                    <td className="px-8 py-5 text-right font-bold text-primary">
+                      ${(report.monto_total || 0).toLocaleString('es-CL')}
+                    </td>
                   </tr>
                 ))}
               </tbody>
               <tfoot className="bg-slate-50 border-t-2 border-slate-100">
                 <tr>
                   <td colSpan={3} className="px-8 py-6 text-right font-bold text-slate-500 uppercase tracking-wider">Total General</td>
-                  <td className="px-8 py-6 text-right font-black text-2xl text-secondary">{reportsMockData.results.totalGeneral}</td>
+                  <td className="px-8 py-6 text-right font-black text-2xl text-secondary">
+                    ${reports.reduce((sum, r) => sum + (r.monto_total || 0), 0).toLocaleString('es-CL')}
+                  </td>
                 </tr>
               </tfoot>
             </table>
           </div>
         </div>
+        )}
       </main>
 
       <footer className="mt-auto py-10 border-t border-gray-200 w-full">

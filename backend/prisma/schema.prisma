@@ -13,19 +13,30 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Role {
+  id          Int     @id @default(autoincrement())
+  nombre      String  @unique
+  permisos    Json?   @default("{}")
+  descripcion String?
+  users       User[]
+
+  @@map("roles")
+}
+
 model User {
   id              String           @id @default(uuid())
   email           String           @unique
   password        String
   fullName        String
   name            String           @default("") // Alias para compatibilidad con endpoints
-  role            Role             @default(CLIENTE)
+  roleId          Int              @map("role_id")
   phone           String?
-  status          UserStatus       @default(ACTIVO) // Cambiar a enum
-  lastLogin       DateTime?        // Para tracking de login
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
-  companyId       String?
+  status          UserStatus       @default(ACTIVO)
+  lastLogin       DateTime?        @map("lastlogin")
+  createdAt       DateTime         @default(now()) @map("createdat")
+  updatedAt       DateTime         @updatedAt @map("updatedat")
+  companyId       String?          @map("companyid")
+  role            Role             @relation(fields: [roleId], references: [id])
   serviceRequests ServiceRequest[] @relation("ClientRequests")
   tripsAsDriver   Trip[]           @relation("DriverTrips")
   company         Company?         @relation(fields: [companyId], references: [id])
@@ -53,7 +64,7 @@ model Company {
   users           User[]
   trips           Trip[]           @relation("CompanyTrips") // Relación directa con trips
 
-  @@map("companies")
+  @@map("empresas_cliente")
 }
 
 model Vehicle {
@@ -73,8 +84,10 @@ model Vehicle {
   updatedAt           DateTime      @updatedAt
   trips               Trip[]
 
-  @@map("vehicles")
+  @@map("vehiculos")
 }
+
+
 
 model ServiceRequest {
   id             String         @id @default(uuid())
@@ -94,7 +107,7 @@ model ServiceRequest {
   company        Company?       @relation(fields: [companyId], references: [id])
   trip           Trip?
 
-  @@map("service_requests")
+  @@map("solicitudes_servicio")
 }
 
 model Trip {
@@ -139,12 +152,6 @@ model Complaint {
   @@map("complaints")
 }
 
-enum Role {
-  ADMIN
-  CHOFER
-  CLIENTE
-}
-
 enum UserStatus {
   ACTIVO
   INACTIVO
@@ -158,16 +165,13 @@ enum CompanyStatus {
 
 enum VehicleStatus {
   DISPONIBLE
-  EN_RUTA
   MANTENCION
-  FUERA_DE_SERVICIO
+  EN_RUTA
 }
 
 enum RequestStatus {
   PENDIENTE
-  ASIGNADO
-  EN_RUTA
-  COMPLETADO
+  AGENDADO
   CANCELADO
 }
 

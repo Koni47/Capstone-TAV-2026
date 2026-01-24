@@ -1,5 +1,6 @@
 import React from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
+import ProtectedRoute from './components/ProtectedRoute'
 import Home from './pages/Home'
 import Profile from './pages/Profile'
 import ClientPortal from './pages/ClientPortal'
@@ -49,39 +50,39 @@ export default function App() {
       <Route path="/dashboard" element={<Navigate to="/dashboard/admin" replace />} />
       <Route path="/AdminDashboard" element={<Navigate to="/dashboard/admin" replace />} />
       <Route path="/admindashboard" element={<Navigate to="/dashboard/admin" replace />} />
-      <Route path="/dashboard/admin" element={<AdminDashboard />} />
-      <Route path="/dashboard/driver" element={<DriverDashboard />} />
-      <Route path="/dashboard/client" element={<ClientDashboard />} />
+      <Route path="/dashboard/admin" element={<ProtectedRoute allowedRoles={['ADMIN']}><AdminDashboard /></ProtectedRoute>} />
+      <Route path="/dashboard/driver" element={<ProtectedRoute allowedRoles={['CHOFER']}><DriverDashboard /></ProtectedRoute>} />
+      <Route path="/dashboard/client" element={<ProtectedRoute allowedRoles={['CLIENTE']}><ClientDashboard /></ProtectedRoute>} />
 
-      <Route path="/portal" element={<ClientPortal />} />
-      <Route path="/profile" element={<Profile />} />
+      <Route path="/portal" element={<ProtectedRoute><ClientPortal /></ProtectedRoute>} />
+      <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
 
-      <Route path="/companies" element={<Companies />} />
-      <Route path="/companies/page-2" element={<CompaniesPage2 />} />
-      <Route path="/company/:id" element={<CompanyDetail />} />
-      <Route path="/company/:id/edit" element={<CompanyEdit />} />
-      <Route path="/company-edit" element={<CompanyEdit />} />
+      <Route path="/companies" element={<ProtectedRoute allowedRoles={['ADMIN']}><Companies /></ProtectedRoute>} />
+      <Route path="/companies/page-2" element={<ProtectedRoute allowedRoles={['ADMIN']}><CompaniesPage2 /></ProtectedRoute>} />
+      <Route path="/company/:id" element={<ProtectedRoute allowedRoles={['ADMIN']}><CompanyDetail /></ProtectedRoute>} />
+      <Route path="/company/:id/edit" element={<ProtectedRoute allowedRoles={['ADMIN']}><CompanyEdit /></ProtectedRoute>} />
+      <Route path="/company-edit" element={<ProtectedRoute allowedRoles={['ADMIN']}><CompanyEdit /></ProtectedRoute>} />
 
-      <Route path="/users" element={<Users />} />
-      <Route path="/users/page-2" element={<UsersPage2 />} />
-      <Route path="/user/:id" element={<UserDetail />} />
-      <Route path="/user/:id/edit" element={<UserEdit />} />
+      <Route path="/users" element={<ProtectedRoute allowedRoles={['ADMIN']}><Users /></ProtectedRoute>} />
+      <Route path="/users/page-2" element={<ProtectedRoute allowedRoles={['ADMIN']}><UsersPage2 /></ProtectedRoute>} />
+      <Route path="/user/:id" element={<ProtectedRoute allowedRoles={['ADMIN']}><UserDetail /></ProtectedRoute>} />
+      <Route path="/user/:id/edit" element={<ProtectedRoute allowedRoles={['ADMIN']}><UserEdit /></ProtectedRoute>} />
 
-      <Route path="/vehicles" element={<Vehicles />} />
-      <Route path="/vehicle-add" element={<VehicleAdd />} />
-      <Route path="/vehicle/:id" element={<VehicleDetail />} />
-      <Route path="/vehicle/:id/edit" element={<VehicleEdit />} />
+      <Route path="/vehicles" element={<ProtectedRoute allowedRoles={['ADMIN']}><Vehicles /></ProtectedRoute>} />
+      <Route path="/vehicle-add" element={<ProtectedRoute allowedRoles={['ADMIN']}><VehicleAdd /></ProtectedRoute>} />
+      <Route path="/vehicle/:id" element={<ProtectedRoute allowedRoles={['ADMIN']}><VehicleDetail /></ProtectedRoute>} />
+      <Route path="/vehicle/:id/edit" element={<ProtectedRoute allowedRoles={['ADMIN']}><VehicleEdit /></ProtectedRoute>} />
 
-      <Route path="/trips" element={<Trips />} />
-      <Route path="/trip/:id" element={<TripDetail />} />
+      <Route path="/trips" element={<ProtectedRoute><Trips /></ProtectedRoute>} />
+      <Route path="/trip/:id" element={<ProtectedRoute><TripDetail /></ProtectedRoute>} />
 
-      <Route path="/service-request" element={<ServiceRequest />} />
-      <Route path="/service-request-create" element={<ServiceRequestCreate />} />
-      <Route path="/portal-choferes" element={<PortalChoferes />} />
-      <Route path="/payment" element={<Payment />} />
+      <Route path="/service-request" element={<ProtectedRoute><ServiceRequest /></ProtectedRoute>} />
+      <Route path="/service-request-create" element={<ProtectedRoute><ServiceRequestCreate /></ProtectedRoute>} />
+      <Route path="/portal-choferes" element={<ProtectedRoute allowedRoles={['CHOFER']}><PortalChoferes /></ProtectedRoute>} />
+      <Route path="/payment" element={<ProtectedRoute><Payment /></ProtectedRoute>} />
 
-      <Route path="/reports" element={<Reports />} />
-      <Route path="/complaints" element={<Complaints />} />
+      <Route path="/reports" element={<ProtectedRoute allowedRoles={['ADMIN']}><Reports /></ProtectedRoute>} />
+      <Route path="/complaints" element={<ProtectedRoute><Complaints /></ProtectedRoute>} />
 
       <Route path="/contact" element={<ClientPortal />} />
       <Route path="/privacy" element={<Privacy />} />

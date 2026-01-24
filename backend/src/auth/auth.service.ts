@@ -13,25 +13,28 @@ export class AuthService {
   ) {}
 
   async login(loginDto: LoginDto) {
-    const { email, password, role } = loginDto;
+    const { email, password } = loginDto;
 
-    // Buscar usuario por email y rol
+    // Buscar usuario por email con su rol
     const user = await this.prisma.user.findFirst({
-      where: { email, role: role as any },
-      include: { company: true },
+      where: { email },
+      include: {
+        company: true,
+        role: true,
+      },
     });
 
     if (!user || !(await bcrypt.compare(password, user.password))) {
       throw new UnauthorizedException('Credenciales inválidas');
     }
 
-    // Actualizar último login
-    await this.prisma.user.update({
-      where: { id: user.id },
-      data: { lastLogin: new Date() },
-    });
+    // Actualizar último login (temporalmente deshabilitado por problema de cache)
+    // await this.prisma.user.update({
+    //   where: { id: user.id },
+    //   data: { lastLogin: new Date() },
+    // });
 
-    const payload = { sub: user.id, email: user.email, role: user.role };
+    const payload = { sub: user.id, email: user.email, role: user.role.nombre };
     const accessToken = this.jwtService.sign(payload);
 
     return {
@@ -40,7 +43,7 @@ export class AuthService {
         id: user.id,
         name: user.fullName,
         email: user.email,
-        role: user.role,
+        role: user.role.nombre,
         company: user.company?.name,
       },
     };
@@ -55,6 +58,15 @@ export class AuthService {
       throw new ConflictException('El correo ya está registrado');
     }
 
+    // Buscar el rol por nombre
+    const role = await this.prisma.role.findUnique({
+      where: { nombre: registerDto.role.toUpperCase() },
+    });
+
+    if (!role) {
+      throw new ConflictException('Rol no encontrado');
+    }
+
     const hashedPassword = await bcrypt.hash(registerDto.password, 10);
 
     const user = await this.prisma.user.create({
@@ -63,7 +75,7 @@ export class AuthService {
         password: hashedPassword,
         fullName: registerDto.name,
         name: registerDto.name,
-        role: registerDto.role as any,
+        roleId: role.id,
         phone: registerDto.phone,
         companyId: registerDto.companyId?.toString(),
       },

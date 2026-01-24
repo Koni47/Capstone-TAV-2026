@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import HtmlMockRenderer from '../components/HtmlMockRenderer';
 import { getHtmlMock } from '../services/mockApi';
+import Header from '../components/Header';
 
 // Declare Chart.js types
 declare global {
@@ -164,39 +165,7 @@ const DashboardWithCharts: React.FC<{ navigate: any }> = ({ navigate }) => {
 
   return (
     <div className="bg-surface font-sans text-gray-800 min-h-screen">
-      {/* Navigation */}
-      <nav className="bg-primary text-white shadow-lg sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-20">
-            <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/')}>
-              <span className="material-icons text-secondary">local_shipping</span>
-              <span className="font-bold text-xl tracking-wide">Dashboard Administrador</span>
-            </div>
-
-            <div className="hidden md:flex space-x-6">
-              <a onClick={() => navigate('/dashboard/admin')} className="text-secondary font-bold border-b-2 border-secondary px-1 pb-1 cursor-pointer">Dashboard</a>
-              <a onClick={() => navigate('/trips')} className="hover:text-gray-300 transition px-1 pb-1 cursor-pointer">Viajes</a>
-              <a onClick={() => navigate('/vehicles')} className="hover:text-gray-300 transition px-1 pb-1 cursor-pointer">Vehículos</a>
-              <a onClick={() => navigate('/users')} className="hover:text-gray-300 transition px-1 pb-1 cursor-pointer">Usuarios</a>
-              <a onClick={() => navigate('/companies')} className="hover:text-gray-300 transition px-1 pb-1 cursor-pointer">Clientes</a>
-            </div>
-
-            <div className="hidden md:flex items-center gap-3">
-              <button className="bg-primary p-1 rounded-full text-gray-400 hover:text-white transition">
-                <span className="material-icons">notifications</span>
-              </button>
-              <div className="flex items-center gap-3 pl-4 border-l border-blue-800">
-                <div className="text-right hidden sm:block">
-                  <p className="text-sm font-bold leading-none">Usuario</p>
-                  <p className="text-xs text-blue-300">Admin</p>
-                </div>
-                <div className="h-8 w-8 rounded-full bg-secondary flex items-center justify-center text-white text-xs font-bold ring-2 ring-blue-900">US</div>
-                <a onClick={() => navigate('/logout')} className="ml-2 text-sm font-semibold hover:text-gray-300 cursor-pointer">Salir</a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <Header />
 
       {/* Main Content */}
       <main className="flex-1 py-10 px-4 sm:px-6 lg:px-8 bg-gray-50/50">
