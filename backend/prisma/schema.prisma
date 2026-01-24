@@ -13,40 +13,64 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model UserRoleModel {
-  id          Int     @id @default(autoincrement())
-  nombre      String  @unique
-  permisos    Json?   @default("{}")
-  descripcion String?
-  users       User[]
+model User {
+  id              String           @id @default(uuid())
+  email           String           @unique
+  password        String
+  fullName        String
+  name            String           @default("") // Alias para compatibilidad con endpoints
+  role            Role             @default(CLIENTE)
+  phone           String?
+  status          UserStatus       @default(ACTIVO) // Cambiar a enum
+  lastLogin       DateTime?        // Para tracking de login
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  companyId       String?
+  serviceRequests ServiceRequest[] @relation("ClientRequests")
+  tripsAsDriver   Trip[]           @relation("DriverTrips")
+  company         Company?         @relation(fields: [companyId], references: [id])
 
-  @@map("roles")
+  @@map("users")
 }
 
 model Company {
-  id                  String   @id @default(uuid())
-  razonSocial         String   @map("razon_social")
-  rutEmpresa          String   @unique @map("rut_empresa")
-  centroCosto         String?  @map("centro_costo")
-  contactoComercial   String?  @map("contacto_comercial")
-  createdAt           DateTime @default(now()) @map("created_at")
-  updatedAt           DateTime @updatedAt @map("updated_at")
-  serviceRequests     ServiceRequest[]
-  users               User[]
+  id              String           @id @default(uuid())
+  rut             String           @unique
+  name            String
+  costCenter      String?          // Hacerlo opcional
+  costCenterDesc  String?          // Descripción del centro de costo
+  address         String?
+  contactName     String?          // Nombre del contacto principal
+  contactEmail    String?
+  phone           String?          // Teléfono de contacto
+  contractStart   DateTime?        // Inicio de contrato
+  contractEnd     DateTime?        // Fin de contrato
+  status          CompanyStatus    @default(ACTIVO) // Cambiar a enum
+  description     String?          // Descripción de la empresa
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  serviceRequests ServiceRequest[]
+  users           User[]
+  trips           Trip[]           @relation("CompanyTrips") // Relación directa con trips
 
   @@map("empresas_cliente")
 }
 
 model Vehicle {
   id                  String        @id @default(uuid())
-  patente             String        @unique @map("patente")
-  marca               String        @map("marca")
-  modelo              String        @map("modelo")
-  capacidadPax        Int           @map("capacidad_pax")
-  estado              VehicleStatus @default(DISPONIBLE) @map("estado")
-  vencimientoRevTec   DateTime?     @map("vencimiento_rev_tec")
-  createdAt           DateTime      @default(now()) @map("created_at")
-  updatedAt           DateTime      @updatedAt @map("updated_at")
+  licensePlate        String        @unique
+  model               String
+  type                String?       // Tipo de vehículo (Van, Sedan, etc.)
+  capacity            Int?          // Capacidad de pasajeros
+  color               String?       // Color del vehículo
+  year                Int
+  mileage             Int?          // Kilometraje
+  status              VehicleStatus @default(DISPONIBLE)
+  technicalReviewDate DateTime?
+  purchaseDate        DateTime?     // Fecha de compra
+  notes               String?       // Observaciones
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
   trips               Trip[]
 
   @@map("vehiculos")
@@ -71,38 +95,83 @@ model User {
 }
 
 model ServiceRequest {
-  id             String   @id @default(uuid())
-  empresaId      String   @map("empresa_id")
-  fechaHoraRequerida DateTime @map("fecha_hora_requerida")
-  origenDireccion String @map("origen_direccion")
-  destinoDireccion String @map("destino_direccion")
-  cantidadPasajeros Int @map("cantidad_pasajeros")
-  nominaPasajeros String? @map("nomina_pasajeros")
-  estado         RequestStatus @default(PENDIENTE) @map("estado")
-  createdAt      DateTime @default(now()) @map("created_at")
-  updatedAt      DateTime @updatedAt @map("updated_at")
-  company        Company  @relation(fields: [empresaId], references: [id])
+  id             String         @id @default(uuid())
+  origin         String
+  destination    String
+  passengerCount Int
+  requestedAt    DateTime       @default(now())
+  estimatedFare  Int?           // Tarifa estimada
+  notes          String?
+  status         RequestStatus  @default(PENDIENTE) // Cambiar a enum
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  clientId       String
+  companyId      String?
+  driverId       String?        // Chofer asignado directamente
+  client         User           @relation("ClientRequests", fields: [clientId], references: [id])
+  company        Company?       @relation(fields: [companyId], references: [id])
   trip           Trip?
 
   @@map("solicitudes_servicio")
 }
 
 model Trip {
-  id               String         @id @default(uuid())
-  solicitudId      String         @unique @map("solicitud_id")
-  choferId         String         @map("chofer_id")
-  vehiculoId       String         @map("vehiculo_id")
-  horaInicioReal   DateTime?      @map("hora_inicio_real")
-  horaFinReal      DateTime?      @map("hora_fin_real")
-  estadoActual     TripStatus     @default(EN_RUTA) @map("estado_actual")
-  observaciones    String?        @map("observaciones")
-  createdAt        DateTime       @default(now()) @map("created_at")
-  updatedAt        DateTime       @updatedAt @map("updated_at")
-  serviceRequest   ServiceRequest @relation(fields: [solicitudId], references: [id])
-  driver           User           @relation("DriverTrips", fields: [choferId], references: [id])
-  vehicle          Vehicle        @relation(fields: [vehiculoId], references: [id])
+  id               String          @id @default(uuid())
+  title            String?         // Título del viaje
+  status           TripStatus      @default(PENDIENTE)
+  scheduledDate    DateTime?       // Fecha programada del viaje
+  startTime        DateTime?
+  endTime          DateTime?
+  origin           String?         // Origen del viaje
+  destination      String?         // Destino del viaje
+  fare             Int?            // Tarifa del viaje
+  rating           Int?
+  comment          String?
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  serviceRequestId String?         @unique // Hacerlo opcional
+  clientId         String?         // Cliente directo sin ServiceRequest
+  driverId         String?
+  vehicleId        String?
+  driver           User?           @relation("DriverTrips", fields: [driverId], references: [id])
+  serviceRequest   ServiceRequest? @relation(fields: [serviceRequestId], references: [id])
+  vehicle          Vehicle?        @relation(fields: [vehicleId], references: [id])
+  client           Company?        @relation("CompanyTrips", fields: [clientId], references: [id]) // Relación con Company
 
-  @@map("viajes_asignado")
+  @@map("trips")
+}
+
+model Complaint {
+  id            String          @id @default(uuid())
+  name          String          // Nombre del denunciante
+  email         String          // Email del denunciante
+  phone         String?         // Teléfono opcional
+  type          String          // Tipo de denuncia (Servicio, Conductor, etc.)
+  subject       String          // Asunto
+  description   String          // Descripción detallada
+  tripReference String?         // Referencia al viaje (opcional)
+  status        ComplaintStatus @default(PENDIENTE) // Cambiar a enum
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  @@map("complaints")
+}
+
+enum Role {
+  ADMIN
+  CHOFER
+  CLIENTE
+}
+
+enum UserStatus {
+  ACTIVO
+  INACTIVO
+  PENDIENTE
+}
+
+enum CompanyStatus {
+  ACTIVO
+  INACTIVO
 }
 
 enum VehicleStatus {
@@ -117,13 +186,25 @@ enum RequestStatus {
   CANCELADO
 }
 
-enum TripStatus {
+enum RequestStatus {
+  PENDIENTE
+  ASIGNADO
   EN_RUTA
-  FINALIZADO
+  COMPLETADO
+  CANCELADO
 }
 
-enum UserRole {
-  ADMIN
-  CHOFER
-  CLIENTE
+enum TripStatus {
+  PENDIENTE
+  ASIGNADO
+  EN_RUTA
+  FINALIZADO
+  CANCELADO
+}
+
+enum ComplaintStatus {
+  PENDIENTE
+  EN_REVISION
+  RESUELTO
+  CERRADO
 }

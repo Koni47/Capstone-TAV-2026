@@ -1,28 +1,33 @@
-import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { IsEmail, IsNotEmpty, IsString, MinLength, IsEnum, IsOptional } from 'class-validator';
+import { UserRole } from './login.dto';
 
 export class RegisterDto {
-  @ApiProperty({ example: '12345678-9' })
+  @ApiProperty({ example: 'Juan Pérez' })
   @IsString()
   @IsNotEmpty()
-  rut: string;
+  name: string;
 
-  @ApiProperty({ example: 'nuevo@usuario.cl' })
+  @ApiProperty({ example: 'juan.perez@mineraabc.cl' })
   @IsEmail()
+  @IsNotEmpty()
   email: string;
 
-  @ApiProperty({ example: 'ContraseñaSegura123', minLength: 6 })
+  @ApiProperty({ example: 'Password123!' })
   @IsString()
-  @MinLength(6)
+  @MinLength(8)
   password: string;
 
-  @ApiProperty({ example: 'Juan Nuevo' })
-  @IsString()
-  @IsNotEmpty()
-  nombreCompleto: string;
+  @ApiProperty({ enum: UserRole, example: UserRole.CLIENT })
+  @IsEnum(UserRole)
+  role: UserRole;
 
-  @ApiProperty({ example: '+56912345678', required: false })
+  @ApiProperty({ example: '+56 9 8765 4321', required: false })
   @IsString()
-  @IsNotEmpty()
-  phone: string;
+  @IsOptional()
+  phone?: string;
+
+  @ApiProperty({ example: 1, required: false })
+  @IsOptional()
+  companyId?: number;
 }

@@ -1,39 +1,33 @@
-import { IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString, MinLength } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-
-export enum UserRole {
-  ADMIN = 'ADMIN',
-  CHOFER = 'CHOFER',
-  CLIENTE = 'CLIENTE',
-}
+import { IsEmail, IsNotEmpty, IsString, IsEnum, IsOptional, MinLength } from 'class-validator';
+import { UserRole } from '../../auth/dto/login.dto';
 
 export class CreateUserDto {
-  @ApiProperty({ example: '12345678-9' })
+  @ApiProperty({ example: 'Juan Pérez' })
   @IsString()
   @IsNotEmpty()
-  rut: string;
+  name: string;
 
-  @ApiProperty({ example: 'juan@elloa.cl' })
+  @ApiProperty({ example: 'juan.perez@mineraabc.cl' })
   @IsEmail()
+  @IsNotEmpty()
   email: string;
 
-  @ApiProperty({ example: 'Secret123!', minLength: 6 })
+  @ApiProperty({ example: 'Password123!' })
   @IsString()
-  @MinLength(6)
+  @MinLength(8)
   password: string;
 
-  @ApiProperty({ example: 'Juan Perez' })
-  @IsString()
-  @IsNotEmpty()
-  nombreCompleto: string;
-
-  @ApiProperty({ enum: UserRole, default: UserRole.CLIENTE })
+  @ApiProperty({ enum: UserRole, example: UserRole.CLIENT })
   @IsEnum(UserRole)
-  @IsOptional()
-  role?: UserRole;
+  role: UserRole;
 
-  @ApiProperty({ example: 'uuid-company', required: false })
+  @ApiProperty({ example: '+56 9 8765 4321', required: false })
   @IsString()
   @IsOptional()
-  empresaId?: string;
+  phone?: string;
+
+  @ApiProperty({ example: 1, required: false })
+  @IsOptional()
+  companyId?: number;
 }

@@ -1,111 +1,78 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { UsersService } from '../users/users.service';
+import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import * as bcrypt from 'bcrypt';
+import { PrismaService } from '../prisma/prisma.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
-import { ConfigService } from '@nestjs/config';
-import { RefreshTokenDto } from './dto/refresh-token.dto';
-import { UserRole } from '../users/dto/create-user.dto';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private usersService: UsersService,
+    private prisma: PrismaService,
     private jwtService: JwtService,
-    private configService: ConfigService,
   ) {}
 
-  async validateUser(email: string, pass: string): Promise<any> {
-    const user = await this.usersService.findByEmail(email);
-    if (user && (await bcrypt.compare(pass, user.password))) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { password, ...result } = user;
-      return result;
-    }
-    return null;
-  }
+  async login(loginDto: LoginDto) {
+    const { email, password, role } = loginDto;
 
-  async register(registerDto: RegisterDto) {
-    // Reutilizamos el servicio de usuarios para crear el usuario.
-    // Asumimos que el registro público crea usuarios tipo CLIENTE por defecto si no se especifica.
-    // El CreateUserDto ya maneja el rol por defecto, pero aquí mapeamos el RegisterDto.
-    const newUser = await this.usersService.create({
-      rut: registerDto.rut,
-      email: registerDto.email,
-      password: registerDto.password,
-      nombreCompleto: registerDto.nombreCompleto,
-      role: UserRole.CLIENTE,
-      empresaId: undefined,
+    // Buscar usuario por email y rol
+    const user = await this.prisma.user.findFirst({
+      where: { email, role: role as any },
+      include: { company: true },
     });
 
-    // Opcional: Loguear automáticamente al usuario después de registrarse
-    const payload = { email: newUser.email, sub: newUser.id, role: newUser.role.nombre };
-
-    return {
-      message: 'Usuario registrado exitosamente',
-      user: {
-        id: newUser.id,
-        email: newUser.email,
-        nombreCompleto: newUser.nombreCompleto,
-        role: newUser.role.nombre,
-      },
-      tokens: {
-        accessToken: this.jwtService.sign(payload),
-        refreshToken: this.jwtService.sign(payload, {
-          secret: this.configService.get('JWT_REFRESH_SECRET'),
-          expiresIn: this.configService.get('JWT_REFRESH_EXPIRATION'),
-        }),
-      },
-    };
-  }
-
-  async login(loginDto: LoginDto) {
-    const user = await this.validateUser(loginDto.email, loginDto.password);
-    if (!user) {
+    if (!user || !(await bcrypt.compare(password, user.password))) {
       throw new UnauthorizedException('Credenciales inválidas');
     }
 
-    const payload = { email: user.email, sub: user.id, role: user.role };
+    // Actualizar último login
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: { lastLogin: new Date() },
+    });
+
+    const payload = { sub: user.id, email: user.email, role: user.role };
+    const accessToken = this.jwtService.sign(payload);
 
     return {
-      accessToken: this.jwtService.sign(payload),
-      refreshToken: this.jwtService.sign(payload, {
-        secret: this.configService.get('JWT_REFRESH_SECRET'),
-        expiresIn: this.configService.get('JWT_REFRESH_EXPIRATION'),
-      }),
-      user,
+      accessToken,
+      user: {
+        id: user.id,
+        name: user.fullName,
+        email: user.email,
+        role: user.role,
+        company: user.company?.name,
+      },
     };
   }
 
-  async refreshToken(refreshTokenDto: RefreshTokenDto) {
-    try {
-      const { refreshToken } = refreshTokenDto;
-      const payload = await this.jwtService.verifyAsync(refreshToken, {
-        secret: this.configService.get('JWT_REFRESH_SECRET'),
-      });
+  async register(registerDto: RegisterDto) {
+    const existingUser = await this.prisma.user.findUnique({
+      where: { email: registerDto.email },
+    });
 
-      const user = await this.usersService.findOne(payload.sub);
-      if (!user) {
-        throw new UnauthorizedException('Usuario no encontrado');
-      }
-
-      const newPayload = { email: user.email, sub: user.id, role: user.role };
-      return {
-        accessToken: this.jwtService.sign(newPayload),
-      };
-    } catch (error) {
-      throw new UnauthorizedException('Token de refresco inválido o expirado');
+    if (existingUser) {
+      throw new ConflictException('El correo ya está registrado');
     }
+
+    const hashedPassword = await bcrypt.hash(registerDto.password, 10);
+
+    const user = await this.prisma.user.create({
+      data: {
+        email: registerDto.email,
+        password: hashedPassword,
+        fullName: registerDto.name,
+        name: registerDto.name,
+        role: registerDto.role as any,
+        phone: registerDto.phone,
+        companyId: registerDto.companyId?.toString(),
+      },
+    });
+
+    return { message: 'Usuario registrado exitosamente', userId: user.id };
   }
 
-  getProfile() {
-    return { id: 'user-id', role: 'ADMIN' };
-  }
-  recoverPassword(_body: any) {
-    return { message: 'Correo enviado', _body };
-  }
-  resetPassword(_body: any) {
-    return { message: 'Contraseña actualizada', _body };
+  async logout() {
+    return { message: 'Sesión cerrada exitosamente' };
   }
 }

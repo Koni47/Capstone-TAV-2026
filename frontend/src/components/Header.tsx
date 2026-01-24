@@ -43,35 +43,33 @@ export default function Header() {
         { label: 'Flota', href: '/vehicles' }
       ]
     }
-    return site.nav
+    return site?.nav || []
   }
 
   const navigation = getNavigation()
 
   return (
-    <nav className="bg-primary text-white sticky top-0 z-50">
+    <nav className="bg-primary text-white shadow-lg sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/')}> 
-            <span className="material-icons text-secondary text-3xl">local_shipping</span>
-            <span className="font-bold text-xl tracking-wide">EL LOA</span>
+            <div className="w-10 h-10 bg-white rounded-md flex items-center justify-center text-primary font-bold text-xl">EL</div>
+            <span className="font-bold text-xl tracking-wide">Servicios El Loa</span>
           </div>
 
-          <div className="hidden md:block ml-6">
-            <div className="flex items-baseline gap-6">
-              {navigation.map((n) => (
-                <Link
-                  key={n.href}
-                  to={n.href}
-                  className={`${current === n.href ? 'text-white border-b-2 border-secondary px-4 py-3' : 'text-gray-300 hover:bg-primary-light hover:text-white px-4 py-3'} rounded-md text-sm font-medium transition`}
-                >
-                  {n.label}
-                </Link>
-              ))}
-            </div>
+          <div className="hidden md:flex space-x-6">
+            {navigation && navigation.map((n) => (
+              <Link
+                key={n.href}
+                to={n.href}
+                className={`${current === n.href ? 'text-secondary font-bold border-b-2 border-secondary' : 'hover:text-gray-300'} transition px-1 pb-1`}
+              >
+                {n.label}
+              </Link>
+            ))}
           </div>
 
-          <div className="hidden md:flex items-center gap-4">
+          <div className="hidden md:flex items-center gap-3">
             {userEmail ? (
               <>
                 <button

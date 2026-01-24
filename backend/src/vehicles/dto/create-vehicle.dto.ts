@@ -1,26 +1,63 @@
-import { IsEnum, IsInt, IsNotEmpty, IsString, Min, MinLength } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { VehicleStatus } from '@prisma/client';
+import { IsNotEmpty, IsString, IsNumber, IsOptional, IsEnum } from 'class-validator';
+
+export enum VehicleStatus {
+  DISPONIBLE = 'DISPONIBLE',
+  EN_RUTA = 'EN_RUTA',
+  MANTENCION = 'MANTENCION',
+  FUERA_DE_SERVICIO = 'FUERA_DE_SERVICIO',
+}
 
 export class CreateVehicleDto {
   @ApiProperty({ example: 'ABCD-12' })
   @IsString()
   @IsNotEmpty()
-  licensePlate: string;
+  plate: string;
 
-  @ApiProperty({ example: 'Toyota Hilux' })
+  @ApiProperty({ example: 'Mercedes-Benz' })
+  @IsString()
+  @IsNotEmpty()
+  brand: string;
+
+  @ApiProperty({ example: 'Sprinter 515 CDI' })
   @IsString()
   @IsNotEmpty()
   model: string;
 
-  @ApiProperty({ example: 2024 })
-  @IsInt()
-  @Min(2000)
-  year: number;
+  @ApiProperty({ example: 'Van Pasajeros' })
+  @IsString()
+  @IsNotEmpty()
+  type: string;
 
-  @ApiProperty({ enum: VehicleStatus, default: VehicleStatus.DISPONIBLE })
+  @ApiProperty({ example: 19 })
+  @IsNumber()
+  @IsNotEmpty()
+  capacity: number;
+
+  @ApiProperty({ example: 'Blanco', required: false })
+  @IsString()
+  @IsOptional()
+  color?: string;
+
+  @ApiProperty({ example: 125000, required: false })
+  @IsNumber()
+  @IsOptional()
+  mileage?: number;
+
+  @ApiProperty({ example: 2020, required: false })
+  @IsNumber()
+  @IsOptional()
+  year?: number;
+
+  @ApiProperty({ example: 'Diésel', required: false })
+  @IsString()
+  @IsOptional()
+  fuel?: string;
+
+  @ApiProperty({ enum: VehicleStatus, example: VehicleStatus.DISPONIBLE, required: false })
   @IsEnum(VehicleStatus)
-  status: VehicleStatus;
+  @IsOptional()
+  status?: VehicleStatus;
 }
 
 export class UpdateVehicleDto {
