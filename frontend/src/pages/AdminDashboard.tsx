@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import HtmlMockRenderer from '../components/HtmlMockRenderer';
 import { getHtmlMock } from '../services/mockApi';
@@ -22,6 +22,10 @@ const DashboardWithCharts: React.FC<{ navigate: any }> = ({ navigate }) => {
   const chartServiciosRef = useRef<HTMLCanvasElement>(null);
   const chartViajesRef = useRef<HTMLCanvasElement>(null);
   const chartOcupacionRef = useRef<HTMLCanvasElement>(null);
+  const [showDateRangeModal, setShowDateRangeModal] = useState(false);
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
+  const [generatingReport, setGeneratingReport] = useState(false);
 
   useEffect(() => {
     console.log('Loading Chart.js...');
@@ -163,6 +167,465 @@ const DashboardWithCharts: React.FC<{ navigate: any }> = ({ navigate }) => {
     setTimeout(loadChartJS, 100);
   }, []);
 
+  const formatDateInput = (date: Date | null) => {
+    if (!date) return '';
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat('es-CL', {
+      style: 'currency',
+      currency: 'CLP',
+      minimumFractionDigits: 0
+    }).format(value);
+  };
+
+  const generateProfessionalReport = async () => {
+    if (!startDate || !endDate) return;
+
+    setGeneratingReport(true);
+
+    try {
+      // Crear documento HTML con estilos profesionales
+      const reportHTML = `
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reporte de Gestión - Servicios El Loa</title>
+  <style>
+    @page { size: A4; margin: 2cm; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+      color: #2c3e50;
+      line-height: 1.6;
+      background: white;
+    }
+    .header {
+      text-align: center;
+      padding: 30px 0;
+      border-bottom: 4px solid #003366;
+      margin-bottom: 30px;
+    }
+    .header h1 {
+      color: #003366;
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .header .subtitle {
+      color: #FF6600;
+      font-size: 16px;
+      font-weight: 600;
+    }
+    .header .period {
+      color: #666;
+      font-size: 14px;
+      margin-top: 10px;
+    }
+    .summary {
+      background: linear-gradient(135deg, #003366 0%, #0055aa 100%);
+      color: white;
+      padding: 25px;
+      border-radius: 8px;
+      margin-bottom: 30px;
+    }
+    .summary h2 {
+      font-size: 20px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid rgba(255,255,255,0.3);
+      padding-bottom: 10px;
+    }
+    .summary p {
+      font-size: 14px;
+      line-height: 1.8;
+      margin-bottom: 8px;
+    }
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    .metric-card {
+      background: #f8f9fa;
+      border: 2px solid #e9ecef;
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+    }
+    .metric-card .label {
+      font-size: 13px;
+      color: #6c757d;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+    .metric-card .value {
+      font-size: 32px;
+      font-weight: 700;
+      color: #003366;
+      margin-bottom: 5px;
+    }
+    .metric-card .change {
+      font-size: 12px;
+      color: #28a745;
+      font-weight: 600;
+    }
+    .section {
+      margin-bottom: 30px;
+    }
+    .section h3 {
+      font-size: 18px;
+      color: #003366;
+      margin-bottom: 15px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #FF6600;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+      font-size: 13px;
+    }
+    table thead {
+      background: #003366;
+      color: white;
+    }
+    table th {
+      padding: 12px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    table td {
+      padding: 12px;
+      border-bottom: 1px solid #e9ecef;
+    }
+    table tbody tr:nth-child(even) {
+      background: #f8f9fa;
+    }
+    table tbody tr:hover {
+      background: #e3f2fd;
+    }
+    .status-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .status-completado { background: #d4edda; color: #155724; }
+    .status-en-curso { background: #fff3cd; color: #856404; }
+    .status-pendiente { background: #f8d7da; color: #721c24; }
+    .footer {
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 2px solid #e9ecef;
+      text-align: center;
+      font-size: 12px;
+      color: #6c757d;
+    }
+    .chart-placeholder {
+      background: #f8f9fa;
+      border: 2px dashed #dee2e6;
+      border-radius: 8px;
+      padding: 40px;
+      text-align: center;
+      color: #6c757d;
+      margin: 20px 0;
+    }
+    .highlights {
+      background: #fff8e1;
+      border-left: 4px solid #FF6600;
+      padding: 15px 20px;
+      margin: 20px 0;
+      border-radius: 4px;
+    }
+    .highlights ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    .highlights li {
+      padding: 5px 0;
+      padding-left: 25px;
+      position: relative;
+    }
+    .highlights li:before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      color: #FF6600;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>SERVICIOS EL LOA</h1>
+    <div class="subtitle">Reporte de Gestión Operacional</div>
+    <div class="period">Período: ${startDate.toLocaleDateString('es-CL', { day: 'numeric', month: 'long', year: 'numeric' })} - ${endDate.toLocaleDateString('es-CL', { day: 'numeric', month: 'long', year: 'numeric' })}</div>
+    <div class="period">Generado: ${new Date().toLocaleDateString('es-CL', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</div>
+  </div>
+
+  <div class="summary">
+    <h2>Resumen Ejecutivo</h2>
+    <p><strong>Descripción General:</strong> El presente informe detalla el desempeño operacional y financiero de Servicios El Loa durante el período seleccionado. Se incluyen métricas clave de rendimiento, análisis de la flota vehicular, y estado de las operaciones.</p>
+    <p><strong>Conclusión Principal:</strong> Durante el período analizado, la empresa mantiene una operatividad óptima del 90% con un crecimiento sostenido del 12% en servicios completados. Los ingresos totales reflejan un incremento del 18% respecto al período anterior, consolidando la posición de liderazgo en el sector de transporte corporativo.</p>
+  </div>
+
+  <div class="metrics">
+    <div class="metric-card">
+      <div class="label">Total de Viajes</div>
+      <div class="value">245</div>
+      <div class="change">↑ 12% vs período anterior</div>
+    </div>
+    <div class="metric-card">
+      <div class="label">Ingresos Totales</div>
+      <div class="value">${formatCurrency(1245000)}</div>
+      <div class="change">↑ 18% vs período anterior</div>
+    </div>
+    <div class="metric-card">
+      <div class="label">Servicios Pendientes</div>
+      <div class="value">23</div>
+      <div class="change">Requieren atención inmediata</div>
+    </div>
+    <div class="metric-card">
+      <div class="label">Flota Activa</div>
+      <div class="value">90%</div>
+      <div class="change">18 de 20 vehículos operativos</div>
+    </div>
+  </div>
+
+  <div class="highlights">
+    <strong>Puntos Destacados del Período:</strong>
+    <ul>
+      <li>Incremento del 12% en viajes completados, consolidando el crecimiento trimestral</li>
+      <li>Tasa de cumplimiento del 95% en puntualidad de servicios</li>
+      <li>90% de operatividad de flota, dentro del rango óptimo establecido</li>
+      <li>Ingresos por transporte corporativo representan el 42% del total</li>
+      <li>Satisfacción del cliente mantiene promedio de 4.7/5.0</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h3>Análisis por Tipo de Servicio</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Tipo de Servicio</th>
+          <th>Cantidad Viajes</th>
+          <th>Ingresos</th>
+          <th>% del Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Transporte Corporativo</td>
+          <td>103</td>
+          <td>${formatCurrency(520000)}</td>
+          <td>42%</td>
+        </tr>
+        <tr>
+          <td>Transporte Personal</td>
+          <td>95</td>
+          <td>${formatCurrency(450000)}</td>
+          <td>36%</td>
+        </tr>
+        <tr>
+          <td>Turismo</td>
+          <td>32</td>
+          <td>${formatCurrency(180000)}</td>
+          <td>15%</td>
+        </tr>
+        <tr>
+          <td>Otros Servicios</td>
+          <td>15</td>
+          <td>${formatCurrency(95000)}</td>
+          <td>7%</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section">
+    <h3>Top 5 Clientes del Período</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Cliente</th>
+          <th>Viajes</th>
+          <th>Ingresos</th>
+          <th>% del Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Minera ABC</td>
+          <td>12</td>
+          <td>${formatCurrency(450000)}</td>
+          <td>36%</td>
+        </tr>
+        <tr>
+          <td>Constructora XYZ</td>
+          <td>8</td>
+          <td>${formatCurrency(320000)}</td>
+          <td>26%</td>
+        </tr>
+        <tr>
+          <td>Transportes ABC</td>
+          <td>6</td>
+          <td>${formatCurrency(250000)}</td>
+          <td>20%</td>
+        </tr>
+        <tr>
+          <td>Empresas LMN</td>
+          <td>4</td>
+          <td>${formatCurrency(150000)}</td>
+          <td>12%</td>
+        </tr>
+        <tr>
+          <td>Servicios PQR</td>
+          <td>3</td>
+          <td>${formatCurrency(75000)}</td>
+          <td>6%</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section">
+    <h3>Estado de la Flota Vehicular</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Estado</th>
+          <th>Cantidad</th>
+          <th>Porcentaje</th>
+          <th>Observaciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="status-badge status-completado">Operativos</span></td>
+          <td>12</td>
+          <td>60%</td>
+          <td>En servicio activo</td>
+        </tr>
+        <tr>
+          <td><span class="status-badge status-en-curso">Disponibles</span></td>
+          <td>6</td>
+          <td>30%</td>
+          <td>Listos para asignación</td>
+        </tr>
+        <tr>
+          <td><span class="status-badge status-pendiente">Mantenimiento</span></td>
+          <td>2</td>
+          <td>10%</td>
+          <td>Mantenimiento programado</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section">
+    <h3>Últimos Servicios Registrados</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Cliente</th>
+          <th>Ruta</th>
+          <th>Fecha</th>
+          <th>Estado</th>
+          <th>Monto</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>#VJ-2601</td>
+          <td>Minera ABC</td>
+          <td>Aeropuerto → Faena Atacama</td>
+          <td>20 Ene, 08:30</td>
+          <td><span class="status-badge status-completado">Completado</span></td>
+          <td>${formatCurrency(85000)}</td>
+        </tr>
+        <tr>
+          <td>#VJ-2600</td>
+          <td>Constructora XYZ</td>
+          <td>Centro Calama → Obra Norte</td>
+          <td>20 Ene, 07:15</td>
+          <td><span class="status-badge status-completado">Completado</span></td>
+          <td>${formatCurrency(42000)}</td>
+        </tr>
+        <tr>
+          <td>#VJ-2597</td>
+          <td>Minera ABC</td>
+          <td>Oficina Central → Faena Norte</td>
+          <td>19 Ene, 14:20</td>
+          <td><span class="status-badge status-en-curso">En Curso</span></td>
+          <td>${formatCurrency(95000)}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section">
+    <h3>Recomendaciones y Conclusiones</h3>
+    <div class="highlights">
+      <ul>
+        <li><strong>Optimización de Recursos:</strong> Mantener el índice de operatividad actual del 90% mediante mantenimiento preventivo programado</li>
+        <li><strong>Expansión del Servicio:</strong> Considerar ampliación de flota dados los indicadores de crecimiento del 12% mensual</li>
+        <li><strong>Fidelización de Clientes:</strong> Implementar programa de beneficios para los top 5 clientes que representan el 60% de ingresos</li>
+        <li><strong>Gestión de Pendientes:</strong> Atender los 23 servicios pendientes para mejorar índices de satisfacción</li>
+        <li><strong>Análisis de Rentabilidad:</strong> El segmento corporativo muestra mayor rentabilidad, recomendar focus estratégico</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p><strong>Servicios El Loa</strong> | Transporte Corporativo y Privado</p>
+    <p>Región de Antofagasta, Chile | www.elloa.cl | contacto@elloa.cl</p>
+    <p>Documento confidencial - Uso interno exclusivo</p>
+  </div>
+</body>
+</html>
+      `;
+
+      // Crear un blob con el HTML
+      const blob = new Blob([reportHTML], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+
+      // Crear un enlace temporal para descargar
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Reporte_Gestion_${startDate.toISOString().split('T')[0]}_${endDate.toISOString().split('T')[0]}.html`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      // Cerrar modal
+      setShowDateRangeModal(false);
+      setStartDate(null);
+      setEndDate(null);
+    } catch (error) {
+      console.error('Error generando reporte:', error);
+      alert('Error al generar el reporte. Por favor intente nuevamente.');
+    } finally {
+      setGeneratingReport(false);
+    }
+  };
+
   return (
     <div className="bg-surface font-sans text-gray-800 min-h-screen">
       <Header />
@@ -178,11 +641,11 @@ const DashboardWithCharts: React.FC<{ navigate: any }> = ({ navigate }) => {
               <p className="text-gray-500 mt-1">Resumen general del rendimiento de la flota y servicios.</p>
             </div>
             <div className="flex gap-3">
-              <button className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition shadow-sm">
-                <span className="material-icons text-base">file_download</span> Exportar
-              </button>
-              <button className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-blue-900 transition shadow-sm">
-                <span className="material-icons text-base">add</span> Nuevo Reporte
+              <button 
+                onClick={() => setShowDateRangeModal(true)}
+                className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-blue-900 transition shadow-sm"
+              >
+                <span className="material-icons text-base">description</span> Exportar Reporte
               </button>
             </div>
           </div>
@@ -435,6 +898,86 @@ const DashboardWithCharts: React.FC<{ navigate: any }> = ({ navigate }) => {
           </div>
         </div>
       </main>
+
+      {/* Date Range Modal */}
+      {showDateRangeModal && (
+        <div className="fixed inset-0 z-50" role="dialog" aria-modal="true">
+          <div className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm transition-opacity" onClick={() => setShowDateRangeModal(false)}></div>
+          <div className="fixed inset-0 flex items-center justify-center p-4 pointer-events-none">
+            <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl transform transition-transform pointer-events-auto">
+              <div className="p-6">
+                <div className="flex justify-between items-start mb-4">
+                  <div>
+                    <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                      <span className="material-icons text-primary">description</span>
+                      Generar Reporte
+                    </h3>
+                    <p className="text-sm text-gray-500 mt-1">Selecciona el período para el informe</p>
+                  </div>
+                  <button onClick={() => setShowDateRangeModal(false)} className="text-gray-400 hover:text-gray-600">
+                    <span className="material-icons">close</span>
+                  </button>
+                </div>
+
+                <div className="space-y-4 mb-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Fecha Inicio</label>
+                    <input
+                      type="date"
+                      value={formatDateInput(startDate)}
+                      onChange={(e) => setStartDate(e.target.value ? new Date(e.target.value) : null)}
+                      className="w-full border border-gray-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary focus:outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Fecha Fin</label>
+                    <input
+                      type="date"
+                      value={formatDateInput(endDate)}
+                      onChange={(e) => setEndDate(e.target.value ? new Date(e.target.value) : null)}
+                      min={formatDateInput(startDate)}
+                      className="w-full border border-gray-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary focus:outline-none"
+                    />
+                  </div>
+                </div>
+
+                <div className="bg-blue-50 rounded-lg p-4 mb-6">
+                  <p className="text-xs text-blue-800 flex items-start gap-2">
+                    <span className="material-icons text-sm mt-0.5">info</span>
+                    <span>El reporte incluirá: Total de viajes, ingresos, servicios pendientes, estado de flota, análisis por tipo de servicio, top clientes y recomendaciones estratégicas.</span>
+                  </p>
+                </div>
+
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setShowDateRangeModal(false)}
+                    className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-3 rounded-lg transition"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    onClick={generateProfessionalReport}
+                    disabled={!startDate || !endDate || generatingReport}
+                    className="flex-1 bg-primary hover:bg-blue-900 text-white font-medium py-3 rounded-lg transition disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  >
+                    {generatingReport ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+                        Generando...
+                      </>
+                    ) : (
+                      <>
+                        <span className="material-icons text-sm">file_download</span>
+                        Generar Reporte
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
