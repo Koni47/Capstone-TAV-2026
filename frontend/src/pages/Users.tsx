@@ -82,7 +82,7 @@ const Users = () => {
             <p className="text-sm text-gray-500 mt-1">Total: {users.length} usuarios</p>
           </div>
           <button
-            onClick={() => navigate('/users/new')}
+            onClick={() => navigate('/useradd')}
             className="mt-4 md:mt-0 px-4 py-2 bg-secondary text-white rounded-md hover:bg-orange-700 flex items-center gap-2"
           >
             <span className="material-icons text-sm">add</span>

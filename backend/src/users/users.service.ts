@@ -69,7 +69,7 @@ export class UsersService {
       where: { id: id.toString() },
       include: {
         role: true,
-        company: { select: { name: true } },
+        company: { select: { name: true, id: true } },
       },
     });
 
@@ -77,11 +77,7 @@ export class UsersService {
       throw new NotFoundException(`Usuario #${id} no encontrado`);
     }
 
-    return {
-      ...user,
-      name: user.fullName,
-      role: user.role.nombre,
-    };
+    return user;
   }
 
   async getStats() {

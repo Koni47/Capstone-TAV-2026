@@ -1,38 +1,53 @@
-import { Controller, Get, Post, Body, Param, Patch, Query, ParseIntPipe } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
+import { Controller, Get, Post, Body, Param, Patch, Query, ParseIntPipe, UseGuards } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiQuery, ApiBearerAuth } from '@nestjs/swagger';
 import { ServiceRequestsService } from './service-requests.service';
 import { CreateServiceRequestDto } from './dto/create-service-request.dto';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
 
 @ApiTags('Solicitudes de Servicio')
 @Controller('service-requests')
+@UseGuards(JwtAuthGuard, RolesGuard)
+@ApiBearerAuth()
 export class ServiceRequestsController {
   constructor(private readonly service: ServiceRequestsService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Crear una nueva solicitud de servicio' })
+  @Roles('ADMIN', 'CLIENTE')
+  @ApiOperation({ summary: 'Crear una nueva solicitud de servicio (Admin y Cliente)' })
   @ApiResponse({ status: 201, description: 'Solicitud creada' })
-  async create(@Body() createDto: CreateServiceRequestDto) {
-    // TODO: Obtener userId del token JWT en producción
-    const userId = 1; // Mock temporal
-    return this.service.create(createDto, userId);
+  @ApiResponse({ status: 403, description: 'No autorizado' })
+  async create(@Body() createDto: CreateServiceRequestDto, @CurrentUser() user) {
+    return this.service.create(createDto, user.id);
   }
 
   @Get()
-  @ApiOperation({ summary: 'Listar todas las solicitudes' })
+  @Roles('ADMIN', 'CLIENTE')
+  @ApiOperation({ summary: 'Listar solicitudes (Admin ve todas, Cliente ve solo las suyas)' })
   @ApiQuery({ name: 'page', required: false, example: 1 })
   @ApiQuery({ name: 'limit', required: false, example: 10 })
-  async findAll(@Query('page') page?: string, @Query('limit') limit?: string) {
-    return this.service.findAll(Number(page) || 1, Number(limit) || 10);
+  async findAll(
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+    @CurrentUser() user?: any,
+  ) {
+    const isAdmin = user?.role?.nombre === 'ADMIN';
+    const clientId = isAdmin ? undefined : user?.id;
+    return this.service.findAll(Number(page) || 1, Number(limit) || 10, clientId);
   }
 
   @Get('stats')
-  @ApiOperation({ summary: 'Obtener estadísticas de solicitudes' })
+  @Roles('ADMIN')
+  @ApiOperation({ summary: 'Obtener estadísticas de solicitudes (Solo Admin)' })
   async getStats() {
     return this.service.getStats();
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Obtener detalle de una solicitud' })
+  @Roles('ADMIN', 'CLIENTE')
+  @ApiOperation({ summary: 'Obtener detalle de una solicitud (Admin y Cliente)' })
   @ApiResponse({ status: 200, description: 'Detalle de la solicitud' })
   @ApiResponse({ status: 404, description: 'Solicitud no encontrada' })
   async findOne(@Param('id', ParseIntPipe) id: number) {
@@ -40,7 +55,9 @@ export class ServiceRequestsController {
   }
 
   @Patch(':id/assign')
-  @ApiOperation({ summary: 'Asignar chofer a una solicitud' })
+  @Roles('ADMIN')
+  @ApiOperation({ summary: 'Asignar chofer a una solicitud (Solo Admin)' })
+  @ApiResponse({ status: 403, description: 'No autorizado' })
   async assignDriver(
     @Param('id', ParseIntPipe) id: number,
     @Body('driverId') driverId: number,

@@ -574,5 +574,266 @@ export const htmlMocks: Record<string, string> = {
         </div>
     </nav>
 </body>
+</html>`,
+  
+  'vehicle-add.html': `<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <title>Agregar Nuevo Vehículo | Servicios de Transporte El Loa</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#003366',
+                        secondary: '#FF6600',
+                        surface: '#F3F4F6',
+                        success: '#10B981',
+                        warning: '#F59E0B',
+                        danger: '#EF4444',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-surface font-sans text-gray-800">
+    <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <nav class="flex text-sm text-gray-500 mb-6" aria-label="Breadcrumb">
+            <ol class="flex items-center space-x-2">
+                <li><a href="/vehicles" class="hover:text-primary transition cursor-pointer">Flota</a></li>
+                <li><span class="text-gray-400">/</span></li>
+                <li class="text-gray-800 font-medium">Agregar Vehículo</li>
+            </ol>
+        </nav>
+
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold leading-7 text-primary flex items-center gap-3">
+                <span class="material-icons text-4xl">add_circle</span>
+                Agregar Nuevo Vehículo
+            </h1>
+            <p class="mt-2 text-lg text-gray-600">Complete la información del nuevo vehículo para agregarlo a la flota.</p>
+        </div>
+
+        <div class="bg-white shadow-xl rounded-xl border border-gray-100 overflow-hidden">
+            <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
+                <h2 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                    <span class="material-icons text-primary">directions_car</span>
+                    Información del Vehículo
+                </h2>
+            </div>
+
+            <form id="vehicleForm" class="p-6 space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Patente *</label>
+                        <input
+                            type="text"
+                            id="patente"
+                            name="patente"
+                            placeholder="ABCD-12"
+                            class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm uppercase font-mono"
+                            required
+                            maxlength="8"
+                        >
+                        <p class="mt-1 text-xs text-gray-500">Formato: ABCD-12 o ABC-123</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Año *</label>
+                        <input
+                            type="number"
+                            id="anio"
+                            name="anio"
+                            placeholder="2024"
+                            min="1990"
+                            max="2026"
+                            class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
+                            required
+                        >
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Marca *</label>
+                        <select
+                            id="marca"
+                            name="marca"
+                            class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
+                            required
+                        >
+                            <option value="">Seleccionar marca</option>
+                            <option value="Mercedes-Benz">Mercedes-Benz</option>
+                            <option value="Toyota">Toyota</option>
+                            <option value="Hyundai">Hyundai</option>
+                            <option value="Volkswagen">Volkswagen</option>
+                            <option value="Chevrolet">Chevrolet</option>
+                            <option value="Ford">Ford</option>
+                            <option value="Nissan">Nissan</option>
+                            <option value="Mitsubishi">Mitsubishi</option>
+                            <option value="Iveco">Iveco</option>
+                            <option value="Scania">Scania</option>
+                            <option value="Otra">Otra</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Modelo *</label>
+                        <input
+                            type="text"
+                            id="modelo"
+                            name="modelo"
+                            placeholder="Ej: Sprinter 515 CDI"
+                            class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
+                            required
+                        >
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Tipo de Vehículo *</label>
+                        <select
+                            id="tipo"
+                            name="tipo"
+                            class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
+                            required
+                        >
+                            <option value="">Seleccionar tipo</option>
+                            <option value="Van Pasajeros">Van Pasajeros (Sprinter/H1)</option>
+                            <option value="Camioneta">Camioneta (Pickup)</option>
+                            <option value="SUV">SUV / Auto</option>
+                            <option value="Bus">Bus</option>
+                            <option value="Camión">Camión</option>
+                            <option value="Otro">Otro</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Capacidad (Pasajeros)</label>
+                        <input
+                            type="number"
+                            id="capacidad"
+                            name="capacidad"
+                            placeholder="19"
+                            min="1"
+                            max="50"
+                            class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
+                        >
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Color</label>
+                        <input
+                            type="text"
+                            id="color"
+                            name="color"
+                            placeholder="Blanco"
+                            class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
+                        >
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Kilometraje Actual</label>
+                        <input
+                            type="number"
+                            id="kilometraje"
+                            name="kilometraje"
+                            placeholder="0"
+                            min="0"
+                            class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
+                        >
+                        <p class="mt-1 text-xs text-gray-500">En kilómetros</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Combustible</label>
+                        <select
+                            id="combustible"
+                            name="combustible"
+                            class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
+                        >
+                            <option value="">Seleccionar</option>
+                            <option value="Diésel">Diésel</option>
+                            <option value="Gasolina">Gasolina</option>
+                            <option value="Eléctrico">Eléctrico</option>
+                            <option value="Híbrido">Híbrido</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="border-t border-gray-200 pt-6">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4 flex items-center gap-2">
+                        <span class="material-icons text-primary">description</span>
+                        Documentación
+                    </h3>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Fecha de Compra</label>
+                            <input
+                                type="date"
+                                id="fechaCompra"
+                                name="fechaCompra"
+                                class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
+                            >
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Fecha Vencimiento Revisión Técnica</label>
+                            <input
+                                type="date"
+                                id="fechaRevision"
+                                name="fechaRevision"
+                                class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
+                            >
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Observaciones</label>
+                        <textarea
+                            id="observaciones"
+                            name="observaciones"
+                            rows="3"
+                            placeholder="Información adicional sobre el vehículo..."
+                            class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
+                        ></textarea>
+                    </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-200">
+                    <button
+                        type="submit"
+                        class="inline-flex justify-center items-center px-6 py-3 border border-transparent rounded-lg shadow-sm text-base font-medium text-white bg-primary hover:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition duration-150"
+                    >
+                        <span class="material-icons mr-2">save</span>
+                        Registrar Vehículo
+                    </button>
+
+                    <button
+                        type="button"
+                        onclick="window.history.back()"
+                        class="inline-flex justify-center items-center px-6 py-3 border border-gray-300 rounded-lg shadow-sm text-base font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition duration-150"
+                    >
+                        <span class="material-icons mr-2">arrow_back</span>
+                        Cancelar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+</body>
 </html>`
 };

@@ -3,74 +3,77 @@ import { ApiTags, ApiOperation, ApiResponse, ApiQuery, ApiBearerAuth } from '@ne
 import { TripsService } from './trips.service';
 import { CreateTripDto, TripStatus } from './dto/create-trip.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
 
 @ApiTags('Viajes')
 @Controller('trips')
+@UseGuards(JwtAuthGuard, RolesGuard)
+@ApiBearerAuth()
 export class TripsController {
   constructor(private readonly tripsService: TripsService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Crear un nuevo viaje' })
+  @Roles('ADMIN')
+  @ApiOperation({ summary: 'Crear un nuevo viaje (Solo Admin)' })
   @ApiResponse({ status: 201, description: 'Viaje creado' })
+  @ApiResponse({ status: 403, description: 'No autorizado' })
   async create(@Body() createTripDto: CreateTripDto) {
     return this.tripsService.create(createTripDto);
   }
 
   @Get()
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
   @ApiOperation({ summary: 'Listar viajes según rol del usuario autenticado' })
   @ApiQuery({ name: 'page', required: false, example: 1 })
   @ApiQuery({ name: 'limit', required: false, example: 10 })
   async findAll(
-    @Request() req,
+    @CurrentUser() user,
     @Query('page') page?: string,
     @Query('limit') limit?: string,
   ) {
-    return this.tripsService.findAll(req.user, Number(page) || 1, Number(limit) || 10);
+    return this.tripsService.findAll(user, Number(page) || 1, Number(limit) || 10);
   }
 
   @Get(':id')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
   @ApiOperation({ summary: 'Obtener detalle de un viaje' })
   @ApiResponse({ status: 200, description: 'Detalle del viaje' })
   @ApiResponse({ status: 404, description: 'Viaje no encontrado' })
   @ApiResponse({ status: 403, description: 'No autorizado para ver este viaje' })
-  async findOne(@Param('id') id: string, @Request() req) {
-    return this.tripsService.findOne(id, req.user);
+  async findOne(@Param('id') id: string, @CurrentUser() user) {
+    return this.tripsService.findOne(id, user);
   }
 
   @Patch(':id/status')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Actualizar estado del viaje' })
+  @Roles('ADMIN', 'CHOFER')
+  @ApiOperation({ summary: 'Actualizar estado del viaje (Admin o Chofer)' })
+  @ApiResponse({ status: 403, description: 'No autorizado' })
   async updateStatus(
     @Param('id') id: string,
     @Body('status') status: TripStatus,
-    @Request() req,
+    @CurrentUser() user,
   ) {
-    return this.tripsService.updateStatus(id, status, req.user);
+    return this.tripsService.updateStatus(id, status, user);
   }
 
   @Patch(':id/start')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Iniciar Ruta' })
+  @Roles('CHOFER')
+  @ApiOperation({ summary: 'Iniciar Ruta (Solo Chofer)' })
   @ApiResponse({ status: 200, description: 'Viaje iniciado.' })
   @ApiResponse({ status: 404, description: 'Viaje no encontrado.' })
-  startTrip(@Param('id') id: string, @Request() req) {
-    return this.tripsService.startTrip(id, req.user);
+  @ApiResponse({ status: 403, description: 'No autorizado' })
+  startTrip(@Param('id') id: string, @CurrentUser() user) {
+    return this.tripsService.startTrip(id, user);
   }
 
   @Patch(':id/finish')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Finalizar Ruta' })
+  @Roles('CHOFER')
+  @ApiOperation({ summary: 'Finalizar Ruta (Solo Chofer)' })
   @ApiResponse({ status: 200, description: 'Viaje finalizado.' })
   @ApiResponse({ status: 404, description: 'Viaje no encontrado.' })
-  finishTrip(@Param('id') id: string, @Request() req) {
-    return this.tripsService.finishTrip(id, req.user);
+  @ApiResponse({ status: 403, description: 'No autorizado' })
+  finishTrip(@Param('id') id: string, @CurrentUser() user) {
+    return this.tripsService.finishTrip(id, user);
   }
 
   @Post(':id/evidence')

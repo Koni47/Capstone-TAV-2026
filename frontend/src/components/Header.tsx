@@ -5,17 +5,20 @@ import { useAuth } from '../context/AuthContext'
 
 export default function Header() {
   const navigate = useNavigate()
-  const { logout } = useAuth()
+  const { logout, user } = useAuth()
   const [userEmail, setUserEmail] = useState<string | null>(null)
   const [userRole, setUserRole] = useState<string | null>(null)
   const [notifications, setNotifications] = useState<number>(0)
 
   useEffect(() => {
-    setUserEmail(localStorage.getItem('userEmail'))
-    setUserRole(localStorage.getItem('userRole'))
+    // Preferir user del contexto sobre localStorage
+    const role = user?.role || localStorage.getItem('userRole')
+    const email = user?.email || localStorage.getItem('userEmail')
+    setUserEmail(email)
+    setUserRole(role)
     const n = parseInt(localStorage.getItem('notifications') || '0', 10)
     setNotifications(isNaN(n) ? 0 : n)
-  }, [])
+  }, [user])
 
   const handleLogout = () => {
     logout()
@@ -41,17 +44,17 @@ export default function Header() {
       return '/dashboard/admin';
     };
 
-    // Common menu items for all roles
-    const commonItems = [
+    // Base items
+    const baseItems = [
       { label: 'Dashboard', href: getDashboardLink() },
       { label: 'Viajes', href: '/trips' },
-      { label: 'Solicitudes', href: '/service-request' },
     ];
 
     // Admin-only menu items
     if (userRole === 'ADMIN') {
       return [
-        ...commonItems,
+        ...baseItems,
+        { label: 'Solicitudes', href: '/service-request' },
         { label: 'Vehículos', href: '/vehicles' },
         { label: 'Usuarios', href: '/users' },
         { label: 'Clientes', href: '/companies' },
@@ -59,8 +62,16 @@ export default function Header() {
       ];
     }
 
-    // Chofer and Cliente see basic menu
-    return commonItems;
+    // Cliente can see solicitudes
+    if (userRole === 'CLIENTE') {
+      return [
+        ...baseItems,
+        { label: 'Solicitudes', href: '/service-request' },
+      ];
+    }
+
+    // Chofer - basic menu without solicitudes
+    return baseItems;
   }
 
   const navigation = getNavigation()

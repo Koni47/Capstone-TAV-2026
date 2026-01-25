@@ -218,7 +218,6 @@ interface VehicleStatus {
               <div className="hidden md:block">
                 <div className="ml-10 flex items-baseline space-x-4">
                   <a href="#" onClick={(e) => { e.preventDefault(); window.location.href = '/AdminDashboard'; }} className="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Dashboard</a>
-                  <Link to="/service-request" className="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Solicitudes</Link>
                   <Link to="/users" className="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Usuarios</Link>
                   <Link to="/companies" className="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Clientes</Link>
                   <Link to="/vehicles" className="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Flota</Link>
@@ -488,7 +487,6 @@ interface VehicleStatus {
               <h3 className="text-white font-bold uppercase tracking-wider text-sm mb-4 border-b border-blue-800 pb-2 inline-block">Navegación</h3>
               <ul className="space-y-3 text-sm">
                 <li><Link to="/" className="hover:text-secondary transition flex items-center gap-2"><span className="material-icons text-xs">chevron_right</span> Inicio</Link></li>
-                <li><Link to="/service-request" className="hover:text-secondary transition flex items-center gap-2"><span className="material-icons text-xs">chevron_right</span> Solicitudes</Link></li>
                 <li><Link to="/companies" className="hover:text-secondary transition flex items-center gap-2"><span className="material-icons text-xs">chevron_right</span> Clientes</Link></li>
                 <li><Link to="/portal-choferes" className="hover:text-secondary transition flex items-center gap-2"><span className="material-icons text-xs">chevron_right</span> Portal Choferes</Link></li>
                 <li><Link to="/contacto" className="hover:text-secondary transition flex items-center gap-2"><span className="material-icons text-xs">chevron_right</span> Contáctanos</Link></li>

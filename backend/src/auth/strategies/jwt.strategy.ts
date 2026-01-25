@@ -22,6 +22,12 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     if (!user) {
       throw new UnauthorizedException();
     }
+    
+    // Verificar que el usuario esté activo
+    if (user.status !== 'ACTIVO') {
+      throw new UnauthorizedException('Usuario inactivo');
+    }
+    
     // Retornamos lo que queremos que esté disponible en req.user
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password, ...result } = user;

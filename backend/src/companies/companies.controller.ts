@@ -1,22 +1,30 @@
-import { Controller, Get, Post, Body, Param, Query, ParseIntPipe } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
+import { Controller, Get, Post, Body, Param, Query, ParseIntPipe, UseGuards } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiQuery, ApiBearerAuth } from '@nestjs/swagger';
 import { CompaniesService } from './companies.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
 
 @ApiTags('Empresas/Clientes')
 @Controller('companies')
+@UseGuards(JwtAuthGuard, RolesGuard)
+@ApiBearerAuth()
 export class CompaniesController {
   constructor(private readonly companiesService: CompaniesService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Crear una nueva empresa' })
+  @Roles('ADMIN')
+  @ApiOperation({ summary: 'Crear una nueva empresa (Solo Admin)' })
   @ApiResponse({ status: 201, description: 'Empresa creada' })
+  @ApiResponse({ status: 403, description: 'No autorizado' })
   async create(@Body() createCompanyDto: CreateCompanyDto) {
     return this.companiesService.create(createCompanyDto);
   }
 
   @Get()
-  @ApiOperation({ summary: 'Listar todas las empresas' })
+  @Roles('ADMIN')
+  @ApiOperation({ summary: 'Listar todas las empresas (Solo Admin)' })
   @ApiQuery({ name: 'page', required: false, example: 1 })
   @ApiQuery({ name: 'limit', required: false, example: 10 })
   async findAll(@Query('page') page?: string, @Query('limit') limit?: string) {
@@ -24,13 +32,15 @@ export class CompaniesController {
   }
 
   @Get('stats')
-  @ApiOperation({ summary: 'Obtener estadísticas de empresas' })
+  @Roles('ADMIN')
+  @ApiOperation({ summary: 'Obtener estadísticas de empresas (Solo Admin)' })
   async getStats() {
     return this.companiesService.getStats();
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Obtener detalle de una empresa' })
+  @Roles('ADMIN')
+  @ApiOperation({ summary: 'Obtener detalle de una empresa (Solo Admin)' })
   @ApiResponse({ status: 200, description: 'Detalle de la empresa' })
   @ApiResponse({ status: 404, description: 'Empresa no encontrada' })
   async findOne(@Param('id', ParseIntPipe) id: number) {

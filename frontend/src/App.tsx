@@ -24,6 +24,7 @@ import Vehicles from './pages/Vehicles'
 import VehicleEdit from './pages/VehicleEdit'
 import VehicleDetail from './pages/VehicleDetail'
 import VehicleAdd from './pages/VehicleAdd'
+import UserAdd from './pages/UserAdd'
 import Reports from './pages/Reports'
 import Login from './pages/Login'
 import Register from './pages/Register'
@@ -65,21 +66,22 @@ export default function App() {
 
       <Route path="/users" element={<ProtectedRoute allowedRoles={['ADMIN']}><Users /></ProtectedRoute>} />
       <Route path="/users/page-2" element={<ProtectedRoute allowedRoles={['ADMIN']}><UsersPage2 /></ProtectedRoute>} />
+      <Route path="/useradd" element={<ProtectedRoute allowedRoles={['ADMIN']}><UserAdd /></ProtectedRoute>} />
       <Route path="/user/:id" element={<ProtectedRoute allowedRoles={['ADMIN']}><UserDetail /></ProtectedRoute>} />
       <Route path="/user/:id/edit" element={<ProtectedRoute allowedRoles={['ADMIN']}><UserEdit /></ProtectedRoute>} />
 
       <Route path="/vehicles" element={<ProtectedRoute allowedRoles={['ADMIN']}><Vehicles /></ProtectedRoute>} />
-      <Route path="/vehicle-add" element={<ProtectedRoute allowedRoles={['ADMIN']}><VehicleAdd /></ProtectedRoute>} />
+      <Route path="/vehicleadd" element={<ProtectedRoute allowedRoles={['ADMIN']}><VehicleAdd /></ProtectedRoute>} />
       <Route path="/vehicle/:id" element={<ProtectedRoute allowedRoles={['ADMIN']}><VehicleDetail /></ProtectedRoute>} />
       <Route path="/vehicle/:id/edit" element={<ProtectedRoute allowedRoles={['ADMIN']}><VehicleEdit /></ProtectedRoute>} />
 
       <Route path="/trips" element={<ProtectedRoute><Trips /></ProtectedRoute>} />
       <Route path="/trip/:id" element={<ProtectedRoute><TripDetail /></ProtectedRoute>} />
 
-      <Route path="/service-request" element={<ProtectedRoute><ServiceRequest /></ProtectedRoute>} />
-      <Route path="/service-request-create" element={<ProtectedRoute><ServiceRequestCreate /></ProtectedRoute>} />
+      <Route path="/service-request" element={<ProtectedRoute allowedRoles={['ADMIN', 'CLIENTE']}><ServiceRequest /></ProtectedRoute>} />
+      <Route path="/service-request-create" element={<ProtectedRoute allowedRoles={['ADMIN', 'CLIENTE']}><ServiceRequestCreate /></ProtectedRoute>} />
       <Route path="/portal-choferes" element={<ProtectedRoute allowedRoles={['CHOFER']}><PortalChoferes /></ProtectedRoute>} />
-      <Route path="/payment" element={<ProtectedRoute><Payment /></ProtectedRoute>} />
+      <Route path="/payment" element={<ProtectedRoute allowedRoles={['CLIENTE']}><Payment /></ProtectedRoute>} />
 
       <Route path="/reports" element={<ProtectedRoute allowedRoles={['ADMIN']}><Reports /></ProtectedRoute>} />
       <Route path="/complaints" element={<ProtectedRoute><Complaints /></ProtectedRoute>} />

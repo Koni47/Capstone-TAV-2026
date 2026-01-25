@@ -21,10 +21,13 @@ export class ServiceRequestsService {
     });
   }
 
-  async findAll(page = 1, limit = 10) {
+  async findAll(page = 1, limit = 10, clientId?: string) {
     const skip = (page - 1) * limit;
+    const whereClause = clientId ? { clientId } : {};
+    
     const [requests, total] = await Promise.all([
       this.prisma.serviceRequest.findMany({
+        where: whereClause,
         skip,
         take: limit,
         include: {
@@ -33,7 +36,7 @@ export class ServiceRequestsService {
         },
         orderBy: { createdAt: 'desc' },
       }),
-      this.prisma.serviceRequest.count(),
+      this.prisma.serviceRequest.count({ where: whereClause }),
     ]);
 
     return {
