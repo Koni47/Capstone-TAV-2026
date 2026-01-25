@@ -31,35 +31,32 @@ export default function ServiceRequest() {
       
       // Cargar choferes con sus vehículos asignados
       const usersData: any = await getUsers();
-      console.log('Users data:', usersData);
       const allUsers = usersData.users || usersData || [];
       const driversWithRole = allUsers.filter((user: any) => user.role?.nombre === 'CHOFER' || user.role === 'CHOFER');
-      console.log('Drivers:', driversWithRole);
       
       // Cargar vehículos para relacionarlos con choferes
       const vehiclesData: any = await getVehicles();
-      console.log('Vehicles raw data:', vehiclesData);
+      console.log('Raw vehicles data:', vehiclesData);
       const allVehicles = Array.isArray(vehiclesData) ? vehiclesData : (vehiclesData.data || vehiclesData.vehicles || []);
-      console.log('Vehicles array:', allVehicles);
+      console.log('Processed vehicles:', allVehicles);
+      console.log('Drivers:', driversWithRole);
       
-      // Relacionar choferes con sus vehículos
+      // Relacionar choferes con sus vehículos usando currentDriver del endpoint
       const driversWithVehicles = driversWithRole.map((driver: any) => {
-        console.log('Looking for vehicle for driver:', driver.id, driver.name || driver.nombre);
         const assignedVehicle = Array.isArray(allVehicles) ? allVehicles.find((v: any) => {
-          console.log('Checking vehicle:', v.patente, 'choferId:', v.choferId, 'chofer:', v.chofer);
-          return v.choferId === driver.id || v.chofer?.id === driver.id || v.driverId === driver.id;
+          // El endpoint de vehicles retorna currentDriver que contiene el driver del trip activo
+          console.log(`Checking vehicle ${v.licensePlate}, currentDriver:`, v.currentDriver, 'against driver', driver.id);
+          return v.currentDriver?.id === driver.id;
         }) : null;
-        console.log('Assigned vehicle for', driver.name || driver.nombre, ':', assignedVehicle);
+        console.log(`Driver ${driver.fullName} assigned vehicle:`, assignedVehicle);
         return { ...driver, vehicle: assignedVehicle };
       });
       
-      console.log('Drivers with vehicles:', driversWithVehicles);
+      console.log('Final drivers with vehicles:', driversWithVehicles);
       setDrivers(driversWithVehicles);
-      
       setShowAssignModal(true);
     } catch (err: any) {
       console.error('Error loading drivers:', err);
-      console.error('Error details:', err.response);
       alert('Error al cargar los choferes: ' + (err.message || 'Error desconocido'));
     }
   };
@@ -82,32 +79,44 @@ export default function ServiceRequest() {
         serviceRequestId: selectedRequestForAssign.id,
         vehicleId: vehicleId,
         driverId: driverId,
-        status: 'AGENDADO'
+        status: 'ASIGNADO'
       });
       
-      await createTrip({
+      const response = await createTrip({
         serviceRequestId: selectedRequestForAssign.id,
         vehicleId: vehicleId,
         driverId: driverId,
-        status: 'AGENDADO'
+        status: 'ASIGNADO'
       });
       
-      console.log('Trip created successfully, reloading requests...');
+      console.log('Trip created successfully:', response);
       
-      // Recargar datos inmediatamente y mostrar logs
+      // Recargar datos
       const data: any = await getServiceRequests();
-      console.log('Reloaded requests after assignment:', data);
       const updatedRequests = data.requests || data || [];
-      console.log('Updated requests array:', updatedRequests);
-      console.log('Request we just assigned:', updatedRequests.find((r: any) => r.id === selectedRequestForAssign.id));
       setRequests(updatedRequests);
       
       alert('Chofer y vehículo asignados exitosamente');
       closeAssignModal();
       
     } catch (err: any) {
-      console.error('Error assigning driver:', err);
-      alert(err.response?.data?.message || 'Error al asignar el chofer');
+      console.error('Error completo:', err);
+      console.error('Response data:', err.response?.data);
+      console.error('Response status:', err.response?.status);
+      
+      let errorMessage = 'Error al asignar el chofer';
+      
+      if (err.response?.data?.message) {
+        if (Array.isArray(err.response.data.message)) {
+          errorMessage = err.response.data.message.join(', ');
+        } else {
+          errorMessage = err.response.data.message;
+        }
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+      
+      alert(`Error: ${errorMessage}`);
     }
   };
 
@@ -258,7 +267,9 @@ export default function ServiceRequest() {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {requests.map((request: any) => (
+                    {requests.map((request: any) => {
+                      console.log('Request:', request.id.slice(0,8), 'Status:', request.status, 'Has trip?', !!request.trip, 'Has driver?', !!request.trip?.driver);
+                      return (
                       <tr key={request.id} className="hover:bg-gray-50 transition">
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm font-bold text-gray-900">#{request.id.slice(0, 8)}</div>
@@ -293,12 +304,22 @@ export default function ServiceRequest() {
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap hidden md:table-cell">
-                          {request.trip?.driver ? (
+                          {request.status === 'CANCELADO' ? (
+                            <span className="text-sm text-gray-400">-</span>
+                          ) : request.trip?.driver && (request.status === 'AGENDADO' || request.status === 'ASIGNADO') ? (
+                            <button
+                              onClick={() => openAssignModal(request)}
+                              className="px-3 py-1 bg-green-600 text-white rounded-lg hover:bg-green-700 text-xs flex items-center gap-1"
+                            >
+                              <span className="material-icons text-xs">check_circle</span>
+                              Asignado
+                            </button>
+                          ) : request.trip?.driver ? (
                             <>
                               <div className="text-sm text-gray-900">{request.trip.driver.fullName || request.trip.driver.name}</div>
-                              <div className="text-xs text-gray-500">{request.trip.vehicle?.patente || request.trip.vehicle?.plate || 'N/A'}</div>
+                              <div className="text-xs text-gray-500">{request.trip.vehicle?.licensePlate || request.trip.vehicle?.plate || 'N/A'}</div>
                             </>
-                          ) : request.status === 'PENDIENTE' ? (
+                          ) : (request.status === 'PENDIENTE' || request.status === 'AGENDADO') ? (
                             <button
                               onClick={() => openAssignModal(request)}
                               className="px-3 py-1 bg-secondary text-white rounded-lg hover:bg-orange-700 text-xs"
@@ -318,7 +339,8 @@ export default function ServiceRequest() {
                           </button>
                         </td>
                       </tr>
-                    ))}
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
@@ -521,12 +543,18 @@ export default function ServiceRequest() {
                               Email: {driver.email}
                             </div>
                             {driver.vehicle ? (
-                              <div className="text-sm text-gray-900 mt-1 flex items-center gap-1">
-                                <span className="material-icons text-xs">directions_car</span>
-                                <span className="font-medium">Vehículo: {driver.vehicle.patente}</span>
+                              <div className="text-sm text-gray-900 mt-1">
+                                <div className="flex items-center gap-1">
+                                  <span className="material-icons text-xs">directions_car</span>
+                                  <span className="font-medium">Patente: {driver.vehicle.licensePlate}</span>
+                                </div>
+                                <div className="text-xs text-gray-600 ml-5">
+                                  {driver.vehicle.model} ({driver.vehicle.year})
+                                </div>
                               </div>
                             ) : (
-                              <div className="text-sm text-gray-400 mt-1">
+                              <div className="text-sm text-gray-400 mt-1 flex items-center gap-1">
+                                <span className="material-icons text-xs">warning</span>
                                 Sin vehículo asignado
                               </div>
                             )}

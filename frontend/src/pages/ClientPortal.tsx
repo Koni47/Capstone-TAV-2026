@@ -169,15 +169,15 @@ export default function ClientPortal() {
               <ul className="space-y-4 text-sm">
                 <li className="flex items-start gap-3">
                   <span className="material-icons text-secondary text-sm mt-1">location_on</span>
-                  <span>{site.contact.address}</span>
+                  <span>Av. Apoquindo 4800, Las Condes, Santiago</span>
                 </li>
                 <li className="flex items-center gap-3">
                   <span className="material-icons text-secondary text-sm">phone</span>
-                  <span>{site.contact.phone}</span>
+                  <span>+56 2 2345 6789</span>
                 </li>
                 <li className="flex items-center gap-3">
                   <span className="material-icons text-secondary text-sm">email</span>
-                  <span>{site.contact.email}</span>
+                  <span>contacto@serviciosloa.cl</span>
                 </li>
                 <li className="flex items-center gap-3">
                   <span className="material-icons text-secondary text-sm">access_time</span>

@@ -32,15 +32,15 @@ export default function Contact() {
                 <div className="space-y-4">
                     <p className="flex items-start gap-3">
                         <span className="material-icons text-primary">location_on</span>
-                        <span className="text-gray-600 whitespace-pre-line">{site.contact.address}</span>
+                        <span className="text-gray-600 whitespace-pre-line">Av. Apoquindo 4800, Las Condes, Santiago</span>
                     </p>
                     <p className="flex items-center gap-3">
                         <span className="material-icons text-primary">phone</span>
-                        <a href={`tel:${site.contact.phone}`} className="text-gray-600 hover:text-primary transition">{site.contact.phone}</a>
+                        <a href="tel:+56223456789" className="text-gray-600 hover:text-primary transition">+56 2 2345 6789</a>
                     </p>
                     <p className="flex items-center gap-3">
                         <span className="material-icons text-primary">email</span>
-                        <a href={`mailto:${site.contact.email}`} className="text-gray-600 hover:text-primary transition">{site.contact.email}</a>
+                        <a href="mailto:contacto@serviciosloa.cl" className="text-gray-600 hover:text-primary transition">contacto@serviciosloa.cl</a>
                     </p>
                 </div>
             </div>

@@ -8,6 +8,7 @@ import Companies from './pages/Companies'
 import CompaniesPage2 from './pages/CompaniesPage2'
 import CompanyDetail from './pages/CompanyDetail'
 import CompanyEdit from './pages/CompanyEdit'
+import CompanyAdd from './pages/CompanyAdd'
 import Complaints from './pages/Complaints'
 import Payment from './pages/Payment'
 import ServiceRequest from './pages/ServiceRequest'
@@ -60,6 +61,7 @@ export default function App() {
 
       <Route path="/companies" element={<ProtectedRoute allowedRoles={['ADMIN']}><Companies /></ProtectedRoute>} />
       <Route path="/companies/page-2" element={<ProtectedRoute allowedRoles={['ADMIN']}><CompaniesPage2 /></ProtectedRoute>} />
+      <Route path="/companyadd" element={<ProtectedRoute allowedRoles={['ADMIN']}><CompanyAdd /></ProtectedRoute>} />
       <Route path="/company/:id" element={<ProtectedRoute allowedRoles={['ADMIN']}><CompanyDetail /></ProtectedRoute>} />
       <Route path="/company/:id/edit" element={<ProtectedRoute allowedRoles={['ADMIN']}><CompanyEdit /></ProtectedRoute>} />
       <Route path="/company-edit" element={<ProtectedRoute allowedRoles={['ADMIN']}><CompanyEdit /></ProtectedRoute>} />

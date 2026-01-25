@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { getCompanies } from '../services/api';
+import { getCompanies, updateCompany } from '../services/api';
 import Header from '../components/Header';
 
 export default function Companies() {
@@ -11,18 +11,26 @@ export default function Companies() {
   const [companies, setCompanies] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const [selectedCompany, setSelectedCompany] = useState<any>(null);
+  const [editingStatus, setEditingStatus] = useState(false);
 
   useEffect(() => {  
     const fetchCompanies = async () => {
       try {
         setLoading(true);
+        console.log('Fetching companies...');
         const data: any = await getCompanies();
+        console.log('Companies data received:', data);
         // Manejar si viene paginado o array directo
-        setCompanies(data.companies || data || []);
+        const companiesList = data.companies || data || [];
+        console.log('Companies list:', companiesList);
+        setCompanies(companiesList);
         setError(null);
-      } catch (err) {
+      } catch (err: any) {
         console.error('Error fetching companies:', err);
-        setError('Error al cargar empresas');
+        console.error('Error details:', err.response);
+        setError('Error al cargar empresas: ' + (err.message || 'Error desconocido'));
       } finally {
         setLoading(false);
       }
@@ -47,6 +55,57 @@ export default function Companies() {
     return styles[status] || styles.green;
   };
 
+  const openDetailModal = (company: any) => {
+    console.log('Opening modal for company:', company);
+    setSelectedCompany(company);
+    setShowDetailModal(true);
+  };
+
+  const closeDetailModal = () => {
+    setShowDetailModal(false);
+    setSelectedCompany(null);
+    setEditingStatus(false);
+  };
+
+  const handleStatusChange = async (newStatus: string) => {
+    if (!selectedCompany) return;
+
+    try {
+      console.log('Updating company status:', selectedCompany.id, newStatus);
+      const response = await updateCompany(selectedCompany.id, { status: newStatus });
+      console.log('Update response:', response);
+      
+      // Recargar empresas
+      const data: any = await getCompanies();
+      setCompanies(data.companies || data || []);
+      
+      // Actualizar empresa seleccionada
+      setSelectedCompany({ ...selectedCompany, status: newStatus });
+      setEditingStatus(false);
+      
+      alert('Estado actualizado exitosamente');
+    } catch (error: any) {
+      console.error('Error updating status:', error);
+      console.error('Error response:', error.response);
+      alert(error.response?.data?.message || error.message || 'Error al actualizar el estado');
+    }
+  };
+
+  // Filtrar empresas
+  const filteredCompanies = companies.filter(company => {
+    // Filtro por búsqueda (RUT o Razón Social)
+    const matchesSearch = searchTerm === '' || 
+      company.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      company.rut?.toLowerCase().includes(searchTerm.toLowerCase());
+
+    // Filtro por estado
+    const matchesStatus = filterStatus === 'Todos los estados' ||
+      (filterStatus === 'Activos' && company.status === 'ACTIVO') ||
+      (filterStatus === 'Inactivos' && company.status === 'INACTIVO');
+
+    return matchesSearch && matchesStatus;
+  });
+
   return (
     <div className="bg-surface font-sans text-gray-800 min-h-screen">
       {/* Navigation */}
@@ -69,7 +128,10 @@ export default function Companies() {
             <p className="mt-1 text-sm text-gray-500">Gestión de empresas mineras y centros de costo.</p>
           </div>
           <div className="mt-4 flex md:mt-0 md:ml-4">
-            <button className="ml-3 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-secondary hover:bg-orange-700 focus:outline-none transition">
+            <button 
+              onClick={() => navigate('/companyadd')}
+              className="ml-3 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-secondary hover:bg-orange-700 focus:outline-none transition"
+            >
               <span className="material-icons text-sm mr-2">add</span> Nueva Empresa
             </button>
           </div>
@@ -80,19 +142,19 @@ export default function Companies() {
           <div className="bg-white overflow-hidden shadow rounded-lg border-l-4 border-primary">
             <div className="px-4 py-5 sm:p-6">
               <dt className="text-sm font-medium text-gray-500 truncate">Total Empresas</dt>
-              <dd className="mt-1 text-3xl font-bold text-gray-900">{companies.length}</dd>
+              <dd className="mt-1 text-3xl font-bold text-gray-900">{filteredCompanies.length}</dd>
             </div>
           </div>
           <div className="bg-white overflow-hidden shadow rounded-lg border-l-4 border-warning">
             <div className="px-4 py-5 sm:p-6">
               <dt className="text-sm font-medium text-gray-500 truncate">Empresas Activas</dt>
-              <dd className="mt-1 text-3xl font-bold text-gray-900">{companies.filter(c => c.status === 'ACTIVO').length}</dd>
+              <dd className="mt-1 text-3xl font-bold text-gray-900">{filteredCompanies.filter(c => c.status === 'ACTIVO').length}</dd>
             </div>
           </div>
           <div className="bg-white overflow-hidden shadow rounded-lg border-l-4 border-success">
             <div className="px-4 py-5 sm:p-6">
               <dt className="text-sm font-medium text-gray-500 truncate">Total Contratos</dt>
-              <dd className="mt-1 text-3xl font-bold text-gray-900">{companies.length}</dd>
+              <dd className="mt-1 text-3xl font-bold text-gray-900">{filteredCompanies.length}</dd>
             </div>
           </div>
         </div>
@@ -121,9 +183,6 @@ export default function Companies() {
               <option>Activos</option>
               <option>Inactivos</option>
             </select>
-            <button className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none">
-              <span className="material-icons text-sm mr-2">file_download</span> Exportar
-            </button>
           </div>
         </div>
 
@@ -139,20 +198,26 @@ export default function Companies() {
           </div>
         )}
 
-        {!loading && !error && companies.length === 0 && (
+        {!loading && !error && filteredCompanies.length === 0 && (
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
             <span className="material-icons text-gray-300 text-6xl mb-4">business</span>
-            <h3 className="text-xl font-bold text-gray-700 mb-2">No hay empresas registradas</h3>
-            <p className="text-gray-500 mb-6">Agrega tu primera empresa cliente para comenzar.</p>
-            <button className="bg-secondary hover:bg-orange-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-all flex items-center gap-2 mx-auto">
-              <span className="material-icons">add</span>
-              Nueva Empresa
-            </button>
+            <h3 className="text-xl font-bold text-gray-700 mb-2">
+              {companies.length === 0 ? 'No hay empresas registradas' : 'No se encontraron resultados'}
+            </h3>
+            <p className="text-gray-500 mb-6">
+              {companies.length === 0 ? 'Agrega tu primera empresa cliente para comenzar.' : 'Intenta con otros términos de búsqueda o filtros.'}
+            </p>
+            {companies.length === 0 && (
+              <button className="bg-secondary hover:bg-orange-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-all flex items-center gap-2 mx-auto">
+                <span className="material-icons">add</span>
+                Nueva Empresa
+              </button>
+            )}
           </div>
         )}
 
         {/* Companies Table */}
-        {!loading && !error && companies.length > 0 && (
+        {!loading && !error && filteredCompanies.length > 0 && (
         <div className="bg-white shadow overflow-hidden sm:rounded-lg">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
@@ -175,7 +240,7 @@ export default function Companies() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {companies.map((company: any) => {
+              {filteredCompanies.map((company: any) => {
                 const initials = company.name?.substring(0, 2).toUpperCase() || 'EM';
                 return (
                 <tr key={company.id} className="hover:bg-gray-50 transition">
@@ -204,9 +269,12 @@ export default function Companies() {
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <Link to={`/company-detail/${company.id}`} className="text-primary hover:text-blue-900 mr-3">
+                    <button 
+                      onClick={() => openDetailModal(company)}
+                      className="text-primary hover:text-blue-900 mr-3"
+                    >
                       Ver
-                    </Link>
+                    </button>
                     <button className="text-gray-400 hover:text-gray-600">
                       <span className="material-icons text-sm">more_vert</span>
                     </button>
@@ -325,15 +393,15 @@ export default function Companies() {
               <ul className="space-y-4 text-sm">
                 <li className="flex items-start gap-3">
                   <span className="material-icons text-secondary text-sm mt-1">location_on</span>
-                  <span>{site.contact.address}</span>
+                  <span>Av. Apoquindo 4800, Las Condes, Santiago</span>
                 </li>
                 <li className="flex items-center gap-3">
                   <span className="material-icons text-secondary text-sm">phone</span>
-                  <span>{site.contact.phone}</span>
+                  <span>+56 2 2345 6789</span>
                 </li>
                 <li className="flex items-center gap-3">
                   <span className="material-icons text-secondary text-sm">email</span>
-                  <span>{site.contact.email}</span>
+                  <span>contacto@serviciosloa.cl</span>
                 </li>
                 <li className="flex items-center gap-3">
                   <span className="material-icons text-secondary text-sm">access_time</span>
@@ -388,6 +456,125 @@ export default function Companies() {
           </div>
         </div>
       </footer>
+
+      {/* Modal de Detalle */}
+      {showDetailModal && selectedCompany && (
+        <div className="fixed inset-0 z-50 overflow-y-auto">
+          <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onClick={closeDetailModal}></div>
+            <span className="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+
+            <div className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full sm:p-6" onClick={(e) => e.stopPropagation()}>
+              <div className="absolute top-0 right-0 pt-4 pr-4">
+                <button onClick={closeDetailModal} className="bg-white rounded-md text-gray-400 hover:text-gray-500">
+                  <span className="material-icons">close</span>
+                </button>
+              </div>
+
+              <div className="sm:flex sm:items-start">
+                <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 sm:mx-0 sm:h-10 sm:w-10">
+                  <span className="material-icons text-primary">business</span>
+                </div>
+                <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left flex-1">
+                  <h3 className="text-lg leading-6 font-bold text-gray-900">
+                    {selectedCompany.name}
+                  </h3>
+                  <div className="mt-4 space-y-4">
+                    <div className="flex items-center justify-between pb-3 border-b border-gray-200">
+                      <span className="text-sm font-medium text-gray-500">Estado:</span>
+                      {editingStatus ? (
+                        <div className="flex items-center gap-2">
+                          <select
+                            value={selectedCompany.status}
+                            onChange={(e) => handleStatusChange(e.target.value)}
+                            className="px-3 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm"
+                          >
+                            <option value="ACTIVO">Activo</option>
+                            <option value="INACTIVO">Inactivo</option>
+                          </select>
+                          <button
+                            onClick={() => setEditingStatus(false)}
+                            className="text-gray-400 hover:text-gray-600"
+                          >
+                            <span className="material-icons text-sm">close</span>
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2">
+                          <span className={`px-3 py-1 text-xs font-bold rounded-full ${
+                            selectedCompany.status === 'ACTIVO' ? 'bg-green-100 text-green-800' :
+                            selectedCompany.status === 'ELIMINADO' ? 'bg-red-100 text-red-800' :
+                            'bg-gray-100 text-gray-800'
+                          }`}>
+                            {selectedCompany.status}
+                          </span>
+                          <button
+                            onClick={() => setEditingStatus(true)}
+                            className="text-primary hover:text-blue-900"
+                          >
+                            <span className="material-icons text-sm">edit</span>
+                          </button>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="pb-3 border-b border-gray-200">
+                      <span className="text-sm font-medium text-gray-500">RUT:</span>
+                      <p className="text-base font-semibold text-gray-900 mt-1">
+                        {selectedCompany.rut || 'N/A'}
+                      </p>
+                    </div>
+
+                    <div className="pb-3 border-b border-gray-200">
+                      <span className="text-sm font-medium text-gray-500">Dirección:</span>
+                      <p className="text-base text-gray-900 mt-1">
+                        {selectedCompany.address || 'N/A'}
+                      </p>
+                    </div>
+
+                    <div className="pb-3 border-b border-gray-200">
+                      <span className="text-sm font-medium text-gray-500">Centro de Costo:</span>
+                      <p className="text-base text-gray-900 mt-1">
+                        {selectedCompany.costCenter || 'N/A'}
+                      </p>
+                    </div>
+
+                    <div className="pb-3 border-b border-gray-200">
+                      <span className="text-sm font-medium text-gray-500">Contacto:</span>
+                      <p className="text-base font-semibold text-gray-900 mt-1">
+                        {selectedCompany.contactName || 'N/A'}
+                      </p>
+                      <p className="text-sm text-gray-500">{selectedCompany.contactEmail || 'N/A'}</p>
+                      {selectedCompany.phone && (
+                        <p className="text-sm text-gray-500">{selectedCompany.phone}</p>
+                      )}
+                    </div>
+
+                    {selectedCompany.contractEnd && (
+                      <div className="pb-3 border-b border-gray-200">
+                        <span className="text-sm font-medium text-gray-500">Fin de Contrato:</span>
+                        <p className="text-base text-gray-900 mt-1">
+                          {new Date(selectedCompany.contractEnd).toLocaleDateString('es-CL')}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
+                <button
+                  type="button"
+                  onClick={closeDetailModal}
+                  className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary text-base font-medium text-white hover:bg-blue-900 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm"
+                >
+                  Cerrar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
