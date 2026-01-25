@@ -10,6 +10,11 @@ const Trips: React.FC = () => {
   const [trips, setTrips] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [showDateRangePicker, setShowDateRangePicker] = useState(false);
+  const [dateRangeMode, setDateRangeMode] = useState(false);
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
 
   useEffect(() => {
     const fetchTrips = async () => {
@@ -42,10 +47,83 @@ const Trips: React.FC = () => {
     setShowEvidenceModal(!showEvidenceModal);
   };
 
-  // Filtrar viajes por estado
-  const activeTrip = trips.find((t) => t.status === 'EN_RUTA');
-  const upcomingTrips = trips.filter((t) => t.status === 'ASIGNADO' || t.status === 'PENDIENTE');
-  const completedTrips = trips.filter((t) => t.status === 'FINALIZADO');
+  const handlePreviousDay = () => {
+    const newDate = new Date(selectedDate);
+    newDate.setDate(newDate.getDate() - 1);
+    setSelectedDate(newDate);
+  };
+
+  const handleNextDay = () => {
+    const newDate = new Date(selectedDate);
+    newDate.setDate(newDate.getDate() + 1);
+    setSelectedDate(newDate);
+  };
+
+  const formatDateLabel = (date: Date) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const compareDate = new Date(date);
+    compareDate.setHours(0, 0, 0, 0);
+
+    if (compareDate.getTime() === today.getTime()) {
+      return `Hoy, ${date.getDate()} ${date.toLocaleDateString('es-CL', { month: 'short' })}`;
+    } else {
+      return date.toLocaleDateString('es-CL', { day: 'numeric', month: 'short', weekday: 'short' });
+    }
+  };
+
+  const isSameDay = (date1: Date | string, date2: Date) => {
+    const d1 = new Date(date1);
+    const d2 = new Date(date2);
+    return d1.getFullYear() === d2.getFullYear() &&
+           d1.getMonth() === d2.getMonth() &&
+           d1.getDate() === d2.getDate();
+  };
+
+  const isDateInRange = (date: Date | string, start: Date, end: Date) => {
+    const d = new Date(date);
+    d.setHours(0, 0, 0, 0);
+    const s = new Date(start);
+    s.setHours(0, 0, 0, 0);
+    const e = new Date(end);
+    e.setHours(23, 59, 59, 999);
+    return d >= s && d <= e;
+  };
+
+  const applyDateRange = () => {
+    if (startDate && endDate) {
+      setDateRangeMode(true);
+      setShowDateRangePicker(false);
+    }
+  };
+
+  const clearDateRange = () => {
+    setDateRangeMode(false);
+    setStartDate(null);
+    setEndDate(null);
+    setSelectedDate(new Date());
+  };
+
+  const formatDateInput = (date: Date | null) => {
+    if (!date) return '';
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  // Filtrar viajes por fecha seleccionada o rango y estado
+  const filteredTrips = trips.filter(trip => {
+    const tripDate = trip.scheduledDate || trip.startTime || trip.createdAt;
+    if (dateRangeMode && startDate && endDate) {
+      return isDateInRange(tripDate, startDate, endDate);
+    }
+    return isSameDay(tripDate, selectedDate);
+  });
+
+  const activeTrip = filteredTrips.find((t) => t.status === 'EN_RUTA');
+  const upcomingTrips = filteredTrips.filter((t) => t.status === 'ASIGNADO' || t.status === 'PENDIENTE');
+  const completedTrips = filteredTrips.filter((t) => t.status === 'FINALIZADO');
 
   return (
     <div className="bg-gray-100 font-sans text-gray-800 pb-24 md:pb-0 min-h-screen">
@@ -56,16 +134,83 @@ const Trips: React.FC = () => {
         <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
           <h2 className="hidden md:block text-2xl font-bold text-gray-800">Panel de Ruta</h2>
 
-          <div className="flex justify-between items-center bg-white p-2 rounded-lg shadow-sm w-full md:w-64">
-            <button className="p-1 text-gray-400 hover:text-primary">
-              <span className="material-icons">chevron_left</span>
-            </button>
-            <span className="font-bold text-sm text-gray-700">Hoy, 22 Ene</span>
-            <button className="p-1 text-gray-400 hover:text-primary">
-              <span className="material-icons">chevron_right</span>
+          <div className="flex gap-2 w-full md:w-auto">
+            {!dateRangeMode ? (
+              <div className="flex justify-between items-center bg-white p-2 rounded-lg shadow-sm flex-1 md:w-64">
+                <button onClick={handlePreviousDay} className="p-1 text-gray-400 hover:text-primary transition">
+                  <span className="material-icons">chevron_left</span>
+                </button>
+                <span className="font-bold text-sm text-gray-700">{formatDateLabel(selectedDate)}</span>
+                <button onClick={handleNextDay} className="p-1 text-gray-400 hover:text-primary transition">
+                  <span className="material-icons">chevron_right</span>
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2 bg-white p-2 rounded-lg shadow-sm flex-1">
+                <span className="material-icons text-primary text-sm">date_range</span>
+                <span className="font-bold text-sm text-gray-700">
+                  {startDate?.toLocaleDateString('es-CL', { day: 'numeric', month: 'short' })} - {endDate?.toLocaleDateString('es-CL', { day: 'numeric', month: 'short' })}
+                </span>
+                <button onClick={clearDateRange} className="ml-auto p-1 text-gray-400 hover:text-red-500 transition">
+                  <span className="material-icons text-sm">close</span>
+                </button>
+              </div>
+            )}
+            
+            <button 
+              onClick={() => setShowDateRangePicker(!showDateRangePicker)}
+              className="bg-primary hover:bg-blue-900 text-white p-2 rounded-lg shadow-sm transition flex items-center gap-1 px-3"
+            >
+              <span className="material-icons text-lg">date_range</span>
+              <span className="hidden md:inline text-sm font-medium">Rango</span>
             </button>
           </div>
         </div>
+
+        {showDateRangePicker && (
+          <div className="mb-6 bg-white rounded-lg shadow-lg p-4 border border-gray-200">
+            <h3 className="font-bold text-gray-800 mb-3 flex items-center gap-2">
+              <span className="material-icons text-primary">date_range</span>
+              Seleccionar Rango de Fechas
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Fecha Inicio</label>
+                <input
+                  type="date"
+                  value={formatDateInput(startDate)}
+                  onChange={(e) => setStartDate(e.target.value ? new Date(e.target.value) : null)}
+                  className="w-full border border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Fecha Fin</label>
+                <input
+                  type="date"
+                  value={formatDateInput(endDate)}
+                  onChange={(e) => setEndDate(e.target.value ? new Date(e.target.value) : null)}
+                  min={formatDateInput(startDate)}
+                  className="w-full border border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none"
+                />
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setShowDateRangePicker(false)}
+                className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 rounded-lg transition"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={applyDateRange}
+                disabled={!startDate || !endDate}
+                className="flex-1 bg-primary hover:bg-blue-900 text-white font-medium py-2 rounded-lg transition disabled:bg-gray-300 disabled:cursor-not-allowed"
+              >
+                Aplicar
+              </button>
+            </div>
+          </div>
+        )}
 
         {loading && (
           <div className="flex justify-center items-center py-12">
@@ -90,7 +235,15 @@ const Trips: React.FC = () => {
           </div>
         )}
 
-        {!loading && !error && trips.length > 0 && (
+        {!loading && !error && trips.length > 0 && filteredTrips.length === 0 && (
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
+            <span className="material-icons text-gray-300 text-6xl mb-4">event_busy</span>
+            <h3 className="text-xl font-bold text-gray-700 mb-2">No hay viajes para esta fecha</h3>
+            <p className="text-gray-500">Selecciona otra fecha para ver más viajes.</p>
+          </div>
+        )}
+
+        {!loading && !error && filteredTrips.length > 0 && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 items-start">
           {/* Active Trip Section */}
           <section className="lg:col-span-2">
@@ -145,12 +298,9 @@ const Trips: React.FC = () => {
                 </div>
 
                 <div className="flex flex-col md:flex-row gap-3">
-                  <button className="flex-1 bg-white border border-gray-200 text-gray-700 font-bold py-3 rounded-lg shadow-sm hover:bg-gray-50 flex justify-center items-center gap-2">
-                    <span className="material-icons text-gray-500">map</span> Ver Mapa
-                  </button>
-                  <button onClick={toggleModal} className="flex-[2] bg-danger hover:bg-red-700 text-white font-bold py-3 rounded-lg shadow-md flex justify-center items-center gap-2 transition active:scale-95">
-                    <span className="material-icons">stop_circle</span> FINALIZAR VIAJE
-                  </button>
+                  <Link to={`/trip/${activeTrip.id}`} className="w-full bg-secondary hover:bg-orange-600 text-white font-bold py-3 rounded-lg shadow-md flex justify-center items-center gap-2 transition active:scale-95">
+                    <span className="material-icons">visibility</span> VER DETALLE
+                  </Link>
                 </div>
               </div>
             </div>
