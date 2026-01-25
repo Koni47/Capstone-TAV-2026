@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import HtmlMockRenderer from '../components/HtmlMockRenderer';
 import { getHtmlMock } from '../services/mockApi';
 import Header from '../components/Header';
+import { getServiceRequestStats, getTrips, getVehicles } from '../services/api';
 
 // Declare Chart.js types
 declare global {
@@ -26,8 +27,72 @@ const DashboardWithCharts: React.FC<{ navigate: any }> = ({ navigate }) => {
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [generatingReport, setGeneratingReport] = useState(false);
+  const [dashboardData, setDashboardData] = useState({
+    totalViajes: 0,
+    ingresosTotales: 0,
+    pendientes: 0,
+    flotaActiva: 0,
+    flotaTotal: 0,
+    ultimosViajes: [] as any[]
+  });
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        setLoading(true);
+        
+        // Obtener estadísticas de solicitudes
+        const stats: any = await getServiceRequestStats();
+        console.log('Service request stats:', stats);
+        
+        // Obtener viajes
+        const tripsData: any = await getTrips();
+        const trips = Array.isArray(tripsData) ? tripsData : tripsData.trips || [];
+        
+        // Obtener vehículos
+        const vehiclesData: any = await getVehicles();
+        const vehicles = Array.isArray(vehiclesData) ? vehiclesData : vehiclesData.vehicles || [];
+        
+        // Procesar datos
+        const totalTrips = trips.length;
+        const pendingRequests = stats.PENDIENTE || 0;
+        
+        // Calcular flota activa (vehículos en uso)
+        const activeVehicles = vehicles.filter((v: any) => 
+          v.status === 'ACTIVO' || v.currentDriver
+        ).length;
+        
+        // Calcular ingresos estimados
+        const estimatedIncome = trips
+          .filter((t: any) => t.status === 'FINALIZADO')
+          .reduce((sum: number, t: any) => sum + (t.estimatedCost || 45000), 0);
+        
+        // Obtener últimos viajes
+        const recentTrips = trips
+          .sort((a: any, b: any) => 
+            new Date(b.scheduledDate || b.createdAt).getTime() - 
+            new Date(a.scheduledDate || a.createdAt).getTime()
+          )
+          .slice(0, 3);
+
+        setDashboardData({
+          totalViajes: totalTrips,
+          ingresosTotales: estimatedIncome,
+          pendientes: pendingRequests,
+          flotaActiva: Math.round((activeVehicles / vehicles.length) * 100),
+          flotaTotal: vehicles.length,
+          ultimosViajes: recentTrips
+        });
+        
+      } catch (error) {
+        console.error('Error fetching dashboard data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboardData();
     console.log('Loading Chart.js...');
 
     // Load Chart.js dynamically
@@ -638,7 +703,7 @@ const DashboardWithCharts: React.FC<{ navigate: any }> = ({ navigate }) => {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Panel de Control</h1>
-              <p className="text-gray-500 mt-1">Resumen general del rendimiento de la flota y servicios.</p>
+              <p className="text-gray-500 mt-1">Resumen general del rendimiento de la flota y servicios del mes actual.</p>
             </div>
             <div className="flex gap-3">
               <button 
@@ -651,6 +716,11 @@ const DashboardWithCharts: React.FC<{ navigate: any }> = ({ navigate }) => {
           </div>
 
           {/* KPI Cards */}
+          {loading ? (
+            <div className="flex justify-center items-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+            </div>
+          ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm hover:shadow-md transition duration-300 relative overflow-hidden group">
               <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
@@ -664,7 +734,7 @@ const DashboardWithCharts: React.FC<{ navigate: any }> = ({ navigate }) => {
                   <span className="text-sm font-semibold text-gray-600">Total Viajes</span>
                 </div>
                 <div className="flex items-baseline gap-2">
-                  <h3 className="text-3xl font-bold text-gray-900">245</h3>
+                  <h3 className="text-3xl font-bold text-gray-900">{dashboardData.totalViajes}</h3>
                   <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">+12%</span>
                 </div>
                 <p className="text-xs text-gray-500 mt-2">Mes actual</p>
@@ -684,7 +754,7 @@ const DashboardWithCharts: React.FC<{ navigate: any }> = ({ navigate }) => {
                   <span className="text-sm font-semibold text-gray-600">Ingresos Totales</span>
                 </div>
                 <div className="flex items-baseline gap-2">
-                  <h3 className="text-3xl font-bold text-gray-900">$1.2M</h3>
+                  <h3 className="text-3xl font-bold text-gray-900">${(dashboardData.ingresosTotales / 1000000).toFixed(1)}M</h3>
                   <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">+18%</span>
                 </div>
                 <p className="text-xs text-gray-500 mt-2">Mes actual</p>
@@ -704,7 +774,7 @@ const DashboardWithCharts: React.FC<{ navigate: any }> = ({ navigate }) => {
                   <span className="text-sm font-semibold text-gray-600">Pendientes</span>
                 </div>
                 <div className="flex items-baseline gap-2">
-                  <h3 className="text-3xl font-bold text-gray-900">23</h3>
+                  <h3 className="text-3xl font-bold text-gray-900">{dashboardData.pendientes}</h3>
                 </div>
                 <p className="text-xs text-orange-600 font-medium mt-2 flex items-center gap-1">
                   <span className="material-icons text-xs">priority_high</span> Requieren atención
@@ -725,8 +795,8 @@ const DashboardWithCharts: React.FC<{ navigate: any }> = ({ navigate }) => {
                   <span className="text-sm font-semibold text-gray-600">Flota Activa</span>
                 </div>
                 <div className="flex items-baseline gap-2">
-                  <h3 className="text-3xl font-bold text-gray-900">90%</h3>
-                  <span className="text-sm text-gray-500 font-medium">18/20</span>
+                  <h3 className="text-3xl font-bold text-gray-900">{dashboardData.flotaActiva}%</h3>
+                  <span className="text-sm text-gray-500 font-medium">{dashboardData.flotaTotal > 0 ? `${Math.round(dashboardData.flotaActiva * dashboardData.flotaTotal / 100)}/${dashboardData.flotaTotal}` : '0/0'}</span>
                 </div>
                 <p className="text-xs text-green-600 font-medium mt-2 flex items-center gap-1">
                   <span className="material-icons text-xs">check_circle</span> Operatividad óptima
@@ -735,6 +805,7 @@ const DashboardWithCharts: React.FC<{ navigate: any }> = ({ navigate }) => {
               <div className="absolute bottom-0 left-0 h-1 bg-secondary w-full opacity-60"></div>
             </div>
           </div>
+          )}
 
           {/* Charts Row */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -753,7 +824,7 @@ const DashboardWithCharts: React.FC<{ navigate: any }> = ({ navigate }) => {
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-lg font-bold text-gray-900">Top Clientes</h3>
-                <button className="text-xs font-semibold text-primary hover:text-secondary transition uppercase">Ver Todos</button>
+                <span className="text-xs font-semibold text-gray-500 uppercase">Montos</span>
               </div>
 
               <div className="space-y-5">
@@ -844,54 +915,46 @@ const DashboardWithCharts: React.FC<{ navigate: any }> = ({ navigate }) => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
-                  <tr className="hover:bg-blue-50/30 transition">
-                    <td className="py-4 px-6 text-sm font-medium text-primary">#VJ-2601</td>
-                    <td className="py-4 px-6 text-sm text-gray-700">Minera ABC</td>
-                    <td className="py-4 px-6 text-sm text-gray-500">Juan Pérez</td>
-                    <td className="py-4 px-6 text-sm text-gray-700">
-                      <div className="flex flex-col">
-                        <span className="font-medium">Aeropuerto</span>
-                        <span className="text-xs text-gray-400">Faena Atacama</span>
-                      </div>
-                    </td>
-                    <td className="py-4 px-6 text-sm text-gray-500">20 Ene, 08:30</td>
-                    <td className="py-4 px-6 text-sm">
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Completado</span>
-                    </td>
-                    <td className="py-4 px-6 text-sm font-bold text-gray-900 text-right">$85.000</td>
-                  </tr>
-                  <tr className="hover:bg-blue-50/30 transition">
-                    <td className="py-4 px-6 text-sm font-medium text-primary">#VJ-2600</td>
-                    <td className="py-4 px-6 text-sm text-gray-700">Constructora XYZ</td>
-                    <td className="py-4 px-6 text-sm text-gray-500">Carlos López</td>
-                    <td className="py-4 px-6 text-sm text-gray-700">
-                      <div className="flex flex-col">
-                        <span className="font-medium">Centro Calama</span>
-                        <span className="text-xs text-gray-400">Obra Norte</span>
-                      </div>
-                    </td>
-                    <td className="py-4 px-6 text-sm text-gray-500">20 Ene, 07:15</td>
-                    <td className="py-4 px-6 text-sm">
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Completado</span>
-                    </td>
-                    <td className="py-4 px-6 text-sm font-bold text-gray-900 text-right">$42.000</td>
-                  </tr>
-                  <tr className="hover:bg-blue-50/30 transition">
-                    <td className="py-4 px-6 text-sm font-medium text-primary">#VJ-2597</td>
-                    <td className="py-4 px-6 text-sm text-gray-700">Minera ABC</td>
-                    <td className="py-4 px-6 text-sm text-gray-500">Francisco Silva</td>
-                    <td className="py-4 px-6 text-sm text-gray-700">
-                      <div className="flex flex-col">
-                        <span className="font-medium">Oficina Central</span>
-                        <span className="text-xs text-gray-400">Faena Norte</span>
-                      </div>
-                    </td>
-                    <td className="py-4 px-6 text-sm text-gray-500">19 Ene, 14:20</td>
-                    <td className="py-4 px-6 text-sm">
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">En Curso</span>
-                    </td>
-                    <td className="py-4 px-6 text-sm font-bold text-gray-900 text-right">$95.000</td>
-                  </tr>
+                  {dashboardData.ultimosViajes.length > 0 ? (
+                    dashboardData.ultimosViajes.map((trip: any, index: number) => {
+                      const statusConfig = {
+                        'FINALIZADO': { label: 'Completado', class: 'bg-green-100 text-green-800' },
+                        'EN_CURSO': { label: 'En Curso', class: 'bg-yellow-100 text-yellow-800' },
+                        'PENDIENTE': { label: 'Pendiente', class: 'bg-blue-100 text-blue-800' },
+                        'CANCELADO': { label: 'Cancelado', class: 'bg-red-100 text-red-800' }
+                      };
+                      const status = statusConfig[trip.status as keyof typeof statusConfig] || { label: trip.status, class: 'bg-gray-100 text-gray-800' };
+                      
+                      const formatDate = (date: string) => {
+                        if (!date) return 'N/A';
+                        const d = new Date(date);
+                        return d.toLocaleDateString('es-ES', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+                      };
+
+                      return (
+                        <tr key={trip.id} className="hover:bg-blue-50/30 transition">
+                          <td className="py-4 px-6 text-sm font-medium text-primary">#{trip.id}</td>
+                          <td className="py-4 px-6 text-sm text-gray-700">{trip.serviceRequest?.client || trip.serviceRequest?.company || 'N/A'}</td>
+                          <td className="py-4 px-6 text-sm text-gray-500">{trip.assignedDriver?.name || trip.assignedDriver?.user?.name || 'Sin asignar'}</td>
+                          <td className="py-4 px-6 text-sm text-gray-700">
+                            <div className="flex flex-col">
+                              <span className="font-medium">{trip.pickupLocation || 'N/A'}</span>
+                              <span className="text-xs text-gray-400">{trip.dropoffLocation || 'N/A'}</span>
+                            </div>
+                          </td>
+                          <td className="py-4 px-6 text-sm text-gray-500">{formatDate(trip.scheduledDate || trip.createdAt)}</td>
+                          <td className="py-4 px-6 text-sm">
+                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${status.class}`}>{status.label}</span>
+                          </td>
+                          <td className="py-4 px-6 text-sm font-bold text-gray-900 text-right">${(trip.estimatedCost || 45000).toLocaleString('es-CL')}</td>
+                        </tr>
+                      );
+                    })
+                  ) : (
+                    <tr>
+                      <td colSpan={7} className="py-8 px-6 text-center text-sm text-gray-500">No hay viajes recientes</td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>

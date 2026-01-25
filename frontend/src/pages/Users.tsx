@@ -18,6 +18,10 @@ const Users = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedUser, setEditedUser] = useState<User | null>(null);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -36,6 +40,47 @@ const Users = () => {
 
     fetchUsers();
   }, []);
+
+  const handleOpenModal = (user: User) => {
+    setSelectedUser(user);
+    setEditedUser(user);
+    setIsEditing(false);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedUser(null);
+    setEditedUser(null);
+    setIsEditing(false);
+  };
+
+  const handleEditToggle = () => {
+    setIsEditing(!isEditing);
+  };
+
+  const handleInputChange = (field: keyof User, value: string) => {
+    if (editedUser) {
+      setEditedUser({ ...editedUser, [field]: value });
+    }
+  };
+
+  const handleSaveChanges = async () => {
+    if (!editedUser) return;
+    
+    try {
+      // Aquí llamarías a la API para actualizar el usuario
+      // await updateUser(editedUser.id, editedUser);
+      
+      // Actualizar la lista local
+      setUsers(users.map(u => u.id === editedUser.id ? editedUser : u));
+      setIsEditing(false);
+      alert('Usuario actualizado correctamente');
+    } catch (err) {
+      console.error('Error updating user:', err);
+      alert('Error al actualizar usuario');
+    }
+  };
 
   if (loading) {
     return (
@@ -128,16 +173,10 @@ const Users = () => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <button
-                      onClick={() => navigate(`/users/${user.id}`)}
+                      onClick={() => handleOpenModal(user)}
                       className="text-primary hover:text-blue-900 mr-3"
                     >
                       Ver
-                    </button>
-                    <button
-                      onClick={() => navigate(`/users/${user.id}/edit`)}
-                      className="text-orange-600 hover:text-orange-900"
-                    >
-                      Editar
                     </button>
                   </td>
                 </tr>
@@ -146,6 +185,151 @@ const Users = () => {
           </table>
         </div>
       </main>
+
+      {/* Modal de Usuario */}
+      {isModalOpen && selectedUser && editedUser && (
+        <div className="fixed inset-0 z-50 overflow-y-auto">
+          <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            <div className="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" onClick={handleCloseModal}></div>
+
+            <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+              <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                    <span className="material-icons text-primary">person</span>
+                    Información del Usuario
+                  </h3>
+                  <button onClick={handleCloseModal} className="text-gray-400 hover:text-gray-600">
+                    <span className="material-icons">close</span>
+                  </button>
+                </div>
+
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
+                    {isEditing ? (
+                      <input
+                        type="text"
+                        value={editedUser.name}
+                        onChange={(e) => handleInputChange('name', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent"
+                      />
+                    ) : (
+                      <p className="text-gray-900 bg-gray-50 px-3 py-2 rounded-md">{selectedUser.name}</p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    {isEditing ? (
+                      <input
+                        type="email"
+                        value={editedUser.email}
+                        onChange={(e) => handleInputChange('email', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent"
+                      />
+                    ) : (
+                      <p className="text-gray-900 bg-gray-50 px-3 py-2 rounded-md">{selectedUser.email}</p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
+                    {isEditing ? (
+                      <input
+                        type="tel"
+                        value={editedUser.phone || ''}
+                        onChange={(e) => handleInputChange('phone', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent"
+                      />
+                    ) : (
+                      <p className="text-gray-900 bg-gray-50 px-3 py-2 rounded-md">{selectedUser.phone || '-'}</p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Rol</label>
+                    {isEditing ? (
+                      <select
+                        value={editedUser.role}
+                        onChange={(e) => handleInputChange('role', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent"
+                      >
+                        <option value="ADMIN">ADMIN</option>
+                        <option value="CLIENTE">CLIENTE</option>
+                        <option value="CHOFER">CHOFER</option>
+                      </select>
+                    ) : (
+                      <span className="inline-block px-3 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                        {selectedUser.role}
+                      </span>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Estado</label>
+                    {isEditing ? (
+                      <select
+                        value={editedUser.status}
+                        onChange={(e) => handleInputChange('status', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent"
+                      >
+                        <option value="ACTIVO">ACTIVO</option>
+                        <option value="INACTIVO">INACTIVO</option>
+                      </select>
+                    ) : (
+                      <span className={`inline-block px-3 py-1 text-xs font-semibold rounded-full ${
+                        selectedUser.status === 'ACTIVO' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                      }`}>
+                        {selectedUser.status}
+                      </span>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Empresa</label>
+                    <p className="text-gray-900 bg-gray-50 px-3 py-2 rounded-md">{selectedUser.company?.name || '-'}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse gap-3">
+                {isEditing ? (
+                  <>
+                    <button
+                      onClick={handleSaveChanges}
+                      className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary text-base font-medium text-white hover:bg-blue-700 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm"
+                    >
+                      Guardar Cambios
+                    </button>
+                    <button
+                      onClick={handleEditToggle}
+                      className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:w-auto sm:text-sm"
+                    >
+                      Cancelar
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      onClick={handleEditToggle}
+                      className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-secondary text-base font-medium text-white hover:bg-orange-700 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm"
+                    >
+                      Editar
+                    </button>
+                    <button
+                      onClick={handleCloseModal}
+                      className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:w-auto sm:text-sm"
+                    >
+                      Cerrar
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -125,6 +125,8 @@ export const getServiceRequests = () => apiClient.get('/service-requests');
 export const createServiceRequest = (requestData: any) =>
   apiClient.post('/service-requests', requestData);
 
+export const getServiceRequestStats = () => apiClient.get('/service-requests/stats');
+
 // Reports
 export const getReports = () => apiClient.get('/reports/dashboard');
 export const getBillingReport = (month?: string, clientId?: number) => 
