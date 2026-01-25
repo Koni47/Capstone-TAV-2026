@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Param, Query, ParseIntPipe, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Query, ParseIntPipe, UseGuards, Patch } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery, ApiBearerAuth } from '@nestjs/swagger';
 import { CompaniesService } from './companies.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
+import { UpdateCompanyDto } from './dto/update-company.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -43,7 +44,16 @@ export class CompaniesController {
   @ApiOperation({ summary: 'Obtener detalle de una empresa (Solo Admin)' })
   @ApiResponse({ status: 200, description: 'Detalle de la empresa' })
   @ApiResponse({ status: 404, description: 'Empresa no encontrada' })
-  async findOne(@Param('id', ParseIntPipe) id: number) {
+  async findOne(@Param('id') id: string) {
     return this.companiesService.findOne(id);
+  }
+
+  @Patch(':id')
+  @Roles('ADMIN')
+  @ApiOperation({ summary: 'Actualizar una empresa (Solo Admin)' })
+  @ApiResponse({ status: 200, description: 'Empresa actualizada' })
+  @ApiResponse({ status: 404, description: 'Empresa no encontrada' })
+  async update(@Param('id') id: string, @Body() updateCompanyDto: UpdateCompanyDto) {
+    return this.companiesService.update(id, updateCompanyDto);
   }
 }

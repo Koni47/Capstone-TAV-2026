@@ -8,22 +8,42 @@ export class TripsService {
   constructor(private prisma: PrismaService) {}
 
   async create(createTripDto: CreateTripDto) {
-    return this.prisma.trip.create({
-      data: {
-        title: createTripDto.title,
-        scheduledDate: new Date(createTripDto.scheduledDate),
-        origin: createTripDto.origin,
-        destination: createTripDto.destination,
-        fare: createTripDto.fare,
-        status: (createTripDto.status || TripStatus.PENDING) as any,
-        clientId: createTripDto.clientId.toString(),
-        driverId: createTripDto.driverId?.toString(),
-      },
+    // Construir objeto de datos con campos opcionales
+    const tripData: any = {
+      status: (createTripDto.status || TripStatus.PENDIENTE) as any,
+    };
+
+    // Agregar campos opcionales solo si están definidos
+    if (createTripDto.title) tripData.title = createTripDto.title;
+    if (createTripDto.scheduledDate) tripData.scheduledDate = new Date(createTripDto.scheduledDate);
+    if (createTripDto.origin) tripData.origin = createTripDto.origin;
+    if (createTripDto.destination) tripData.destination = createTripDto.destination;
+    if (createTripDto.fare) tripData.fare = createTripDto.fare;
+    if (createTripDto.clientId) tripData.clientId = createTripDto.clientId;
+    if (createTripDto.driverId) tripData.driverId = createTripDto.driverId;
+    if (createTripDto.vehicleId) tripData.vehicleId = createTripDto.vehicleId;
+    if (createTripDto.serviceRequestId) tripData.serviceRequestId = createTripDto.serviceRequestId;
+
+    // Crear el trip y actualizar el ServiceRequest si existe
+    const trip = await this.prisma.trip.create({
+      data: tripData,
       include: {
         client: true,
         driver: true,
+        vehicle: true,
+        serviceRequest: true,
       },
     });
+
+    // Si se asoció a un ServiceRequest, actualizar su estado a ASIGNADO
+    if (createTripDto.serviceRequestId) {
+      await this.prisma.serviceRequest.update({
+        where: { id: createTripDto.serviceRequestId },
+        data: { status: 'ASIGNADO' as any },
+      });
+    }
+
+    return trip;
   }
 
   async findAll(user: any, page = 1, limit = 10) {

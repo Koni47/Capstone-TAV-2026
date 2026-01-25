@@ -2,51 +2,60 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString, IsNumber, IsDateString, IsOptional, IsEnum } from 'class-validator';
 
 export enum TripStatus {
-  PENDING = 'Pendiente',
-  ASSIGNED = 'Asignado',
-  IN_ROUTE = 'En ruta',
-  COMPLETED = 'Completado',
-  CANCELLED = 'Cancelado',
+  PENDIENTE = 'PENDIENTE',
+  ASIGNADO = 'ASIGNADO',
+  EN_RUTA = 'EN_RUTA',
+  FINALIZADO = 'FINALIZADO',
+  CANCELADO = 'CANCELADO',
 }
 
 export class CreateTripDto {
-  @ApiProperty({ example: 'Traslado Turno B' })
+  @ApiProperty({ example: 'Traslado Turno B', required: false })
   @IsString()
-  @IsNotEmpty()
-  title: string;
+  @IsOptional()
+  title?: string;
 
-  @ApiProperty({ example: '2026-01-22T08:30:00Z' })
+  @ApiProperty({ example: '2026-01-22T08:30:00Z', required: false })
   @IsDateString()
-  @IsNotEmpty()
-  scheduledDate: string;
+  @IsOptional()
+  scheduledDate?: string;
 
-  @ApiProperty({ example: 'Aeropuerto Calama' })
+  @ApiProperty({ example: 'Aeropuerto Calama', required: false })
   @IsString()
-  @IsNotEmpty()
-  origin: string;
+  @IsOptional()
+  origin?: string;
 
-  @ApiProperty({ example: 'Faena Minera Gaby' })
+  @ApiProperty({ example: 'Faena Minera Gaby', required: false })
   @IsString()
-  @IsNotEmpty()
-  destination: string;
+  @IsOptional()
+  destination?: string;
 
-  @ApiProperty({ example: 1 })
-  @IsNumber()
-  @IsNotEmpty()
-  clientId: number;
+  @ApiProperty({ example: 'uuid-string', required: false })
+  @IsString()
+  @IsOptional()
+  clientId?: string;
 
-  @ApiProperty({ example: 1, required: false })
+  @ApiProperty({ example: 'uuid-string', required: false })
+  @IsString()
+  @IsOptional()
+  driverId?: string;
+
+  @ApiProperty({ example: 'uuid-string', required: false })
+  @IsString()
+  @IsOptional()
+  vehicleId?: string;
+
+  @ApiProperty({ example: 'uuid-string', required: false })
+  @IsString()
+  @IsOptional()
+  serviceRequestId?: string;
+
+  @ApiProperty({ example: 85000, required: false })
   @IsNumber()
   @IsOptional()
-  driverId?: number;
+  fare?: number;
 
-  @ApiProperty({ example: 85000 })
-  @IsNumber()
-  @IsNotEmpty()
-  fare: number;
-
-  @ApiProperty({ enum: TripStatus, example: TripStatus.PENDING, required: false })
-  @IsEnum(TripStatus)
+  @ApiProperty({ example: 'ASIGNADO', required: false })
   @IsOptional()
-  status?: TripStatus;
+  status?: string;
 }

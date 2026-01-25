@@ -33,6 +33,27 @@ export class ServiceRequestsService {
         include: {
           client: { select: { fullName: true, email: true } },
           company: { select: { name: true, rut: true } },
+          trip: {
+            include: {
+              driver: { 
+                select: { 
+                  id: true, 
+                  fullName: true, 
+                  email: true, 
+                  phone: true 
+                } 
+              },
+              vehicle: { 
+                select: { 
+                  id: true, 
+                  licensePlate: true, 
+                  model: true, 
+                  type: true,
+                  year: true
+                } 
+              },
+            },
+          },
         },
         orderBy: { createdAt: 'desc' },
       }),

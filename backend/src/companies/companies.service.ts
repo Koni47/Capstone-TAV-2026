@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
+import { UpdateCompanyDto } from './dto/update-company.dto';
 
 @Injectable()
 export class CompaniesService {
@@ -44,9 +45,9 @@ export class CompaniesService {
     };
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     const company = await this.prisma.company.findUnique({
-      where: { id: id.toString() },
+      where: { id },
       include: {
         _count: {
           select: { trips: true },
@@ -59,6 +60,30 @@ export class CompaniesService {
     }
 
     return company;
+  }
+
+  async update(id: string, updateCompanyDto: UpdateCompanyDto) {
+    // Verificar que existe
+    await this.findOne(id);
+
+    const updateData: any = {};
+    
+    if (updateCompanyDto.name !== undefined) updateData.name = updateCompanyDto.name;
+    if (updateCompanyDto.rut !== undefined) updateData.rut = updateCompanyDto.rut;
+    if (updateCompanyDto.address !== undefined) updateData.address = updateCompanyDto.address;
+    if (updateCompanyDto.contactName !== undefined) updateData.contactName = updateCompanyDto.contactName;
+    if (updateCompanyDto.contactEmail !== undefined) updateData.contactEmail = updateCompanyDto.contactEmail;
+    if (updateCompanyDto.phone !== undefined) updateData.phone = updateCompanyDto.phone;
+    if (updateCompanyDto.costCenter !== undefined) updateData.costCenter = updateCompanyDto.costCenter;
+    if (updateCompanyDto.contractEnd !== undefined) {
+      updateData.contractEnd = updateCompanyDto.contractEnd ? new Date(updateCompanyDto.contractEnd) : null;
+    }
+    if (updateCompanyDto.status !== undefined) updateData.status = updateCompanyDto.status;
+
+    return this.prisma.company.update({
+      where: { id },
+      data: updateData,
+    });
   }
 
   async getStats() {
