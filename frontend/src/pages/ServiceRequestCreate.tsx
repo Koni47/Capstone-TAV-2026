@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import Map from '../components/Map'
 import { GeocodingService } from '../services/geocoding'
+import { createServiceRequest, createTrip, getVehicles, getUsers } from '../services/api'
 
 export default function ServiceRequestCreate() {
   const [origin, setOrigin] = useState('')
@@ -10,11 +11,16 @@ export default function ServiceRequestCreate() {
   const [time, setTime] = useState('')
   const [notes, setNotes] = useState('')
   const [clientType, setClientType] = useState('empresa')
+  const [clientName, setClientName] = useState('')
   const [distance, setDistance] = useState(0)
   const [geocodeError, setGeocodeError] = useState<'origin' | 'destination' | null>(null)
   const [showErrorModal, setShowErrorModal] = useState(false)
   const [originCoords, setOriginCoords] = useState<any>(null)
   const [destinationCoords, setDestinationCoords] = useState<any>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isAirport, setIsAirport] = useState(false)
+  const [isOtherDestination, setIsOtherDestination] = useState(false)
+  const navigate = useNavigate()
 
   const handleDistanceChange = useCallback((newDistance: number) => {
     console.log('ServiceRequestCreate: distance updated to:', newDistance)
@@ -112,20 +118,157 @@ export default function ServiceRequestCreate() {
     const baseRate = 1800 // per kilometer
     const baseCost = distance * baseRate
     
-    // Check if time is between 22:01 and 06:00 (night surcharge 15%)
-    const [hours, minutes] = time.split(':').map(Number)
-    const timeInMinutes = hours * 60 + minutes
-    const isNightTime = timeInMinutes >= (22 * 60 + 1) || timeInMinutes <= (6 * 60)
-    const surcharge = isNightTime ? baseCost * 0.15 : 0
+    // Airport surcharge $5000 if checkbox is checked
+    const surcharge = isAirport ? 5000 : 0
+    
+    // Calculate subtotal
+    let subtotal = baseCost + surcharge
+    
+    // Apply minimum fare of $30000
+    const total = Math.max(subtotal, 30000)
     
     return {
       baseCost,
       surcharge,
-      total: baseCost + surcharge
+      total
     }
   }
 
   const cost = calculateCost()
+
+  // Handle form submission with auto-assignment
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    // Validaciones básicas
+    if (!origin || !destination) {
+      alert('Por favor completa origen y destino')
+      return
+    }
+    
+    if (!date || !time) {
+      alert('Por favor selecciona fecha y hora')
+      return
+    }
+
+    setIsSubmitting(true)
+
+    try {
+      // 1. Crear la solicitud de servicio
+      const requestedDateTime = `${date}T${time}:00Z`
+      
+      // Construir notas incluyendo el nombre del cliente si existe
+      let finalNotes = notes || '';
+      if (clientName.trim()) {
+        finalNotes = (finalNotes ? finalNotes + '\n' : '') + `Cliente/Empresa: ${clientName.trim()}`;
+      }
+      
+      const requestData: any = {
+        origin,
+        destination,
+        requestedDate: requestedDateTime,
+        notes: finalNotes || undefined,
+        passengers: 1,
+        estimatedFare: Math.round(cost.total), // Agregar el costo calculado
+        distance: Math.round(distance * 100) / 100 // Agregar la distancia en km con 2 decimales
+      }
+
+      console.log('Enviando solicitud:', requestData)
+      const response = await createServiceRequest(requestData)
+      console.log('Respuesta de creación:', response)
+
+      const requestId = response.id || response.data?.id
+
+      if (!requestId) {
+        throw new Error('No se pudo obtener el ID de la solicitud creada')
+      }
+
+      // Obtener el ID del usuario actual para el clientId del Trip
+      const userStr = localStorage.getItem('user')
+      let currentUserId = null
+      if (userStr) {
+        try {
+          const user = JSON.parse(userStr)
+          currentUserId = user.id
+        } catch (e) {
+          console.error('Error parsing user:', e)
+        }
+      }
+
+      // 2. Asignar automáticamente un chofer y vehículo
+      console.log('Iniciando asignación automática...')
+      
+      const usersData = await getUsers()
+      const drivers = Array.isArray(usersData) 
+        ? usersData.filter((u: any) => u.role === 'CHOFER')
+        : usersData.users?.filter((u: any) => u.role === 'CHOFER') || []
+
+      console.log('Choferes disponibles:', drivers.length)
+
+      if (drivers.length === 0) {
+        alert('Solicitud creada exitosamente, pero no hay choferes disponibles para asignación automática')
+        navigate('/service-request')
+        return
+      }
+
+      const vehiclesData = await getVehicles()
+      const vehicles = Array.isArray(vehiclesData) ? vehiclesData : vehiclesData.vehicles || []
+      
+      console.log('Vehículos disponibles:', vehicles.length)
+
+      if (vehicles.length === 0) {
+        alert('Solicitud creada exitosamente, pero no hay vehículos disponibles para asignación automática')
+        navigate('/service-request')
+        return
+      }
+
+      // Seleccionar el primer chofer disponible
+      const selectedDriver = drivers[0]
+      
+      // Intentar encontrar un vehículo asignado a ese chofer, o el primero disponible
+      let selectedVehicle = vehicles.find((v: any) => v.currentDriver?.id === selectedDriver.id)
+      if (!selectedVehicle) {
+        selectedVehicle = vehicles[0]
+      }
+
+      console.log('Chofer seleccionado:', selectedDriver.name)
+      console.log('Vehículo seleccionado:', selectedVehicle.plateNumber)
+
+      // 3. Intentar crear el Trip con la asignación y el monto
+      // Si falla, la solicitud ya se creó correctamente
+      try {
+        const tripData = {
+          title: `${origin} → ${destination}`,
+          scheduledDate: requestedDateTime,
+          origin: origin,
+          destination: destination,
+          clientId: parseInt(currentUserId) || parseInt(selectedDriver.id),
+          driverId: parseInt(selectedDriver.id),
+          status: 'ASIGNADO', // Debe estar en mayúsculas según el enum
+          distance: Math.round(distance * 100) / 100, // Distancia con 2 decimales
+          fare: Math.round(cost.total) // Tarifa calculada
+        }
+        
+        console.log('Creando Trip con datos:', tripData)
+        await createTrip(tripData)
+        console.log('Asignación automática completada')
+        alert('¡Solicitud creada y asignada exitosamente!')
+      } catch (tripError: any) {
+        console.error('Error al asignar chofer automáticamente:', tripError)
+        console.error('Detalle del error:', tripError.response?.data)
+        alert('Solicitud creada exitosamente. La asignación de chofer debe hacerse manualmente.')
+      }
+
+      navigate('/service-request')
+
+    } catch (error: any) {
+      console.error('Error al crear solicitud:', error)
+      const errorMessage = error.response?.data?.message || error.message || 'Error desconocido'
+      alert(`Error al crear la solicitud: ${errorMessage}`)
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
 
   return (
     <div className="bg-surface font-sans text-gray-800 flex flex-col min-h-screen">
@@ -196,7 +339,7 @@ export default function ServiceRequestCreate() {
               </div>
 
               <div className="p-6 overflow-y-auto custom-scroll flex-grow">
-                <form className="space-y-5">
+                <form className="space-y-5" onSubmit={handleSubmit}>
                   <div>
                     <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 ml-1">Cliente</label>
                     <div className="relative">
@@ -205,6 +348,20 @@ export default function ServiceRequestCreate() {
                         <option value="empresa">Empresa / Convenio</option>
                         <option value="persona">Persona Natural</option>
                       </select>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5 ml-1">Nombre del Cliente/Empresa</label>
+                    <div className="relative">
+                      <span className="material-icons absolute left-3 top-3 text-gray-400">person</span>
+                      <input 
+                        type="text" 
+                        value={clientName} 
+                        onChange={(e) => setClientName(e.target.value)} 
+                        placeholder="Ingrese el nombre del cliente o empresa"
+                        className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                      />
                     </div>
                   </div>
 
@@ -245,6 +402,36 @@ export default function ServiceRequestCreate() {
                     </div>
                   </div>
 
+                  <div>
+                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-2 ml-1">Tipo de Destino</label>
+                    <div className="flex gap-4">
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input 
+                          type="checkbox" 
+                          checked={isAirport}
+                          onChange={(e) => setIsAirport(e.target.checked)}
+                          className="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary/20"
+                        />
+                        <span className="text-sm text-gray-700 flex items-center gap-1">
+                          <span className="material-icons text-sm text-blue-500">flight</span>
+                          Aeropuerto
+                        </span>
+                      </label>
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input 
+                          type="checkbox" 
+                          checked={isOtherDestination}
+                          onChange={(e) => setIsOtherDestination(e.target.checked)}
+                          className="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary/20"
+                        />
+                        <span className="text-sm text-gray-700 flex items-center gap-1">
+                          <span className="material-icons text-sm text-gray-500">place</span>
+                          Otro destino
+                        </span>
+                      </label>
+                    </div>
+                  </div>
+
                   <div className="flex justify-end">
                     <button 
                       type="button" 
@@ -279,14 +466,28 @@ export default function ServiceRequestCreate() {
                       <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={3} placeholder="Nombres, centro de costo, observaciones..." className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all resize-none"></textarea>
                     </div>
                   </div>
-                </form>
-              </div>
 
-              <div className="p-6 bg-gray-50 border-t border-gray-100">
-                <button type="submit" className="w-full bg-secondary hover:bg-orange-700 text-white font-bold py-3.5 px-4 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 flex justify-center items-center gap-2">
-                  <span>Confirmar Solicitud</span>
-                  <span className="material-icons text-sm">arrow_forward</span>
-                </button>
+                  {/* Botón de submit dentro del formulario */}
+                  <div className="pt-4">
+                    <button 
+                      type="submit" 
+                      disabled={isSubmitting}
+                      className="w-full bg-secondary hover:bg-orange-700 text-white font-bold py-3.5 px-4 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 flex justify-center items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                    >
+                      {isSubmitting ? (
+                        <>
+                          <span className="material-icons animate-spin">refresh</span>
+                          <span>Creando y asignando...</span>
+                        </>
+                      ) : (
+                        <>
+                          <span>Confirmar Solicitud</span>
+                          <span className="material-icons text-sm">arrow_forward</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </form>
               </div>
             </div>
           </div>
@@ -313,18 +514,18 @@ export default function ServiceRequestCreate() {
                     <span className="font-semibold text-gray-800">{distance > 0 ? `${distance.toFixed(2)} km` : '-'}</span>
                   </div>
                   <div className="flex justify-between items-center text-sm">
-                    <span className="text-gray-600">Tarifa Base ($1,800/km)</span>
+                    <span className="text-gray-600">Tarifa</span>
                     <span className="font-mono text-gray-800">{cost.baseCost > 0 ? `$${cost.baseCost.toLocaleString('es-CL')}` : '-'}</span>
                   </div>
                   <div className="flex justify-between items-center text-sm">
-                    <span className="text-gray-600 flex items-center gap-1" title="Cargo Nocturno (22:01 - 06:00)"><span className="material-icons text-xs text-blue-500">nightlight</span> Recargo Nocturno (15%)</span>
+                    <span className="text-gray-600 flex items-center gap-1"><span className="material-icons text-xs text-blue-500">add_circle</span> Costos Adicionales</span>
                     <span className="font-mono text-orange-600">{cost.surcharge > 0 ? `$${cost.surcharge.toLocaleString('es-CL')}` : '-'}</span>
                   </div>
                 </div>
 
                 <div className="pt-4 border-t border-gray-200 flex justify-between items-end">
                   <span className="text-gray-500 text-sm font-medium">Total Estimado</span>
-                  <span className="text-4xl font-bold text-primary leading-none">{cost.total > 0 ? `$${cost.total.toLocaleString()}` : '-'}</span>
+                  <span className="text-4xl font-bold text-primary leading-none">{cost.total > 0 ? `$${Math.round(cost.total).toLocaleString()}` : '-'}</span>
                 </div>
               </div>
             </div>
@@ -360,12 +561,17 @@ export default function ServiceRequestCreate() {
               <h3 className="font-bold text-red-800">Ubicación no encontrada</h3>
             </div>
             <div className="p-6">
-              <p className="text-gray-600 text-sm mb-4">No pudimos localizar una de las direcciones. Intenta ser más específico.</p>
+              <p className="text-gray-600 text-sm mb-4">
+                No pudimos localizar {geocodeError === 'origin' ? 'el origen' : 'el destino'}. 
+                Intenta ser más específico con la dirección.
+              </p>
               <div className="bg-gray-50 rounded-lg p-3 text-xs text-gray-500 border border-gray-100">
                 <strong>Sugerencias:</strong>
                 <ul className="list-disc list-inside mt-1 space-y-1">
-                  <li>Agrega "Calama" o la ciudad al final.</li>
-                  <li>Usa nombres de lugares conocidos (Aeropuerto, Hotel...).</li>
+                  <li>Incluye la ciudad o comuna (ej: "Alameda 123, Santiago")</li>
+                  <li>Usa nombres de lugares conocidos (Aeropuerto, Mall, Hotel, etc.)</li>
+                  <li>Intenta con coordenadas o direcciones más completas</li>
+                  <li>Verifica que la dirección exista en Chile</li>
                 </ul>
               </div>
             </div>

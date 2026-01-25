@@ -55,6 +55,11 @@ export class CreateTripDto {
   @IsOptional()
   fare?: number;
 
+  @ApiProperty({ example: 25.5, required: false, description: 'Distancia en kilómetros' })
+  @IsNumber()
+  @IsOptional()
+  distance?: number;
+
   @ApiProperty({ example: 'ASIGNADO', required: false })
   @IsOptional()
   status?: string;

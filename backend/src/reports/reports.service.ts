@@ -6,15 +6,33 @@ export class ReportsService {
   constructor(private prisma: PrismaService) {}
 
   async getDashboard() {
-    // TODO: Implementar con queries reales de Prisma
+    // Calcular métricas reales desde la base de datos 
     const totalTrips = await this.prisma.trip.count();
+    
+    // Calcular ingresos totales desde trips finalizados
+    const trips = await this.prisma.trip.findMany({
+      where: { status: 'FINALIZADO' },
+      select: { fare: true }
+    });
+    const totalRevenue = trips.reduce((sum, trip) => sum + (trip.fare || 0), 0);
+    
+    // Contar viajes pendientes
+    const pendingTrips = await this.prisma.trip.count({
+      where: { status: 'PENDIENTE' }
+    });
+    
+    // Contar vehículos activos
+    const totalVehicles = await this.prisma.vehicle.count();
+    const activeVehicles = await this.prisma.vehicle.count({
+      where: { status: 'DISPONIBLE' }
+    });
     
     return {
       kpis: {
         totalTrips,
-        totalRevenue: 1245000,
-        pendingTrips: 23,
-        activeVehicles: '18 / 20',
+        totalRevenue,
+        pendingTrips,
+        activeVehicles: `${activeVehicles} / ${totalVehicles}`,
       },
       revenueByService: [
         { label: 'Transporte Personal', value: 400000 },
@@ -60,22 +78,45 @@ export class ReportsService {
       orderBy: { scheduledDate: 'desc' },
     });
 
-    const totalGeneral = trips.reduce((sum, trip) => sum + (trip.fare || 0), 0);
+    // Función para calcular fare dinámicamente con la nueva fórmula
+    const calculateFare = (trip: any): number => {
+      const baseRate = 1800; // $1,800 por km
+      const airportSurcharge = 5000; // $5,000 si va al aeropuerto
+      const minimumFare = 30000; // Mínimo $30,000
+
+      // Usar distancia almacenada en el trip, o 20km por defecto si no hay datos
+      const distance = trip.distance || 20;
+
+      // Detectar si va al aeropuerto
+      const isAirport = 
+        trip.origin?.toLowerCase().includes('aeropuerto') ||
+        trip.destination?.toLowerCase().includes('aeropuerto');
+
+      // Calcular
+      const baseCost = distance * baseRate;
+      const surcharge = isAirport ? airportSurcharge : 0;
+      return Math.max(baseCost + surcharge, minimumFare);
+    };
+
+    const totalGeneral = trips.reduce((sum, trip) => sum + calculateFare(trip), 0);
 
     return {
       results: {
         month: month || 'Enero 2026',
-        rows: trips.map(trip => ({
-          date: trip.scheduledDate.toISOString().split('T')[0],
-          client: trip.client?.name || 'N/A',
-          trip: `VJ-${trip.id}`,
-          trips: 1,
-          driver: trip.driver?.fullName || 'Sin asignar',
-          fare: trip.fare,
-          kilometers: 150, // TODO: Calcular desde origen/destino
-          total: trip.fare,
-          status: trip.status,
-        })),
+        rows: trips.map(trip => {
+          const fare = calculateFare(trip);
+          return {
+            date: trip.scheduledDate.toISOString().split('T')[0],
+            client: trip.client?.name || 'N/A',
+            trip: `VJ-${trip.id}`,
+            trips: 1,
+            driver: trip.driver?.fullName || 'Sin asignar',
+            fare: fare,
+            kilometers: trip.distance || 20, // Usar distancia almacenada
+            total: fare,
+            status: trip.status,
+          };
+        }),
         totalGeneral,
       },
     };

@@ -83,4 +83,13 @@ export class TripsController {
   uploadEvidence(@Param('id') id: string, @Body() body: any) {
     return this.tripsService.uploadEvidence(id, body);
   }
+
+  @Post('recalculate-fares')
+  @Roles('ADMIN')
+  @ApiOperation({ summary: 'Recalcular todos los fares según nueva fórmula (Solo Admin)' })
+  @ApiResponse({ status: 200, description: 'Fares recalculados exitosamente' })
+  @ApiResponse({ status: 403, description: 'No autorizado' })
+  async recalculateFares() {
+    return this.tripsService.recalculateAllFares();
+  }
 }

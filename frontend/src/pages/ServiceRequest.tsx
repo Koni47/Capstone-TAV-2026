@@ -1,114 +1,275 @@
 import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
-import { useNavigate } from 'react-router-dom';
-import { getServiceRequests, getVehicles, createTrip, getUsers } from '../services/api';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { getServiceRequests, getVehicles, createTrip, getUsers, createServiceRequest } from '../services/api';
 
 export default function ServiceRequest() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [requests, setRequests] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [userRole, setUserRole] = useState<string>('');
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState<any>(null);
-  const [showAssignModal, setShowAssignModal] = useState(false);
   const [drivers, setDrivers] = useState<any[]>([]);
-  const [selectedRequestForAssign, setSelectedRequestForAssign] = useState<any>(null);
+  const [isEditingRequest, setIsEditingRequest] = useState(false);
+  const [showNewRequestModal, setShowNewRequestModal] = useState(false);
+  const [newRequest, setNewRequest] = useState({
+    companyId: '',
+    origin: '',
+    destination: '',
+    requestedAt: '',
+    notes: ''
+  });
+  const [companies, setCompanies] = useState<any[]>([]);
+  const [creatingRequest, setCreatingRequest] = useState(false);
+  const [editedRequest, setEditedRequest] = useState<any>(null);
+  const [allVehicles, setAllVehicles] = useState<any[]>([]);
 
-  const openDetailModal = (request: any) => {
+  const openDetailModal = async (request: any) => {
     setSelectedRequest(request);
+    setEditedRequest(request);
+    setIsEditingRequest(false);
+    
+    // Cargar vehículos y choferes para el modal de edición
+    try {
+      const vehiclesData: any = await getVehicles();
+      const vehicles = Array.isArray(vehiclesData) ? vehiclesData : (vehiclesData.data || vehiclesData.vehicles || []);
+      setAllVehicles(vehicles);
+      
+      const usersData: any = await getUsers();
+      const allUsers = usersData.users || usersData || [];
+      const driversWithRole = allUsers.filter((user: any) => user.role?.nombre === 'CHOFER' || user.role === 'CHOFER');
+      setDrivers(driversWithRole);
+    } catch (err) {
+      console.error('Error loading data for edit:', err);
+    }
+    
     setShowDetailModal(true);
   };
 
   const closeDetailModal = () => {
     setShowDetailModal(false);
     setSelectedRequest(null);
+    setEditedRequest(null);
+    setIsEditingRequest(false);
   };
 
-  const openAssignModal = async (request: any) => {
+  const handleEditToggle = () => {
+    setIsEditingRequest(!isEditingRequest);
+    if (!isEditingRequest) {
+      setEditedRequest({...selectedRequest});
+    }
+  };
+
+  const handleEditChange = (field: string, value: any) => {
+    setEditedRequest((prev: any) => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handleSaveEdit = async () => {
     try {
-      setSelectedRequestForAssign(request);
+      // Aquí llamarías a la API para actualizar la solicitud
+      // await updateServiceRequest(editedRequest.id, editedRequest);
       
-      // Cargar choferes con sus vehículos asignados
+      // Actualizar localmente
+      setRequests(requests.map(r => r.id === editedRequest.id ? editedRequest : r));
+      setSelectedRequest(editedRequest);
+      setIsEditingRequest(false);
+      alert('Solicitud actualizada correctamente');
+      
+      // Recargar datos
+      const data: any = await getServiceRequests();
+      setRequests(data.requests || data || []);
+    } catch (err) {
+      console.error('Error updating request:', err);
+      alert('Error al actualizar la solicitud');
+    }
+  };
+
+  const openNewRequestModal = async () => {
+    try {
+      // Cargar usuarios con rol EMPRESA o que tengan company asociada
+      const usersData: any = await getUsers();
+      const allUsers = usersData.users || usersData || [];
+      
+      // Buscar usuarios que sean EMPRESA o que tengan una company asociada
+      const companiesList = allUsers.filter((user: any) => {
+        const isEmpresaRole = user.role?.nombre === 'EMPRESA' || user.role === 'EMPRESA';
+        const hasCompany = !!user.company;
+        return isEmpresaRole || hasCompany;
+      });
+      
+      console.log('Empresas encontradas:', companiesList.length);
+      setCompanies(companiesList);
+      setShowNewRequestModal(true);
+    } catch (err) {
+      console.error('Error loading companies:', err);
+      alert('Error al cargar empresas');
+    }
+  };
+
+  const closeNewRequestModal = () => {
+    setShowNewRequestModal(false);
+    setNewRequest({
+      companyId: '',
+      origin: '',
+      destination: '',
+      requestedAt: '',
+      notes: ''
+    });
+  };
+
+  const handleNewRequestChange = (field: string, value: any) => {
+    setNewRequest(prev => ({ ...prev, [field]: value }));
+  };
+
+  const assignDriverAutomatically = async (serviceRequestId: string) => {
+    try {
+      console.log('Iniciando asignación automática para solicitud:', serviceRequestId);
+      
+      // Obtener choferes disponibles
       const usersData: any = await getUsers();
       const allUsers = usersData.users || usersData || [];
       const driversWithRole = allUsers.filter((user: any) => user.role?.nombre === 'CHOFER' || user.role === 'CHOFER');
       
-      // Cargar vehículos para relacionarlos con choferes
+      console.log('Choferes encontrados:', driversWithRole.length);
+      
+      // Obtener vehículos
       const vehiclesData: any = await getVehicles();
-      console.log('Raw vehicles data:', vehiclesData);
       const allVehicles = Array.isArray(vehiclesData) ? vehiclesData : (vehiclesData.data || vehiclesData.vehicles || []);
-      console.log('Processed vehicles:', allVehicles);
-      console.log('Drivers:', driversWithRole);
       
-      // Relacionar choferes con sus vehículos usando currentDriver del endpoint
-      const driversWithVehicles = driversWithRole.map((driver: any) => {
-        const assignedVehicle = Array.isArray(allVehicles) ? allVehicles.find((v: any) => {
-          // El endpoint de vehicles retorna currentDriver que contiene el driver del trip activo
-          console.log(`Checking vehicle ${v.licensePlate}, currentDriver:`, v.currentDriver, 'against driver', driver.id);
-          return v.currentDriver?.id === driver.id;
-        }) : null;
-        console.log(`Driver ${driver.fullName} assigned vehicle:`, assignedVehicle);
-        return { ...driver, vehicle: assignedVehicle };
-      });
+      console.log('Vehículos encontrados:', allVehicles.length);
       
-      console.log('Final drivers with vehicles:', driversWithVehicles);
-      setDrivers(driversWithVehicles);
-      setShowAssignModal(true);
-    } catch (err: any) {
-      console.error('Error loading drivers:', err);
-      alert('Error al cargar los choferes: ' + (err.message || 'Error desconocido'));
+      // Buscar un chofer con vehículo disponible (sin trip activo)
+      let assignedDriver = null;
+      let assignedVehicle = null;
+      
+      // Primero intentar encontrar vehículo con currentDriver
+      for (const driver of driversWithRole) {
+        const vehicle = allVehicles.find((v: any) => {
+          // Buscar vehículo asignado a este chofer
+          const hasDriver = v.currentDriver?.id === driver.id;
+          console.log(`Vehículo ${v.licensePlate}: currentDriver=${v.currentDriver?.id}, buscando=${driver.id}, match=${hasDriver}`);
+          return hasDriver;
+        });
+        
+        if (vehicle) {
+          assignedDriver = driver;
+          assignedVehicle = vehicle;
+          console.log('Chofer y vehículo encontrados:', driver.fullName || driver.name, vehicle.licensePlate);
+          break;
+        }
+      }
+      
+      // Si no encuentra con currentDriver, asignar el primer chofer y primer vehículo disponible
+      if (!assignedDriver && driversWithRole.length > 0 && allVehicles.length > 0) {
+        assignedDriver = driversWithRole[0];
+        assignedVehicle = allVehicles[0];
+        console.log('Asignando primer chofer y vehículo disponible:', assignedDriver.fullName || assignedDriver.name, assignedVehicle.licensePlate);
+      }
+      
+      if (assignedDriver && assignedVehicle) {
+        console.log('Creando trip con:', {
+          serviceRequestId,
+          vehicleId: assignedVehicle.id,
+          driverId: assignedDriver.id,
+          driverName: assignedDriver.fullName || assignedDriver.name,
+          vehiclePlate: assignedVehicle.licensePlate
+        });
+        
+        // Crear el trip automáticamente
+        const tripResponse = await createTrip({
+          serviceRequestId: serviceRequestId,
+          vehicleId: assignedVehicle.id,
+          driverId: assignedDriver.id,
+          status: 'ASIGNADO'
+        });
+        
+        console.log('Trip creado exitosamente:', tripResponse);
+        return true;
+      } else {
+        console.warn('No hay choferes con vehículo disponible');
+        return false;
+      }
+    } catch (err) {
+      console.error('Error en asignación automática:', err);
+      return false;
     }
   };
 
-  const closeAssignModal = () => {
-    setShowAssignModal(false);
-    setSelectedRequestForAssign(null);
-  };
-
-  const handleAssignDriver = async (driverId: string, vehicleId: string) => {
-    if (!selectedRequestForAssign) return;
-    
-    if (!vehicleId) {
-      alert('El chofer seleccionado no tiene un vehículo asignado');
+  const handleCreateRequest = async () => {
+    // Validar campos
+    if (!newRequest.companyId || !newRequest.origin || !newRequest.destination || !newRequest.requestedAt) {
+      alert('Por favor complete todos los campos obligatorios');
       return;
     }
     
+    setCreatingRequest(true);
     try {
-      console.log('Creating trip with:', {
-        serviceRequestId: selectedRequestForAssign.id,
-        vehicleId: vehicleId,
-        driverId: driverId,
-        status: 'ASIGNADO'
-      });
+      // Preparar datos para enviar
+      const requestData = {
+        companyId: newRequest.companyId,
+        origin: newRequest.origin,
+        destination: newRequest.destination,
+        requestedDate: new Date(newRequest.requestedAt).toISOString(),
+        passengers: 1,
+        notes: newRequest.notes || undefined
+      };
       
-      const response = await createTrip({
-        serviceRequestId: selectedRequestForAssign.id,
-        vehicleId: vehicleId,
-        driverId: driverId,
-        status: 'ASIGNADO'
-      });
+      console.log('Enviando solicitud:', requestData);
       
-      console.log('Trip created successfully:', response);
+      // Crear la solicitud
+      const response: any = await createServiceRequest(requestData);
       
-      // Recargar datos
-      const data: any = await getServiceRequests();
-      const updatedRequests = data.requests || data || [];
-      setRequests(updatedRequests);
+      console.log('Solicitud creada:', response);
       
-      alert('Chofer y vehículo asignados exitosamente');
-      closeAssignModal();
+      // Asignar chofer automáticamente
+      const requestId = response.id || response.data?.id;
+      if (requestId) {
+        console.log('Intentando asignar chofer automáticamente a solicitud:', requestId);
+        const assigned = await assignDriverAutomatically(requestId);
+        
+        // Esperar un momento para que el backend procese
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // Recargar datos para obtener la solicitud con el trip asignado
+        const data: any = await getServiceRequests();
+        const updatedRequests = data.requests || data || [];
+        setRequests(updatedRequests);
+        
+        // Buscar la solicitud recién creada para verificar
+        const createdRequest = updatedRequests.find((r: any) => r.id === requestId);
+        console.log('Solicitud actualizada:', createdRequest);
+        
+        if (assigned && createdRequest?.trip?.driver) {
+          alert(`Solicitud creada y asignada a ${createdRequest.trip.driver.fullName || createdRequest.trip.driver.name}`);
+        } else if (assigned) {
+          alert('Solicitud creada y chofer asignado automáticamente');
+        } else {
+          alert('Solicitud creada. No hay choferes disponibles en este momento');
+        }
+      } else {
+        // Recargar datos de todas formas
+        const data: any = await getServiceRequests();
+        setRequests(data.requests || data || []);
+      }
       
+      closeNewRequestModal();
     } catch (err: any) {
-      console.error('Error completo:', err);
-      console.error('Response data:', err.response?.data);
-      console.error('Response status:', err.response?.status);
+      console.error('Error creating request:', err);
+      console.error('Error response:', err.response);
+      console.error('Error data:', err.response?.data);
+      console.error('Error message array:', err.response?.data?.message);
       
-      let errorMessage = 'Error al asignar el chofer';
-      
+      let errorMessage = 'Error desconocido';
       if (err.response?.data?.message) {
         if (Array.isArray(err.response.data.message)) {
           errorMessage = err.response.data.message.join(', ');
+          console.error('Mensajes de validación:', err.response.data.message);
         } else {
           errorMessage = err.response.data.message;
         }
@@ -116,9 +277,13 @@ export default function ServiceRequest() {
         errorMessage = err.message;
       }
       
-      alert(`Error: ${errorMessage}`);
+      alert('Error al crear la solicitud:\n' + errorMessage);
+    } finally {
+      setCreatingRequest(false);
     }
   };
+
+
 
   useEffect(() => {
     const userStr = localStorage.getItem('user');
@@ -134,7 +299,9 @@ export default function ServiceRequest() {
     const fetchRequests = async () => {
       try {
         setLoading(true);
+        console.log('Cargando solicitudes de servicio...');
         const data: any = await getServiceRequests();
+        console.log('Solicitudes recibidas:', data);
         setRequests(data.requests || data || []);
         setError(null);
       } catch (err) {
@@ -145,7 +312,23 @@ export default function ServiceRequest() {
       }
     };
     fetchRequests();
-  }, [navigate]);
+  }, [navigate, location.key]); // Agregar location.key para recargar cuando navegamos de vuelta
+
+  // Recargar datos cuando la página recibe foco (vuelves desde otra página)
+  useEffect(() => {
+    const handleFocus = async () => {
+      try {
+        console.log('Página recibió foco, recargando solicitudes...');
+        const data: any = await getServiceRequests();
+        setRequests(data.requests || data || []);
+      } catch (err) {
+        console.error('Error refreshing requests on focus:', err);
+      }
+    };
+
+    window.addEventListener('focus', handleFocus);
+    return () => window.removeEventListener('focus', handleFocus);
+  }, []);
 
   const totalRequests = requests.length;
   const pendingCount = requests.filter(r => r.status === 'PENDIENTE').length;
@@ -171,14 +354,14 @@ export default function ServiceRequest() {
               <span className="material-icons">assignment</span> Gestión de Solicitudes
             </h2>
           </div>
-          {userRole !== 'ADMIN' && (
-            <div className="mt-4 flex md:mt-0 md:ml-4">
-              <button className="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-secondary hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-secondary transition shadow-md">
-                <span className="material-icons mr-2 text-sm">add_circle</span>
-                Nueva Solicitud
-              </button>
-            </div>
-          )}
+          <div className="mt-4 flex md:mt-0 md:ml-4">
+            <button 
+              onClick={() => navigate('/service-request-create')}
+              className="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-secondary hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-secondary transition shadow-md">
+              <span className="material-icons mr-2 text-sm">add_circle</span>
+              Nueva Solicitud
+            </button>
+          </div>
         </div>
 
         {loading && (
@@ -267,9 +450,7 @@ export default function ServiceRequest() {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {requests.map((request: any) => {
-                      console.log('Request:', request.id.slice(0,8), 'Status:', request.status, 'Has trip?', !!request.trip, 'Has driver?', !!request.trip?.driver);
-                      return (
+                    {requests.map((request: any) => (
                       <tr key={request.id} className="hover:bg-gray-50 transition">
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm font-bold text-gray-900">#{request.id.slice(0, 8)}</div>
@@ -306,41 +487,29 @@ export default function ServiceRequest() {
                         <td className="px-6 py-4 whitespace-nowrap hidden md:table-cell">
                           {request.status === 'CANCELADO' ? (
                             <span className="text-sm text-gray-400">-</span>
-                          ) : request.trip?.driver && (request.status === 'AGENDADO' || request.status === 'ASIGNADO') ? (
-                            <button
-                              onClick={() => openAssignModal(request)}
-                              className="px-3 py-1 bg-green-600 text-white rounded-lg hover:bg-green-700 text-xs flex items-center gap-1"
-                            >
-                              <span className="material-icons text-xs">check_circle</span>
-                              Asignado
-                            </button>
                           ) : request.trip?.driver ? (
                             <>
-                              <div className="text-sm text-gray-900">{request.trip.driver.fullName || request.trip.driver.name}</div>
-                              <div className="text-xs text-gray-500">{request.trip.vehicle?.licensePlate || request.trip.vehicle?.plate || 'N/A'}</div>
+                              <div className="text-sm text-gray-900 font-medium">{request.trip.driver.fullName || request.trip.driver.name}</div>
+                              <div className="text-xs text-gray-500 flex items-center gap-1">
+                                <span className="material-icons" style={{fontSize: '12px'}}>directions_car</span>
+                                {request.trip.vehicle?.licensePlate || request.trip.vehicle?.plate || 'N/A'}
+                              </div>
                             </>
-                          ) : (request.status === 'PENDIENTE' || request.status === 'AGENDADO') ? (
-                            <button
-                              onClick={() => openAssignModal(request)}
-                              className="px-3 py-1 bg-secondary text-white rounded-lg hover:bg-orange-700 text-xs"
-                            >
-                              Asignar
-                            </button>
                           ) : (
-                            <span className="text-xs text-gray-400">Sin asignar</span>
+                            <span className="text-xs text-gray-400">Asignación automática</span>
                           )}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                           <button
                             onClick={() => openDetailModal(request)}
-                            className="text-primary hover:text-blue-900"
+                            className="text-primary hover:text-blue-900 flex items-center gap-1 ml-auto"
                           >
-                            Ver detalle
+                            <span className="material-icons text-sm">edit</span>
+                            Editar
                           </button>
                         </td>
                       </tr>
-                      );
-                    })}
+                    ))}
                   </tbody>
                 </table>
               </div>
@@ -348,6 +517,151 @@ export default function ServiceRequest() {
           </>
         )}
       </main>
+
+      {/* Modal de Nueva Solicitud */}
+      {showNewRequestModal && (
+        <div className="fixed inset-0 z-50 overflow-y-auto">
+          <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onClick={closeNewRequestModal}></div>
+            <span className="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+
+            <div className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full sm:p-6" onClick={(e) => e.stopPropagation()}>
+              <div className="absolute top-0 right-0 pt-4 pr-4">
+                <button onClick={closeNewRequestModal} className="bg-white rounded-md text-gray-400 hover:text-gray-500">
+                  <span className="material-icons">close</span>
+                </button>
+              </div>
+
+              <div className="sm:flex sm:items-start">
+                <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-orange-100 sm:mx-0 sm:h-10 sm:w-10">
+                  <span className="material-icons text-secondary">add_circle</span>
+                </div>
+                <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left flex-1">
+                  <h3 className="text-lg leading-6 font-bold text-gray-900">
+                    Nueva Solicitud de Servicio
+                  </h3>
+                  <p className="mt-1 text-sm text-gray-500">
+                    Complete los datos para crear una nueva solicitud. Se asignará automáticamente un chofer disponible.
+                  </p>
+
+                  <div className="mt-6 space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Empresa / Cliente *
+                      </label>
+                      <select
+                        value={newRequest.companyId}
+                        onChange={(e) => handleNewRequestChange('companyId', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent"
+                        required
+                      >
+                        <option value="">Seleccione una empresa o cliente</option>
+                        {companies.map((company: any) => (
+                          <option key={company.id} value={company.id}>
+                            {company.company?.name || company.fullName || company.email}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Origen *
+                      </label>
+                      <input
+                        type="text"
+                        value={newRequest.origin}
+                        onChange={(e) => handleNewRequestChange('origin', e.target.value)}
+                        placeholder="Dirección de origen"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent"
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Destino *
+                      </label>
+                      <input
+                        type="text"
+                        value={newRequest.destination}
+                        onChange={(e) => handleNewRequestChange('destination', e.target.value)}
+                        placeholder="Dirección de destino"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent"
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Fecha y Hora del Servicio *
+                      </label>
+                      <input
+                        type="datetime-local"
+                        value={newRequest.requestedAt}
+                        onChange={(e) => handleNewRequestChange('requestedAt', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent"
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Observaciones
+                      </label>
+                      <textarea
+                        value={newRequest.notes}
+                        onChange={(e) => handleNewRequestChange('notes', e.target.value)}
+                        placeholder="Notas adicionales (opcional)"
+                        rows={3}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent"
+                      />
+                    </div>
+
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                      <div className="flex items-start">
+                        <span className="material-icons text-blue-600 text-sm mr-2">info</span>
+                        <p className="text-sm text-blue-800">
+                          Al crear la solicitud, se asignará automáticamente un chofer con vehículo disponible.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse gap-3">
+                <button
+                  type="button"
+                  onClick={handleCreateRequest}
+                  disabled={creatingRequest}
+                  className="w-full inline-flex justify-center items-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-secondary text-base font-medium text-white hover:bg-orange-700 focus:outline-none sm:w-auto sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {creatingRequest ? (
+                    <>
+                      <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Creando...
+                    </>
+                  ) : (
+                    'Crear Solicitud'
+                  )}
+                </button>
+                <button
+                  type="button"
+                  onClick={closeNewRequestModal}
+                  disabled={creatingRequest}
+                  className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:w-auto sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Modal de Detalle */}
       {showDetailModal && selectedRequest && (
@@ -365,23 +679,37 @@ export default function ServiceRequest() {
 
               <div className="sm:flex sm:items-start">
                 <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 sm:mx-0 sm:h-10 sm:w-10">
-                  <span className="material-icons text-primary">description</span>
+                  <span className="material-icons text-primary">{isEditingRequest ? 'edit' : 'description'}</span>
                 </div>
                 <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left flex-1">
                   <h3 className="text-lg leading-6 font-bold text-gray-900">
-                    Detalle de Solicitud #{selectedRequest.id.slice(0, 8)}
+                    {isEditingRequest ? 'Editar' : 'Detalle de'} Solicitud #{selectedRequest.id.slice(0, 8)}
                   </h3>
                   <div className="mt-4 space-y-4">
                     <div className="flex items-center justify-between pb-3 border-b border-gray-200">
                       <span className="text-sm font-medium text-gray-500">Estado:</span>
-                      <span className={`px-3 py-1 text-xs font-bold rounded-full ${
-                        selectedRequest.status === 'AGENDADO' ? 'bg-green-100 text-green-800' :
-                        selectedRequest.status === 'CANCELADO' ? 'bg-red-100 text-red-800' :
-                        selectedRequest.status === 'PENDIENTE' ? 'bg-yellow-100 text-yellow-800' :
-                        'bg-gray-100 text-gray-800'
-                      }`}>
-                        {selectedRequest.status}
-                      </span>
+                      {isEditingRequest ? (
+                        <select
+                          value={editedRequest.status}
+                          onChange={(e) => handleEditChange('status', e.target.value)}
+                          className="px-3 py-1 text-xs font-bold rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent"
+                        >
+                          <option value="PENDIENTE">PENDIENTE</option>
+                          <option value="AGENDADO">AGENDADO</option>
+                          <option value="EN_RUTA">EN_RUTA</option>
+                          <option value="COMPLETADO">COMPLETADO</option>
+                          <option value="CANCELADO">CANCELADO</option>
+                        </select>
+                      ) : (
+                        <span className={`px-3 py-1 text-xs font-bold rounded-full ${
+                          selectedRequest.status === 'AGENDADO' ? 'bg-green-100 text-green-800' :
+                          selectedRequest.status === 'CANCELADO' ? 'bg-red-100 text-red-800' :
+                          selectedRequest.status === 'PENDIENTE' ? 'bg-yellow-100 text-yellow-800' :
+                          'bg-blue-100 text-blue-800'
+                        }`}>
+                          {selectedRequest.status}
+                        </span>
+                      )}
                     </div>
 
                     <div className="pb-3 border-b border-gray-200">
@@ -398,33 +726,85 @@ export default function ServiceRequest() {
                       <span className="text-sm font-medium text-gray-500">Ruta:</span>
                       <div className="mt-2 flex items-center gap-2">
                         <div className="flex-1">
-                          <p className="text-sm font-semibold text-gray-900">{selectedRequest.origin}</p>
-                          <p className="text-xs text-gray-500">Origen</p>
+                          {isEditingRequest ? (
+                            <input
+                              type="text"
+                              value={editedRequest.origin}
+                              onChange={(e) => handleEditChange('origin', e.target.value)}
+                              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent"
+                              placeholder="Origen"
+                            />
+                          ) : (
+                            <>
+                              <p className="text-sm font-semibold text-gray-900">{selectedRequest.origin}</p>
+                              <p className="text-xs text-gray-500">Origen</p>
+                            </>
+                          )}
                         </div>
                         <span className="material-icons text-gray-400">arrow_forward</span>
                         <div className="flex-1">
-                          <p className="text-sm font-semibold text-gray-900">{selectedRequest.destination}</p>
-                          <p className="text-xs text-gray-500">Destino</p>
+                          {isEditingRequest ? (
+                            <input
+                              type="text"
+                              value={editedRequest.destination}
+                              onChange={(e) => handleEditChange('destination', e.target.value)}
+                              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent"
+                              placeholder="Destino"
+                            />
+                          ) : (
+                            <>
+                              <p className="text-sm font-semibold text-gray-900">{selectedRequest.destination}</p>
+                              <p className="text-xs text-gray-500">Destino</p>
+                            </>
+                          )}
                         </div>
                       </div>
                     </div>
 
                     <div className="pb-3 border-b border-gray-200">
                       <span className="text-sm font-medium text-gray-500">Fecha solicitada:</span>
-                      <p className="text-base text-gray-900 mt-1">
-                        {new Date(selectedRequest.requestedAt).toLocaleString('es-CL', {
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric',
-                          hour: '2-digit',
-                          minute: '2-digit'
-                        })}
-                      </p>
+                      {isEditingRequest ? (
+                        <input
+                          type="datetime-local"
+                          value={editedRequest.requestedAt ? new Date(editedRequest.requestedAt).toISOString().slice(0, 16) : ''}
+                          onChange={(e) => handleEditChange('requestedAt', e.target.value)}
+                          className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent mt-1"
+                        />
+                      ) : (
+                        <p className="text-base text-gray-900 mt-1">
+                          {new Date(selectedRequest.requestedAt).toLocaleString('es-CL', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          })}
+                        </p>
+                      )}
                     </div>
 
                     <div className="pb-3 border-b border-gray-200">
                       <span className="text-sm font-medium text-gray-500">Chofer asignado:</span>
-                      {selectedRequest.trip?.driver ? (
+                      {isEditingRequest ? (
+                        <select
+                          value={editedRequest.trip?.driver?.id || ''}
+                          onChange={(e) => {
+                            const driver = drivers.find(d => d.id === e.target.value);
+                            handleEditChange('trip', {
+                              ...editedRequest.trip,
+                              driver: driver
+                            });
+                          }}
+                          className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent mt-2"
+                        >
+                          <option value="">Sin asignar</option>
+                          {drivers.map((driver: any) => (
+                            <option key={driver.id} value={driver.id}>
+                              {driver.name || driver.fullName} - {driver.email}
+                            </option>
+                          ))}
+                        </select>
+                      ) : selectedRequest.trip?.driver ? (
                         <div className="mt-2 flex items-center gap-3 p-3 bg-green-50 rounded-lg">
                           <div className="h-10 w-10 rounded-full bg-primary flex items-center justify-center text-white font-bold">
                             {selectedRequest.trip.driver.fullName?.charAt(0) || 'C'}
@@ -446,17 +826,40 @@ export default function ServiceRequest() {
                       )}
                     </div>
 
-                    {selectedRequest.trip?.vehicle && (
-                      <div className="pb-3 border-b border-gray-200">
-                        <span className="text-sm font-medium text-gray-500">Vehículo asignado:</span>
+                    <div className="pb-3 border-b border-gray-200">
+                      <span className="text-sm font-medium text-gray-500">Vehículo asignado:</span>
+                      {isEditingRequest ? (
+                        <select
+                          value={editedRequest.trip?.vehicle?.id || ''}
+                          onChange={(e) => {
+                            const vehicle = allVehicles.find(v => v.id === e.target.value);
+                            handleEditChange('trip', {
+                              ...editedRequest.trip,
+                              vehicle: vehicle
+                            });
+                          }}
+                          className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent mt-2"
+                        >
+                          <option value="">Sin asignar</option>
+                          {allVehicles.map((vehicle: any) => (
+                            <option key={vehicle.id} value={vehicle.id}>
+                              {vehicle.licensePlate || vehicle.plate} - {vehicle.brand} {vehicle.model}
+                            </option>
+                          ))}
+                        </select>
+                      ) : selectedRequest.trip?.vehicle ? (
                         <div className="mt-2 p-3 bg-blue-50 rounded-lg">
                           <p className="text-sm font-semibold text-gray-900">
                             {selectedRequest.trip.vehicle.brand} {selectedRequest.trip.vehicle.model}
                           </p>
-                          <p className="text-xs text-gray-500 font-mono">Patente: {selectedRequest.trip.vehicle.plate}</p>
+                          <p className="text-xs text-gray-500 font-mono">Patente: {selectedRequest.trip.vehicle.plate || selectedRequest.trip.vehicle.licensePlate}</p>
                         </div>
-                      </div>
-                    )}
+                      ) : (
+                        <div className="mt-2 p-3 bg-gray-50 rounded-lg">
+                          <p className="text-sm text-gray-500">Sin vehículo asignado</p>
+                        </div>
+                      )}
+                    </div>
 
                     {selectedRequest.notes && (
                       <div className="pb-3">
@@ -470,116 +873,49 @@ export default function ServiceRequest() {
                 </div>
               </div>
 
-              <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
-                <button
-                  type="button"
-                  onClick={closeDetailModal}
-                  className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary text-base font-medium text-white hover:bg-blue-900 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm"
-                >
-                  Cerrar
-                </button>
+              <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse gap-3">
+                {isEditingRequest ? (
+                  <>
+                    <button
+                      type="button"
+                      onClick={handleSaveEdit}
+                      className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary text-base font-medium text-white hover:bg-blue-700 focus:outline-none sm:w-auto sm:text-sm"
+                    >
+                      Guardar Cambios
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleEditToggle}
+                      className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:w-auto sm:text-sm"
+                    >
+                      Cancelar
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      type="button"
+                      onClick={handleEditToggle}
+                      className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-secondary text-base font-medium text-white hover:bg-orange-700 focus:outline-none sm:w-auto sm:text-sm"
+                    >
+                      Editar
+                    </button>
+                    <button
+                      type="button"
+                      onClick={closeDetailModal}
+                      className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:w-auto sm:text-sm"
+                    >
+                      Cerrar
+                    </button>
+                  </>
+                )}
               </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* Modal de Asignación de Vehículo */}
-      {showAssignModal && selectedRequestForAssign && (
-        <div className="fixed inset-0 z-50 overflow-y-auto">
-          <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onClick={closeAssignModal}></div>
-            <span className="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
 
-            <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-3xl sm:w-full" onClick={(e) => e.stopPropagation()}>
-              <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-                    <span className="material-icons text-primary">person</span>
-                    Asignar Chofer a Solicitud
-                  </h3>
-                  <button onClick={closeAssignModal} className="text-gray-400 hover:text-gray-500">
-                    <span className="material-icons">close</span>
-                  </button>
-                </div>
-                
-                <div className="mb-4 p-4 bg-orange-50 rounded-lg border border-orange-200">
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="text-xs font-mono text-gray-500">#{selectedRequestForAssign.id.slice(0, 8)}</span>
-                    <span className="text-sm font-semibold text-gray-900">
-                      {selectedRequestForAssign.company?.name || selectedRequestForAssign.client?.fullName}
-                    </span>
-                  </div>
-                  <div className="text-sm text-gray-600 flex items-center gap-1">
-                    <span className="material-icons text-xs text-green-500">trip_origin</span>
-                    {selectedRequestForAssign.origin}
-                  </div>
-                  <div className="text-sm text-gray-600 flex items-center gap-1">
-                    <span className="material-icons text-xs text-red-500">location_on</span>
-                    {selectedRequestForAssign.destination}
-                  </div>
-                </div>
-                
-                <p className="text-sm text-gray-600 mb-4">
-                  Seleccione un chofer disponible:
-                </p>
-
-                <div className="space-y-3 max-h-96 overflow-y-auto">
-                  {drivers.length === 0 ? (
-                    <div className="text-center py-8 text-gray-500">
-                      <span className="material-icons text-4xl mb-2">person_off</span>
-                      <p>No hay choferes disponibles</p>
-                    </div>
-                  ) : (
-                    drivers.map((driver: any) => (
-                      <div key={driver.id} className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition">
-                        <div className="flex justify-between items-center">
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-2">
-                              <span className="material-icons text-primary">person</span>
-                              <span className="font-semibold text-gray-900">{driver.name || driver.nombre} {driver.lastName || driver.apellido}</span>
-                            </div>
-                            <div className="text-sm text-gray-600">
-                              Email: {driver.email}
-                            </div>
-                            {driver.vehicle ? (
-                              <div className="text-sm text-gray-900 mt-1">
-                                <div className="flex items-center gap-1">
-                                  <span className="material-icons text-xs">directions_car</span>
-                                  <span className="font-medium">Patente: {driver.vehicle.licensePlate}</span>
-                                </div>
-                                <div className="text-xs text-gray-600 ml-5">
-                                  {driver.vehicle.model} ({driver.vehicle.year})
-                                </div>
-                              </div>
-                            ) : (
-                              <div className="text-sm text-gray-400 mt-1 flex items-center gap-1">
-                                <span className="material-icons text-xs">warning</span>
-                                Sin vehículo asignado
-                              </div>
-                            )}
-                          </div>
-                          <button
-                            onClick={() => {
-                              console.log('Driver selected:', driver);
-                              console.log('Vehicle:', driver.vehicle);
-                              console.log('Vehicle ID:', driver.vehicle?.id);
-                              handleAssignDriver(driver.id, driver.vehicle?.id);
-                            }}
-                            className="px-4 py-2 bg-secondary text-white rounded-lg hover:bg-orange-700 text-sm"
-                          >
-                            Asignar
-                          </button>
-                        </div>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

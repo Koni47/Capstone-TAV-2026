@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import HtmlMockRenderer from '../components/HtmlMockRenderer';
 import { getHtmlMock } from '../services/mockApi';
 import Header from '../components/Header';
-import { getServiceRequestStats, getTrips, getVehicles } from '../services/api';
+import { getServiceRequestStats, getTrips, getVehicles, recalculateAllFares } from '../services/api';
 
 // Declare Chart.js types
 declare global {
@@ -63,10 +63,10 @@ const DashboardWithCharts: React.FC<{ navigate: any }> = ({ navigate }) => {
           v.status === 'ACTIVO' || v.currentDriver
         ).length;
         
-        // Calcular ingresos estimados
+        // Calcular ingresos estimados desde los trips finalizados
         const estimatedIncome = trips
           .filter((t: any) => t.status === 'FINALIZADO')
-          .reduce((sum: number, t: any) => sum + (t.estimatedCost || 45000), 0);
+          .reduce((sum: number, t: any) => sum + (t.fare || 0), 0);
         
         // Obtener últimos viajes
         const recentTrips = trips
@@ -93,6 +93,26 @@ const DashboardWithCharts: React.FC<{ navigate: any }> = ({ navigate }) => {
     };
 
     fetchDashboardData();
+
+    const handleRecalculateFares = async () => {
+      if (!confirm('¿Estás seguro de recalcular todos los montos de viajes existentes? Esta acción no se puede deshacer.')) {
+        return;
+      }
+
+      try {
+        const result: any = await recalculateAllFares();
+        alert(`${result.message}\nViajes actualizados: ${result.updatedTrips}\nFórmula: ${result.formula}`);
+        // Recargar datos del dashboard
+        fetchDashboardData();
+      } catch (error) {
+        console.error('Error recalculando fares:', error);
+        alert('Error al recalcular montos');
+      }
+    };
+
+    // Exponer función globalmente para el botón
+    (window as any).handleRecalculateFares = handleRecalculateFares;
+
     console.log('Loading Chart.js...');
 
     // Load Chart.js dynamically

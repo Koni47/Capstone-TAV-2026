@@ -72,15 +72,45 @@ export class GeocodingService {
       }
     }
 
-    // Use Nominatim API (matching HTML implementation)
+    // Use Nominatim API - Try multiple search strategies
     try {
       console.log('GeocodingService: calling Nominatim API for:', address)
-      const url = `${this.NOMINATIM_URL}?format=json&q=${encodeURIComponent(address)}, Chile`;
       
-      const response = await fetch(url);
-      const data = await response.json();
+      // Strategy 1: Search with ", Chile" suffix and country code
+      let url = `${this.NOMINATIM_URL}?format=json&q=${encodeURIComponent(address)}, Chile&countrycodes=cl`;
+      let response = await fetch(url, {
+        headers: {
+          'User-Agent': 'ServiciosElLoa/1.0'
+        }
+      });
+      let data = await response.json();
+
+      // Strategy 2: If no results, try without ", Chile" but with country code
+      if (data.length === 0) {
+        console.log('GeocodingService: trying without ", Chile" suffix')
+        url = `${this.NOMINATIM_URL}?format=json&q=${encodeURIComponent(address)}&countrycodes=cl`;
+        response = await fetch(url, {
+          headers: {
+            'User-Agent': 'ServiciosElLoa/1.0'
+          }
+        });
+        data = await response.json();
+      }
+
+      // Strategy 3: If still no results and doesn't contain "Chile", add it
+      if (data.length === 0 && !address.toLowerCase().includes('chile')) {
+        console.log('GeocodingService: trying with explicit Chile')
+        url = `${this.NOMINATIM_URL}?format=json&q=${encodeURIComponent(address + ' Chile')}`;
+        response = await fetch(url, {
+          headers: {
+            'User-Agent': 'ServiciosElLoa/1.0'
+          }
+        });
+        data = await response.json();
+      }
 
       if (data.length > 0) {
+        console.log('GeocodingService: found location:', data[0].display_name)
         return {
           lat: parseFloat(data[0].lat),
           lng: parseFloat(data[0].lon),
@@ -91,6 +121,7 @@ export class GeocodingService {
       console.error('Geocoding error:', error);
     }
 
-    return null; // Return null instead of fallback to match HTML behavior
+    console.log('GeocodingService: no results found for:', address)
+    return null;
   }
 }

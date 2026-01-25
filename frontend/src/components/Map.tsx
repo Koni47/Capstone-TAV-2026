@@ -36,8 +36,8 @@ export default function Map({ originCoords, destinationCoords, className = '', o
     if (!mapRef.current || leafletMapRef.current) return
 
     try {
-      // Initialize map centered on Calama, Chile
-      const map = L.map(mapRef.current, { zoomControl: false }).setView([-22.4544, -68.9292], 13)
+      // Initialize map centered on Chile (Santiago with wider view to show all Chile)
+      const map = L.map(mapRef.current, { zoomControl: false }).setView([-33.4489, -70.6693], 6)
       leafletMapRef.current = map
 
       // Add zoom control to bottom right
@@ -125,8 +125,8 @@ export default function Map({ originCoords, destinationCoords, className = '', o
     } else if (bounds.length === 1) {
       map.setView(bounds[0], 13)
     } else {
-      // If no markers, center on Calama
-      map.setView([-22.4544, -68.9292], 13)
+      // If no markers, center on Chile (Santiago area with national view)
+      map.setView([-33.4489, -70.6693], 6)
     }
 
   }, [originCoords, destinationCoords, onDistanceChange])

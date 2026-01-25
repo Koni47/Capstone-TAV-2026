@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getBillingReport, getTripsReport, getServiceRequests } from "../services/api";
+import { getTrips, recalculateAllFares } from "../services/api";
 import Header from '../components/Header';
 
 interface ReportData {
@@ -31,23 +31,51 @@ const Reports = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [clients, setClients] = useState<string[]>([]);
-  const [serviceRequests, setServiceRequests] = useState<any[]>([]);
+  const [trips, setTrips] = useState<any[]>([]);
+  // Recalcular tarifas y distancias automáticamente al cargar
+  useEffect(() => {
+    const recalc = async () => {
+      try {
+        await recalculateAllFares();
+      } catch (e) {
+        // Silenciar error si ya está actualizado
+      }
+    };
+    recalc();
+  }, []);
 
   useEffect(() => {
     const fetchReports = async () => {
       try {
         setLoading(true);
         
-        // Obtener solicitudes de servicio completadas
-        const response: any = await getServiceRequests();
-        console.log('Service requests:', response);
+        // Obtener trips desde el backend
+        const response: any = await getTrips();
+        console.log('Trips response:', response);
         
         // Extraer el array de datos
-        const requestsData = Array.isArray(response) ? response : (response.requests || response.data || []);
-        console.log('requestsData length:', requestsData.length);
-        setServiceRequests(requestsData);
+        const tripsData = Array.isArray(response) ? response : (response.trips || response.data || []);
+        console.log('tripsData length:', tripsData.length);
+        setTrips(tripsData);
         
-        // Procesar datos para crear el reporte
+        // Función para calcular fare según la fórmula
+        const calculateFare = (trip: any): number => {
+          const baseRate = 1800;
+          const airportSurcharge = 5000;
+          const minimumFare = 30000;
+          
+          const distance = trip.distance || 20; // Usar distancia almacenada o default
+          
+          const isAirport = 
+            trip.origin?.toLowerCase().includes('aeropuerto') ||
+            trip.destination?.toLowerCase().includes('aeropuerto');
+          
+          const baseCost = distance * baseRate;
+          const surcharge = isAirport ? airportSurcharge : 0;
+          return Math.max(baseCost + surcharge, minimumFare);
+        };
+        
+        // Procesar datos para crear el reporte agrupado por cliente
         const clientsMap = new Map<string, {
           name: string;
           rut?: string;
@@ -57,12 +85,12 @@ const Reports = () => {
         }>();
 
         // Agrupar por cliente/empresa
-        requestsData.forEach((request: any) => {
-          const clientName = request.company?.name || request.client?.fullName || 'Cliente Desconocido';
-          const clientRut = request.company?.rut || '';
+        tripsData.forEach((trip: any) => {
+          const clientName = trip.client?.name || 'Cliente Desconocido';
+          const clientRut = trip.client?.rut || '';
           
-          // Incluir todas las solicitudes excepto las canceladas
-          if (request.status !== 'CANCELADO') {
+          // Incluir todos los trips excepto cancelados
+          if (trip.status !== 'CANCELADO') {
             if (!clientsMap.has(clientName)) {
               clientsMap.set(clientName, {
                 name: clientName,
@@ -75,10 +103,10 @@ const Reports = () => {
 
             const clientData = clientsMap.get(clientName)!;
             clientData.viajes += 1;
-            // Estimar kilómetros (en producción vendría del backend)
-            clientData.kilometros += Math.floor(Math.random() * 50) + 10;
-            // Usar el monto de la solicitud o estimarlo
-            clientData.monto += request.estimatedCost || Math.floor(Math.random() * 50000) + 30000;
+            if (typeof trip.distance === 'number' && !isNaN(trip.distance)) {
+              clientData.kilometros += trip.distance;
+            }
+            clientData.monto += calculateFare(trip);
           }
         });
 
@@ -89,7 +117,7 @@ const Reports = () => {
             rut: client.rut
           },
           cantidad_viajes: client.viajes,
-          total_kilometros: client.kilometros,
+          total_kilometros: Math.round(client.kilometros),
           monto_total: client.monto
         }));
 
@@ -113,33 +141,42 @@ const Reports = () => {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     
-    console.log('Total service requests:', serviceRequests.length);
+    console.log('Total trips:', trips.length);
     console.log('Start date:', startDate, 'End date:', endDate);
     
-    // Filtrar service requests por fecha
-    let filteredRequests = [...serviceRequests];
+    // Función para calcular fare según la fórmula
+    const calculateFare = (trip: any): number => {
+      const baseRate = 1800;
+      const airportSurcharge = 5000;
+      const minimumFare = 30000;
+      
+      const distance = trip.distance || 20;
+      
+      const isAirport = 
+        trip.origin?.toLowerCase().includes('aeropuerto') ||
+        trip.destination?.toLowerCase().includes('aeropuerto');
+      
+      const baseCost = distance * baseRate;
+      const surcharge = isAirport ? airportSurcharge : 0;
+      return Math.max(baseCost + surcharge, minimumFare);
+    };
+    
+    // Filtrar trips por fecha
+    let filteredTrips = [...trips];
     
     if (startDate && endDate) {
       const start = new Date(startDate);
-      start.setHours(0, 0, 0, 0);
       const end = new Date(endDate);
-      end.setHours(23, 59, 59, 999);
       
-      console.log('Filtering between:', start, 'and', end);
-      
-      filteredRequests = filteredRequests.filter((request: any) => {
-        // Intentar obtener la fecha del viaje o de la creación de la solicitud
-        const dateStr = request.trip?.scheduledDate || request.trip?.createdAt || request.createdAt || request.requestDate;
-        const requestDate = new Date(dateStr);
-        
-        console.log('Request date:', dateStr, '-> parsed:', requestDate, 'in range?', requestDate >= start && requestDate <= end);
-        
-        return requestDate >= start && requestDate <= end;
+      filteredTrips = trips.filter(trip => {
+        if (!trip.scheduledDate) return false;
+        const tripDate = new Date(trip.scheduledDate);
+        return tripDate >= start && tripDate <= end;
       });
-      
-      console.log('Filtered requests:', filteredRequests.length);
     }
-
+    
+    console.log('Filtered trips:', filteredTrips.length);
+    
     // Procesar datos filtrados
     const clientsMap = new Map<string, {
       name: string;
@@ -149,19 +186,11 @@ const Reports = () => {
       monto: number;
     }>();
 
-    filteredRequests.forEach((request: any) => {
-      const clientName = request.company?.name || request.client?.fullName || 'Cliente Desconocido';
-      const clientRut = request.company?.rut || '';
+    filteredTrips.forEach((trip: any) => {
+      const clientName = trip.client?.name || 'Cliente Desconocido';
+      const clientRut = trip.client?.rut || '';
       
-      console.log('Processing request:', {
-        clientName,
-        status: request.status,
-        hasTrip: !!request.trip,
-        willInclude: request.status !== 'CANCELADO'
-      });
-      
-      // Incluir todas las solicitudes excepto las canceladas
-      if (request.status !== 'CANCELADO') {
+      if (trip.status !== 'CANCELADO') {
         if (!clientsMap.has(clientName)) {
           clientsMap.set(clientName, {
             name: clientName,
@@ -174,32 +203,30 @@ const Reports = () => {
 
         const clientData = clientsMap.get(clientName)!;
         clientData.viajes += 1;
-        clientData.kilometros += Math.floor(Math.random() * 50) + 10;
-        clientData.monto += request.estimatedCost || Math.floor(Math.random() * 50000) + 30000;
+        if (typeof trip.distance === 'number' && !isNaN(trip.distance)) {
+          clientData.kilometros += trip.distance;
+        }
+        clientData.monto += calculateFare(trip);
       }
     });
 
-    console.log('Clients map size:', clientsMap.size);
-    console.log('Clients map:', Array.from(clientsMap.entries()));
-
-    let reportsData: ReportData[] = Array.from(clientsMap.values()).map(client => ({
+    const reportsData: ReportData[] = Array.from(clientsMap.values()).map(client => ({
       empresaCliente: {
         nombre_comercial: client.name,
         rut: client.rut
       },
       cantidad_viajes: client.viajes,
-      total_kilometros: client.kilometros,
+      total_kilometros: Math.round(client.kilometros),
       monto_total: client.monto
     }));
 
-    // Filtrar por cliente
+    // Filtrar por cliente seleccionado
+    let finalReports = reportsData;
     if (selectedClient !== "Todas") {
-      reportsData = reportsData.filter(r => 
-        r.empresaCliente?.nombre_comercial === selectedClient
-      );
+      finalReports = reportsData.filter(r => r.empresaCliente?.nombre_comercial === selectedClient);
     }
-
-    setFilteredReports(reportsData);
+    
+    setFilteredReports(finalReports);
   };
 
   const handleExport = () => {
@@ -298,10 +325,19 @@ const Reports = () => {
     </tbody>
     <tfoot>
       <tr class="grand-total">
-        <td colspan="3" class="text-right"><b>TOTAL GENERAL</b></td>
-        <td class="text-right"><b>$${totalFacturable.toLocaleString('es-CL')}</b></td>
+        <td></td>
+        <td class="text-center"><b>Total Viajes: ${totalViajes}</b></td>
+        <td class="text-center"><b>${totalKilometros.toLocaleString('es-CL')} km</b></td>
+        <td class="text-right"><b>${totalFacturable.toLocaleString('es-CL')}</b></td>
       </tr>
     </tfoot>
+      <tfoot>
+        <tr class="grand-total">
+          <td class="text-center"><b>Total Viajes: ${totalViajes}</b></td>
+          <td class="text-center"><b>${totalKilometros.toLocaleString('es-CL')} km</b></td>
+          <td class="text-right" colspan="2"><b>${totalFacturable.toLocaleString('es-CL')}</b></td>
+        </tr>
+      </tfoot>
   </table>
 
   <div class="footer">
@@ -478,11 +514,11 @@ const Reports = () => {
               {filteredReports.length > 0 && (
               <tfoot className="bg-slate-50 border-t-2 border-slate-100">
                 <tr>
-                  <td className="px-8 py-6 text-right font-bold text-slate-500 uppercase tracking-wider">Total Viajes: {filteredReports.reduce((sum, r) => sum + (r.cantidad_viajes || 0), 0)}</td>
+                  <td className="px-8 py-6"></td>
+                  <td className="px-8 py-6 text-center font-bold text-slate-500 uppercase tracking-wider">Total Viajes: {filteredReports.reduce((sum, r) => sum + (r.cantidad_viajes || 0), 0)}</td>
                   <td className="px-8 py-6 text-center font-bold text-slate-500">
                     {filteredReports.reduce((sum, r) => sum + (r.total_kilometros || 0), 0).toLocaleString('es-CL')} km
                   </td>
-                  <td className="px-8 py-6 text-right font-bold text-slate-500 uppercase tracking-wider">Total General</td>
                   <td className="px-8 py-6 text-right font-black text-2xl text-secondary">
                     ${filteredReports.reduce((sum, r) => sum + (r.monto_total || 0), 0).toLocaleString('es-CL')}
                   </td>

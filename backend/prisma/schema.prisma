@@ -96,6 +96,7 @@ model ServiceRequest {
   passengerCount Int
   requestedAt    DateTime       @default(now())
   estimatedFare  Int?           // Tarifa estimada
+  distance       Float?         // Distancia en kilómetros
   notes          String?
   status         RequestStatus  @default(PENDIENTE) // Cambiar a enum
   createdAt      DateTime       @default(now())
@@ -120,6 +121,7 @@ model Trip {
   origin           String?         // Origen del viaje
   destination      String?         // Destino del viaje
   fare             Int?            // Tarifa del viaje
+  distance         Float?          // Distancia en kilómetros
   rating           Int?
   comment          String?
   createdAt        DateTime        @default(now())

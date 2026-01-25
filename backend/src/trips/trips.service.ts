@@ -205,4 +205,118 @@ export class TripsService {
       data: body,
     };
   }
+
+  // Método para recalcular fares de todos los trips según nueva fórmula
+  async recalculateAllFares() {
+    const trips = await this.prisma.trip.findMany({
+      select: {
+        id: true,
+        origin: true,
+        destination: true,
+      },
+    });
+
+    let updatedCount = 0;
+    const baseRate = 1800; // $1,800 por km
+    const airportSurcharge = 5000; // $5,000 si va al aeropuerto
+    const minimumFare = 30000; // Mínimo $30,000
+
+    for (const trip of trips) {
+      let distance = 20; // Default si no podemos calcular
+
+      // Intentar calcular distancia real usando geocoding
+      if (trip.origin && trip.destination) {
+        try {
+          const originCoords = await this.geocodeAddress(trip.origin);
+          const destCoords = await this.geocodeAddress(trip.destination);
+          
+          if (originCoords && destCoords) {
+            distance = this.calculateDistance(
+              originCoords.lat, originCoords.lng,
+              destCoords.lat, destCoords.lng
+            );
+          }
+        } catch (error) {
+          console.log(`No se pudo calcular distancia para trip ${trip.id}, usando default`);
+        }
+      }
+
+      // Detectar si va al aeropuerto
+      const isAirport = 
+        trip.origin?.toLowerCase().includes('aeropuerto') ||
+        trip.destination?.toLowerCase().includes('aeropuerto');
+
+      // Calcular fare
+      const baseCost = distance * baseRate;
+      const surcharge = isAirport ? airportSurcharge : 0;
+      const calculatedFare = Math.max(baseCost + surcharge, minimumFare);
+
+      // Actualizar el trip con distancia y fare
+      await this.prisma.trip.update({
+        where: { id: trip.id },
+        data: { 
+          distance: Math.round(distance * 100) / 100, // 2 decimales
+          fare: calculatedFare 
+        },
+      });
+
+      updatedCount++;
+    }
+
+    return {
+      message: 'Fares y distancias recalculados exitosamente',
+      updatedTrips: updatedCount,
+      formula: `(distancia × $${baseRate}) + ($${airportSurcharge} si aeropuerto) con mínimo de $${minimumFare}`,
+    };
+  }
+
+  // Geocodificar dirección usando Nominatim
+  private async geocodeAddress(address: string): Promise<{lat: number, lng: number} | null> {
+    try {
+      const fetch = (await import('node-fetch')).default;
+      const searchStrategies = [
+        `${address}, Chile`,
+        address,
+        `${address} Chile`
+      ];
+
+      for (const searchAddress of searchStrategies) {
+        const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchAddress)}&countrycodes=cl&limit=1`;
+        const response = await fetch(url, {
+          headers: { 'User-Agent': 'ServiciosElLoa/1.0' }
+        });
+        
+        const data: any = await response.json();
+        
+        if (data && data.length > 0) {
+          return {
+            lat: parseFloat(data[0].lat),
+            lng: parseFloat(data[0].lon)
+          };
+        }
+      }
+      
+      return null;
+    } catch (error) {
+      console.error('Error geocoding:', error);
+      return null;
+    }
+  }
+
+  // Calcular distancia en km usando fórmula de Haversine
+  private calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+    const R = 6371; // Radio de la Tierra en km
+    const dLat = this.toRad(lat2 - lat1);
+    const dLon = this.toRad(lon2 - lon1);
+    const a = 
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(this.toRad(lat1)) * Math.cos(this.toRad(lat2)) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  }
+
+  private toRad(degrees: number): number {
+    return degrees * (Math.PI / 180);
+  }
 }

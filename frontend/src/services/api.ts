@@ -37,7 +37,10 @@ class ApiClient {
     const response = await fetch(url, config);
 
     if (!response.ok) {
-      throw new Error(`API Error: ${response.status} ${response.statusText}`);
+      const errorData = await response.json().catch(() => null);
+      const error: any = new Error(`API Error: ${response.status} ${response.statusText}`);
+      error.response = { status: response.status, data: errorData };
+      throw error;
     }
 
     return response.json();
@@ -118,6 +121,8 @@ export const createTrip = (tripData: any) => apiClient.post('/trips', tripData);
 
 export const updateTrip = (id: string, tripData: any) =>
   apiClient.patch(`/trips/${id}`, tripData);
+
+export const recalculateAllFares = () => apiClient.post('/trips/recalculate-fares', {});
 
 // Service requests
 export const getServiceRequests = () => apiClient.get('/service-requests');

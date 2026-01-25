@@ -7,16 +7,50 @@ export class ServiceRequestsService {
   constructor(private prisma: PrismaService) {}
 
   async create(createDto: CreateServiceRequestDto, userId: number) {
+    console.log('Creating service request with DTO:', createDto);
+    
+    const data: any = {
+      origin: createDto.origin,
+      destination: createDto.destination,
+      passengerCount: createDto.passengers || 1,
+      requestedAt: createDto.requestedDate ? new Date(createDto.requestedDate) : new Date(),
+      estimatedFare: createDto.estimatedFare,
+      status: 'PENDIENTE',
+    };
+
+    // Si viene notes, agregarlo
+    if (createDto.notes) {
+      data.notes = createDto.notes;
+    }
+
+    // Si viene companyName (texto libre), guardarlo en notes o en un campo especial
+    if (createDto.companyName) {
+      // Buscar si existe una empresa con ese nombre
+      const existingCompany = await this.prisma.company.findFirst({
+        where: { name: { contains: createDto.companyName, mode: 'insensitive' } }
+      });
+      
+      if (existingCompany) {
+        data.companyId = existingCompany.id;
+      } else {
+        // Si no existe, guardar el nombre en notes junto con las otras notas
+        const companyNote = `Cliente/Empresa: ${createDto.companyName}`;
+        data.notes = createDto.notes ? `${companyNote}\n${createDto.notes}` : companyNote;
+        data.clientId = userId.toString();
+      }
+    } else if (createDto.companyId) {
+      // Si viene companyId, asignar a la empresa
+      data.companyId = createDto.companyId;
+    } else {
+      // Si no viene nada, asignar al usuario que crea
+      data.clientId = userId.toString();
+    }
+
     return this.prisma.serviceRequest.create({
-      data: {
-        origin: createDto.origin,
-        destination: createDto.destination,
-        passengerCount: createDto.passengers,
-        requestedAt: new Date(createDto.requestedDate),
-        estimatedFare: createDto.estimatedFare,
-        notes: createDto.notes,
-        clientId: userId.toString(),
-        status: 'PENDIENTE',
+      data,
+      include: {
+        client: { select: { fullName: true, email: true } },
+        company: { select: { name: true, rut: true } },
       },
     });
   }
