@@ -84,7 +84,7 @@ const VehicleDetail = () => {
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 h-full">
               <h3 className="text-lg font-bold text-primary mb-6 flex items-center gap-2 border-b pb-4">
                 <span className="material-icons text-xl">history</span>
-                Historial Histórico
+                Historial
               </h3>
               
               <div className="space-y-6">
