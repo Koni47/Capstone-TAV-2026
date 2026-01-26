@@ -63,7 +63,7 @@ export async function getUsers() {
 
 export async function getUserById(id: string) {
   if (USE_REAL_API) {
-    const users = await apiGetUsers();
+    const users = await apiGetUsers() as any;
     return users.users.find((u: any) => String(u.id) === String(id));
   }
   await wait(50);

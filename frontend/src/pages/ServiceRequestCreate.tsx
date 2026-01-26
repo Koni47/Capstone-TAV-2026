@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import Map from '../components/Map'
 import { GeocodingService } from '../services/geocoding'
 import { createServiceRequest, createTrip, getVehicles, getUsers } from '../services/api'
+import { useAuth } from '../context/AuthContext'
 
 export default function ServiceRequestCreate() {
   const [origin, setOrigin] = useState('')
@@ -21,6 +22,7 @@ export default function ServiceRequestCreate() {
   const [isAirport, setIsAirport] = useState(false)
   const [isOtherDestination, setIsOtherDestination] = useState(false)
   const navigate = useNavigate()
+  const { user } = useAuth()
 
   const handleDistanceChange = useCallback((newDistance: number) => {
     console.log('ServiceRequestCreate: distance updated to:', newDistance)
@@ -84,7 +86,7 @@ export default function ServiceRequestCreate() {
   }, [])
 
   // Debounced route update
-  const [routeUpdateTimeout, setRouteUpdateTimeout] = useState<NodeJS.Timeout | null>(null)
+  const [routeUpdateTimeout, setRouteUpdateTimeout] = useState<number | null>(null)
 
   useEffect(() => {
     if (routeUpdateTimeout) {
@@ -174,7 +176,7 @@ export default function ServiceRequestCreate() {
       }
 
       console.log('Enviando solicitud:', requestData)
-      const response = await createServiceRequest(requestData)
+      const response = await createServiceRequest(requestData) as any
       console.log('Respuesta de creación:', response)
 
       const requestId = response.id || response.data?.id
@@ -195,68 +197,74 @@ export default function ServiceRequestCreate() {
         }
       }
 
-      // 2. Asignar automáticamente un chofer y vehículo
-      console.log('Iniciando asignación automática...')
-      
-      const usersData = await getUsers()
-      const drivers = Array.isArray(usersData) 
-        ? usersData.filter((u: any) => u.role === 'CHOFER')
-        : usersData.users?.filter((u: any) => u.role === 'CHOFER') || []
-
-      console.log('Choferes disponibles:', drivers.length)
-
-      if (drivers.length === 0) {
-        alert('Solicitud creada exitosamente, pero no hay choferes disponibles para asignación automática')
-        navigate('/service-request')
-        return
-      }
-
-      const vehiclesData = await getVehicles()
-      const vehicles = Array.isArray(vehiclesData) ? vehiclesData : vehiclesData.vehicles || []
-      
-      console.log('Vehículos disponibles:', vehicles.length)
-
-      if (vehicles.length === 0) {
-        alert('Solicitud creada exitosamente, pero no hay vehículos disponibles para asignación automática')
-        navigate('/service-request')
-        return
-      }
-
-      // Seleccionar el primer chofer disponible
-      const selectedDriver = drivers[0]
-      
-      // Intentar encontrar un vehículo asignado a ese chofer, o el primero disponible
-      let selectedVehicle = vehicles.find((v: any) => v.currentDriver?.id === selectedDriver.id)
-      if (!selectedVehicle) {
-        selectedVehicle = vehicles[0]
-      }
-
-      console.log('Chofer seleccionado:', selectedDriver.name)
-      console.log('Vehículo seleccionado:', selectedVehicle.plateNumber)
-
-      // 3. Intentar crear el Trip con la asignación y el monto
-      // Si falla, la solicitud ya se creó correctamente
-      try {
-        const tripData = {
-          title: `${origin} → ${destination}`,
-          scheduledDate: requestedDateTime,
-          origin: origin,
-          destination: destination,
-          clientId: parseInt(currentUserId) || parseInt(selectedDriver.id),
-          driverId: parseInt(selectedDriver.id),
-          status: 'ASIGNADO', // Debe estar en mayúsculas según el enum
-          distance: Math.round(distance * 100) / 100, // Distancia con 2 decimales
-          fare: Math.round(cost.total) // Tarifa calculada
-        }
+      // Solo admins pueden hacer asignación automática
+      if (user?.role === 'ADMIN') {
+        // 2. Asignar automáticamente un chofer y vehículo
+        console.log('Iniciando asignación automática...')
         
-        console.log('Creando Trip con datos:', tripData)
-        await createTrip(tripData)
-        console.log('Asignación automática completada')
-        alert('¡Solicitud creada y asignada exitosamente!')
-      } catch (tripError: any) {
-        console.error('Error al asignar chofer automáticamente:', tripError)
-        console.error('Detalle del error:', tripError.response?.data)
-        alert('Solicitud creada exitosamente. La asignación de chofer debe hacerse manualmente.')
+        const usersData = await getUsers() as any
+        const drivers = Array.isArray(usersData) 
+          ? usersData.filter((u: any) => u.role === 'CHOFER')
+          : usersData.users?.filter((u: any) => u.role === 'CHOFER') || []
+
+        console.log('Choferes disponibles:', drivers.length)
+
+        if (drivers.length === 0) {
+          alert('Solicitud creada exitosamente, pero no hay choferes disponibles para asignación automática')
+          navigate('/service-request')
+          return
+        }
+
+        const vehiclesData = await getVehicles() as any
+        const vehicles = Array.isArray(vehiclesData) ? vehiclesData : vehiclesData.vehicles || []
+        
+        console.log('Vehículos disponibles:', vehicles.length)
+
+        if (vehicles.length === 0) {
+          alert('Solicitud creada exitosamente, pero no hay vehículos disponibles para asignación automática')
+          navigate('/service-request')
+          return
+        }
+
+        // Seleccionar el primer chofer disponible
+        const selectedDriver = drivers[0]
+        
+        // Intentar encontrar un vehículo asignado a ese chofer, o el primero disponible
+        let selectedVehicle = vehicles.find((v: any) => v.currentDriver?.id === selectedDriver.id)
+        if (!selectedVehicle) {
+          selectedVehicle = vehicles[0]
+        }
+
+        console.log('Chofer seleccionado:', selectedDriver.name)
+        console.log('Vehículo seleccionado:', selectedVehicle.plateNumber)
+
+        // 3. Intentar crear el Trip con la asignación y el monto
+        // Si falla, la solicitud ya se creó correctamente
+        try {
+          const tripData = {
+            title: `${origin} → ${destination}`,
+            scheduledDate: requestedDateTime,
+            origin: origin,
+            destination: destination,
+            clientId: parseInt(currentUserId) || parseInt(selectedDriver.id),
+            driverId: parseInt(selectedDriver.id),
+            status: 'ASIGNADO', // Debe estar en mayúsculas según el enum
+            distance: Math.round(distance * 100) / 100, // Distancia con 2 decimales
+            fare: Math.round(cost.total) // Tarifa calculada
+          }
+          
+          console.log('Creando Trip con datos:', tripData)
+          await createTrip(tripData)
+          console.log('Asignación automática completada')
+          alert('¡Solicitud creada y asignada exitosamente!')
+        } catch (tripError: any) {
+          console.error('Error al asignar chofer automáticamente:', tripError)
+          console.error('Detalle del error:', tripError.response?.data)
+          alert('Solicitud creada exitosamente. La asignación de chofer debe hacerse manualmente.')
+        }
+      } else {
+        // Para clientes, solo mostrar mensaje de éxito
+        alert('Solicitud creada exitosamente. Un administrador la revisará y asignará pronto.')
       }
 
       navigate('/service-request')

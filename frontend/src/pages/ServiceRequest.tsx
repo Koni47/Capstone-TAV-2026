@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { getServiceRequests, getVehicles, createTrip, getUsers, createServiceRequest } from '../services/api';
+import { getServiceRequests, getVehicles, createTrip, getUsers, createServiceRequest, updateServiceRequest } from '../services/api';
 
 export default function ServiceRequest() {
   const navigate = useNavigate();
@@ -72,21 +72,46 @@ export default function ServiceRequest() {
 
   const handleSaveEdit = async () => {
     try {
-      // Aquí llamarías a la API para actualizar la solicitud
-      // await updateServiceRequest(editedRequest.id, editedRequest);
+      // Preparar solo los campos que se pueden actualizar por clientes
+      const updateData: any = {};
+      
+      // Campos editables por clientes: origen, destino, fecha y notas
+      if (editedRequest.origin !== selectedRequest.origin) updateData.origin = editedRequest.origin;
+      if (editedRequest.destination !== selectedRequest.destination) updateData.destination = editedRequest.destination;
+      if (editedRequest.requestedAt !== selectedRequest.requestedAt) {
+        updateData.requestedDate = new Date(editedRequest.requestedAt).toISOString();
+      }
+      if (editedRequest.notes !== selectedRequest.notes) updateData.notes = editedRequest.notes;
+      
+      // Verificar si hay cambios
+      if (Object.keys(updateData).length === 0) {
+        alert('No hay cambios para guardar');
+        setIsEditingRequest(false);
+        return;
+      }
+
+      console.log('Enviando datos de actualización:', updateData);
+      console.log('ID de solicitud:', editedRequest.id);
+      console.log('Token de auth:', localStorage.getItem('accessToken') ? 'Presente' : 'Ausente');
+      
+      // Llamar a la API para actualizar la solicitud
+      const response = await updateServiceRequest(editedRequest.id, updateData);
+      console.log('Respuesta de actualización:', response);
       
       // Actualizar localmente
-      setRequests(requests.map(r => r.id === editedRequest.id ? editedRequest : r));
-      setSelectedRequest(editedRequest);
+      setRequests(requests.map(r => r.id === editedRequest.id ? { ...r, ...updateData } : r));
+      setSelectedRequest({ ...selectedRequest, ...updateData });
       setIsEditingRequest(false);
       alert('Solicitud actualizada correctamente');
       
       // Recargar datos
       const data: any = await getServiceRequests();
       setRequests(data.requests || data || []);
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error updating request:', err);
-      alert('Error al actualizar la solicitud');
+      console.error('Error response:', err.response?.data);
+      console.error('Error status:', err.response?.status);
+      alert(`Error al actualizar la solicitud: ${err.response?.data?.message || err.message}`);
     }
   };
 
@@ -686,30 +711,16 @@ export default function ServiceRequest() {
                     {isEditingRequest ? 'Editar' : 'Detalle de'} Solicitud #{selectedRequest.id.slice(0, 8)}
                   </h3>
                   <div className="mt-4 space-y-4">
-                    <div className="flex items-center justify-between pb-3 border-b border-gray-200">
+                    <div className="pb-3 border-b border-gray-200">
                       <span className="text-sm font-medium text-gray-500">Estado:</span>
-                      {isEditingRequest ? (
-                        <select
-                          value={editedRequest.status}
-                          onChange={(e) => handleEditChange('status', e.target.value)}
-                          className="px-3 py-1 text-xs font-bold rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent"
-                        >
-                          <option value="PENDIENTE">PENDIENTE</option>
-                          <option value="AGENDADO">AGENDADO</option>
-                          <option value="EN_RUTA">EN_RUTA</option>
-                          <option value="COMPLETADO">COMPLETADO</option>
-                          <option value="CANCELADO">CANCELADO</option>
-                        </select>
-                      ) : (
-                        <span className={`px-3 py-1 text-xs font-bold rounded-full ${
-                          selectedRequest.status === 'AGENDADO' ? 'bg-green-100 text-green-800' :
-                          selectedRequest.status === 'CANCELADO' ? 'bg-red-100 text-red-800' :
-                          selectedRequest.status === 'PENDIENTE' ? 'bg-yellow-100 text-yellow-800' :
-                          'bg-blue-100 text-blue-800'
-                        }`}>
-                          {selectedRequest.status}
-                        </span>
-                      )}
+                      <span className={`px-3 py-1 text-xs font-bold rounded-full ${
+                        selectedRequest.status === 'AGENDADO' ? 'bg-green-100 text-green-800' :
+                        selectedRequest.status === 'CANCELADO' ? 'bg-red-100 text-red-800' :
+                        selectedRequest.status === 'PENDIENTE' ? 'bg-yellow-100 text-yellow-800' :
+                        'bg-blue-100 text-blue-800'
+                      }`}>
+                        {selectedRequest.status}
+                      </span>
                     </div>
 
                     <div className="pb-3 border-b border-gray-200">
@@ -785,26 +796,7 @@ export default function ServiceRequest() {
 
                     <div className="pb-3 border-b border-gray-200">
                       <span className="text-sm font-medium text-gray-500">Chofer asignado:</span>
-                      {isEditingRequest ? (
-                        <select
-                          value={editedRequest.trip?.driver?.id || ''}
-                          onChange={(e) => {
-                            const driver = drivers.find(d => d.id === e.target.value);
-                            handleEditChange('trip', {
-                              ...editedRequest.trip,
-                              driver: driver
-                            });
-                          }}
-                          className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent mt-2"
-                        >
-                          <option value="">Sin asignar</option>
-                          {drivers.map((driver: any) => (
-                            <option key={driver.id} value={driver.id}>
-                              {driver.name || driver.fullName} - {driver.email}
-                            </option>
-                          ))}
-                        </select>
-                      ) : selectedRequest.trip?.driver ? (
+                      {selectedRequest.trip?.driver ? (
                         <div className="mt-2 flex items-center gap-3 p-3 bg-green-50 rounded-lg">
                           <div className="h-10 w-10 rounded-full bg-primary flex items-center justify-center text-white font-bold">
                             {selectedRequest.trip.driver.fullName?.charAt(0) || 'C'}
@@ -828,26 +820,7 @@ export default function ServiceRequest() {
 
                     <div className="pb-3 border-b border-gray-200">
                       <span className="text-sm font-medium text-gray-500">Vehículo asignado:</span>
-                      {isEditingRequest ? (
-                        <select
-                          value={editedRequest.trip?.vehicle?.id || ''}
-                          onChange={(e) => {
-                            const vehicle = allVehicles.find(v => v.id === e.target.value);
-                            handleEditChange('trip', {
-                              ...editedRequest.trip,
-                              vehicle: vehicle
-                            });
-                          }}
-                          className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent mt-2"
-                        >
-                          <option value="">Sin asignar</option>
-                          {allVehicles.map((vehicle: any) => (
-                            <option key={vehicle.id} value={vehicle.id}>
-                              {vehicle.licensePlate || vehicle.plate} - {vehicle.brand} {vehicle.model}
-                            </option>
-                          ))}
-                        </select>
-                      ) : selectedRequest.trip?.vehicle ? (
+                      {selectedRequest.trip?.vehicle ? (
                         <div className="mt-2 p-3 bg-blue-50 rounded-lg">
                           <p className="text-sm font-semibold text-gray-900">
                             {selectedRequest.trip.vehicle.brand} {selectedRequest.trip.vehicle.model}
@@ -862,11 +835,21 @@ export default function ServiceRequest() {
                     </div>
 
                     {selectedRequest.notes && (
-                      <div className="pb-3">
+                      <div className="pb-3 border-b border-gray-200">
                         <span className="text-sm font-medium text-gray-500">Observaciones:</span>
-                        <p className="text-sm text-gray-700 mt-1 p-3 bg-gray-50 rounded-lg">
-                          {selectedRequest.notes}
-                        </p>
+                        {isEditingRequest ? (
+                          <textarea
+                            value={editedRequest.notes || ''}
+                            onChange={(e) => handleEditChange('notes', e.target.value)}
+                            rows={3}
+                            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent mt-1"
+                            placeholder="Observaciones adicionales"
+                          />
+                        ) : (
+                          <p className="text-sm text-gray-700 mt-1 p-3 bg-gray-50 rounded-lg">
+                            {selectedRequest.notes}
+                          </p>
+                        )}
                       </div>
                     )}
                   </div>

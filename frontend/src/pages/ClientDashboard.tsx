@@ -36,16 +36,21 @@ export default function ClientDashboard() {
 
   const fetchTrips = async () => {
     try {
-      const token = localStorage.getItem('token')
-      const response = await fetch('http://localhost:3001/trips', {
+      const token = localStorage.getItem('accessToken')
+      const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3002/api/v1'
+      const response = await fetch(`${API_BASE_URL}/trips`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       })
+      if (!response.ok) {
+        throw new Error('Failed to fetch trips')
+      }
       const data = await response.json()
-      setTrips(data)
+      setTrips(data.trips || [])
     } catch (error) {
       console.error('Error fetching trips:', error)
+      setTrips([])
     } finally {
       setLoading(false)
     }

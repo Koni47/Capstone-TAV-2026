@@ -229,7 +229,7 @@ const Trips: React.FC = () => {
             <span className="material-icons text-gray-300 text-6xl mb-4">local_shipping</span>
             <h3 className="text-xl font-bold text-gray-700 mb-2">No hay viajes registrados</h3>
             <p className="text-gray-500 mb-6">Cuando se creen viajes, aparecerán aquí.</p>
-            <button className="bg-secondary hover:bg-orange-700 text-white font-bold py-2 px-6 rounded-lg transition">
+            <button className="bg-secondary hover:bg-orange-700 text-white font-bold py-2 px-6 rounded-lg transition" onClick={() => window.location.href = '/service-request-create'}>
               Crear primer viaje
             </button>
           </div>

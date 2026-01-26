@@ -1,4 +1,4 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3002/api/v1';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3004/api/v1';
 
 interface ApiResponse<T> {
   data: T;
@@ -60,6 +60,13 @@ class ApiClient {
   async patch<T>(endpoint: string, data: any): Promise<T> {
     return this.request<T>(endpoint, {
       method: 'PATCH',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async put<T>(endpoint: string, data: any): Promise<T> {
+    return this.request<T>(endpoint, {
+      method: 'PUT',
       body: JSON.stringify(data),
     });
   }
@@ -131,6 +138,9 @@ export const createServiceRequest = (requestData: any) =>
   apiClient.post('/service-requests', requestData);
 
 export const getServiceRequestStats = () => apiClient.get('/service-requests/stats');
+
+export const updateServiceRequest = (id: string, requestData: any) =>
+  apiClient.put(`/service-requests/${id}`, requestData);
 
 // Reports
 export const getReports = () => apiClient.get('/reports/dashboard');

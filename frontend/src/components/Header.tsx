@@ -37,6 +37,7 @@ export default function Header() {
 
   // Define navigation based on user role
   const getNavigation = () => {
+    console.log('User role:', userRole, 'User:', user, 'LocalStorage role:', localStorage.getItem('userRole'));
     const getDashboardLink = () => {
       if (userRole === 'ADMIN') return '/dashboard/admin';
       if (userRole === 'CHOFER') return '/dashboard/driver';
@@ -52,6 +53,7 @@ export default function Header() {
 
     // Admin-only menu items
     if (userRole === 'ADMIN') {
+      console.log('Returning admin navigation');
       return [
         ...baseItems,
         { label: 'Solicitudes', href: '/service-request' },
@@ -64,13 +66,16 @@ export default function Header() {
 
     // Cliente can see solicitudes
     if (userRole === 'CLIENTE') {
+      console.log('Returning client navigation');
       return [
-        ...baseItems,
+        { label: 'Dashboard', href: getDashboardLink() },
+        { label: 'Viajes', href: '/trips' },
         { label: 'Solicitudes', href: '/service-request' },
       ];
     }
 
     // Chofer - basic menu without solicitudes
+    console.log('Returning base navigation');
     return baseItems;
   }
 
