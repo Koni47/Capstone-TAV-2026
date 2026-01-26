@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -64,9 +65,9 @@ export class UsersService {
     };
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     const user = await this.prisma.user.findUnique({
-      where: { id: id.toString() },
+      where: { id: id },
       include: {
         role: true,
         company: { select: { name: true, id: true } },
@@ -94,5 +95,42 @@ export class UsersService {
       activeUsers: active,
       pendingUsers: pending,
     };
+  }
+
+  async update(id: string, updateDto: UpdateUserDto) {
+    // Verificar que el usuario existe
+    await this.findOne(id);
+
+    // Construir objeto de actualización
+    const updateData: any = {};
+
+    if (updateDto.name !== undefined) {
+      updateData.fullName = updateDto.name;
+      updateData.name = updateDto.name;
+    }
+    if (updateDto.email !== undefined) updateData.email = updateDto.email;
+    if (updateDto.password !== undefined) {
+      updateData.password = await bcrypt.hash(updateDto.password, 10);
+    }
+    if (updateDto.phone !== undefined) updateData.phone = updateDto.phone;
+    if (updateDto.companyId !== undefined) updateData.companyId = updateDto.companyId?.toString();
+
+    return this.prisma.user.update({
+      where: { id: id },
+      data: updateData,
+      include: {
+        role: true,
+      },
+    });
+  }
+
+  async remove(id: string) {
+    // Verificar que el usuario existe
+    await this.findOne(id);
+
+    // Hard delete
+    return this.prisma.user.delete({
+      where: { id: id },
+    });
   }
 }

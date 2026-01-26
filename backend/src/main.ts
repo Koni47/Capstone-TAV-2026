@@ -46,7 +46,7 @@ async function bootstrap() {
     res.json(document);
   });
 
-  const port = process.env.PORT || 3001;
+  const port = process.env.PORT || 3000;
   await app.listen(port);
   const url = await app.getUrl();
   const formattedUrl = url.replace('[::1]', 'localhost');

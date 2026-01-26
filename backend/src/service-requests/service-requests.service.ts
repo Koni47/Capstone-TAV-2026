@@ -1,6 +1,7 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateServiceRequestDto } from './dto/create-service-request.dto';
+import { UpdateServiceRequestDto } from './dto/update-service-request.dto';
 
 @Injectable()
 export class ServiceRequestsService {
@@ -104,9 +105,9 @@ export class ServiceRequestsService {
     };
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     const request = await this.prisma.serviceRequest.findUnique({
-      where: { id: id.toString() },
+      where: { id: id },
       include: {
         client: true,
       },
@@ -119,9 +120,9 @@ export class ServiceRequestsService {
     return request;
   }
 
-  async assignDriver(id: number, driverId: number) {
+  async assignDriver(id: string, driverId: number) {
     return this.prisma.serviceRequest.update({
-      where: { id: id.toString() },
+      where: { id: id },
       data: {
         driverId: driverId.toString(),
         status: 'AGENDADO' as any,
@@ -138,5 +139,94 @@ export class ServiceRequestsService {
     });
 
     return { pending, inRoute };
+  }
+
+  async update(id: string, updateDto: UpdateServiceRequestDto, user: any) {
+    console.log('Update called with id:', id);
+    console.log('Update DTO:', JSON.stringify(updateDto, null, 2));
+    console.log('User:', JSON.stringify(user, null, 2));
+    
+    const request = await this.prisma.serviceRequest.findUnique({ where: { id } });
+    if (!request) {
+      throw new NotFoundException('Solicitud no encontrada');
+    }
+
+    // Verificar permisos: admin o propietario (cliente que creó la solicitud)
+    const isAdmin = user.role?.nombre === 'ADMIN';
+    const isOwner = request.clientId === user.id;
+    console.log('Is admin:', isAdmin, 'Is owner:', isOwner, 'Request clientId:', request.clientId, 'User id:', user.id);
+    
+    if (!isAdmin && !isOwner) {
+      throw new ForbiddenException('No autorizado para actualizar esta solicitud');
+    }
+
+    // Mapear campos del DTO a campos de la base de datos
+    const data: any = {};
+    
+    if (updateDto.requestedDate) {
+      data.requestedAt = new Date(updateDto.requestedDate);
+      console.log('Mapped requestedDate to requestedAt:', data.requestedAt);
+    }
+    if (updateDto.origin !== undefined) data.origin = updateDto.origin;
+    if (updateDto.destination !== undefined) data.destination = updateDto.destination;
+    if (updateDto.passengers !== undefined) data.passengerCount = updateDto.passengers;
+    if (updateDto.estimatedFare !== undefined) data.estimatedFare = updateDto.estimatedFare;
+    if (updateDto.distance !== undefined) data.distance = updateDto.distance;
+    if (updateDto.notes !== undefined) data.notes = updateDto.notes;
+    if (updateDto.companyId !== undefined) data.companyId = updateDto.companyId;
+    if (updateDto.status !== undefined) data.status = updateDto.status;
+
+    console.log('Data to update:', JSON.stringify(data, null, 2));
+    
+    const result = await this.prisma.serviceRequest.update({
+      where: { id },
+      data,
+      include: { 
+        client: { select: { fullName: true, email: true } },
+        company: { select: { name: true, rut: true } },
+        trip: {
+          include: {
+            driver: { 
+              select: { 
+                id: true, 
+                fullName: true, 
+                email: true, 
+                phone: true 
+              } 
+            },
+            vehicle: { 
+              select: { 
+                id: true, 
+                licensePlate: true, 
+                model: true, 
+                type: true,
+                year: true
+              } 
+            },
+          },
+        },
+      },
+    });
+
+    console.log('Update result:', JSON.stringify(result, null, 2));
+    return result;
+  }
+
+  async remove(id: string, user: any) {
+    const request = await this.prisma.serviceRequest.findUnique({ where: { id } });
+    if (!request) {
+      throw new NotFoundException('Solicitud no encontrada');
+    }
+
+    // Verificar permisos: admin o propietario
+    const isAdmin = user.role?.nombre === 'ADMIN';
+    if (!isAdmin && request.companyId !== user.id) {
+      throw new ForbiddenException('No autorizado para eliminar esta solicitud');
+    }
+
+    // Hard delete
+    return this.prisma.serviceRequest.delete({
+      where: { id },
+    });
   }
 }

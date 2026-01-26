@@ -304,6 +304,31 @@ export class TripsService {
   }
 
   // Calcular distancia en km usando fórmula de Haversine
+  async update(id: string, updateDto: any) {
+    const trip = await this.prisma.trip.findUnique({ where: { id } });
+    if (!trip) {
+      throw new NotFoundException('Viaje no encontrado');
+    }
+
+    return this.prisma.trip.update({
+      where: { id },
+      data: updateDto,
+      include: { driver: true, vehicle: true },
+    });
+  }
+
+  async remove(id: string) {
+    const trip = await this.prisma.trip.findUnique({ where: { id } });
+    if (!trip) {
+      throw new NotFoundException('Viaje no encontrado');
+    }
+
+    // Hard delete
+    return this.prisma.trip.delete({
+      where: { id },
+    });
+  }
+
   private calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
     const R = 6371; // Radio de la Tierra en km
     const dLat = this.toRad(lat2 - lat1);

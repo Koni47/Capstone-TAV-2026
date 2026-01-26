@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Patch, Query, ParseIntPipe, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, Patch, Query, ParseIntPipe, UseGuards, Request } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery, ApiBearerAuth } from '@nestjs/swagger';
 import { TripsService } from './trips.service';
 import { CreateTripDto, TripStatus } from './dto/create-trip.dto';
@@ -91,5 +91,23 @@ export class TripsController {
   @ApiResponse({ status: 403, description: 'No autorizado' })
   async recalculateFares() {
     return this.tripsService.recalculateAllFares();
+  }
+
+  @Put(':id')
+  @Roles('ADMIN')
+  @ApiOperation({ summary: 'Actualizar un viaje (Solo Admin)' })
+  @ApiResponse({ status: 200, description: 'Viaje actualizado' })
+  @ApiResponse({ status: 404, description: 'Viaje no encontrado' })
+  async update(@Param('id') id: string, @Body() updateDto: any) {
+    return this.tripsService.update(id, updateDto);
+  }
+
+  @Delete(':id')
+  @Roles('ADMIN')
+  @ApiOperation({ summary: 'Eliminar un viaje (Solo Admin)' })
+  @ApiResponse({ status: 200, description: 'Viaje eliminado' })
+  @ApiResponse({ status: 404, description: 'Viaje no encontrado' })
+  async remove(@Param('id') id: string) {
+    return this.tripsService.remove(id);
   }
 }

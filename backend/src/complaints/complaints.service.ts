@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateComplaintDto } from './dto/create-complaint.dto';
+import { UpdateComplaintDto } from './dto/update-complaint.dto';
 
 @Injectable()
 export class ComplaintsService {
@@ -60,6 +61,37 @@ export class ComplaintsService {
     return this.prisma.complaint.update({
       where: { id: id.toString() },
       data: { status: status as any },
+    });
+  }
+
+  async update(id: number, updateDto: UpdateComplaintDto) {
+    // Verificar que la complaint existe
+    await this.findOne(id);
+
+    // Construir objeto de actualización solo con campos definidos
+    const updateData: any = {};
+
+    if (updateDto.name !== undefined) updateData.name = updateDto.name;
+    if (updateDto.email !== undefined) updateData.email = updateDto.email;
+    if (updateDto.phone !== undefined) updateData.phone = updateDto.phone;
+    if (updateDto.type !== undefined) updateData.type = updateDto.type;
+    if (updateDto.subject !== undefined) updateData.subject = updateDto.subject;
+    if (updateDto.description !== undefined) updateData.description = updateDto.description;
+    if (updateDto.tripReference !== undefined) updateData.tripReference = updateDto.tripReference;
+
+    return this.prisma.complaint.update({
+      where: { id: id.toString() },
+      data: updateData,
+    });
+  }
+
+  async remove(id: number) {
+    // Verificar que la complaint existe
+    await this.findOne(id);
+
+    // Hard delete
+    return this.prisma.complaint.delete({
+      where: { id: id.toString() },
     });
   }
 }

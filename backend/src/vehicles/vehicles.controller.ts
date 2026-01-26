@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Patch, Query, ParseIntPipe, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, Patch, Query, ParseIntPipe, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery, ApiBearerAuth } from '@nestjs/swagger';
 import { VehiclesService } from './vehicles.service';
 import { CreateVehicleDto, VehicleStatus } from './dto/create-vehicle.dto';
@@ -69,4 +69,15 @@ export class VehiclesController {
     @Body() updateDto: Partial<CreateVehicleDto>,
   ) {
     return this.service.update(id, updateDto);
-  }}
+  }
+
+  @Delete(':id')
+  @Roles('ADMIN')
+  @ApiOperation({ summary: 'Eliminar vehículo (Solo Admin)' })
+  @ApiResponse({ status: 200, description: 'Vehículo eliminado' })
+  @ApiResponse({ status: 404, description: 'Vehículo no encontrado' })
+  @ApiResponse({ status: 403, description: 'No autorizado' })
+  async remove(@Param('id') id: string) {
+    return this.service.remove(id);
+  }
+}

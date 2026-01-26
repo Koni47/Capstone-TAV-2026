@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Param, Patch, Query, ParseIntPipe, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, Patch, Query, ParseIntPipe, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery, ApiBearerAuth } from '@nestjs/swagger';
 import { ComplaintsService } from './complaints.service';
 import { CreateComplaintDto } from './dto/create-complaint.dto';
+import { UpdateComplaintDto } from './dto/update-complaint.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -40,6 +41,33 @@ export class ComplaintsController {
   @ApiResponse({ status: 403, description: 'No autorizado' })
   async findOne(@Param('id', ParseIntPipe) id: number) {
     return this.service.findOne(id);
+  }
+
+  @Put(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Actualizar denuncia completa (Solo Admin)' })
+  @ApiResponse({ status: 200, description: 'Denuncia actualizada' })
+  @ApiResponse({ status: 404, description: 'Denuncia no encontrada' })
+  @ApiResponse({ status: 403, description: 'No autorizado' })
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateDto: UpdateComplaintDto,
+  ) {
+    return this.service.update(id, updateDto);
+  }
+
+  @Delete(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Eliminar denuncia (Solo Admin)' })
+  @ApiResponse({ status: 200, description: 'Denuncia eliminada' })
+  @ApiResponse({ status: 404, description: 'Denuncia no encontrada' })
+  @ApiResponse({ status: 403, description: 'No autorizado' })
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    return this.service.remove(id);
   }
 
   @Patch(':id/status')

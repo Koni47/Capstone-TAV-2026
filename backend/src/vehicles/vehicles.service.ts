@@ -120,6 +120,16 @@ export class VehiclesService {
     });
   }
 
+  async remove(id: string) {
+    // Verificar que el vehículo existe
+    await this.findOne(id);
+
+    // Hard delete
+    return this.prisma.vehicle.delete({
+      where: { id: id },
+    });
+  }
+
   async getStats() {
     const total = await this.prisma.vehicle.count();
     const active = await this.prisma.vehicle.count({

@@ -1,8 +1,10 @@
-import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, ConflictException, NotFoundException, BadRequestException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
+import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -86,5 +88,53 @@ export class AuthService {
 
   async logout() {
     return { message: 'Sesión cerrada exitosamente' };
+  }
+
+  async changePassword(userId: string, changePasswordDto: ChangePasswordDto) {
+    const { currentPassword, newPassword } = changePasswordDto;
+
+    // Buscar usuario
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new NotFoundException('Usuario no encontrado');
+    }
+
+    // Verificar contraseña actual
+    const isCurrentPasswordValid = await bcrypt.compare(currentPassword, user.password);
+    if (!isCurrentPasswordValid) {
+      throw new BadRequestException('La contraseña actual es incorrecta');
+    }
+
+    // Hashear nueva contraseña
+    const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+
+    // Actualizar contraseña
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { password: hashedNewPassword },
+    });
+
+    return { message: 'Contraseña cambiada exitosamente' };
+  }
+
+  async forgotPassword(email: string) {
+    // Buscar usuario por email
+    const user = await this.prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (!user) {
+      // Por seguridad, no revelamos si el email existe o no
+      return { message: 'Si el correo existe, recibirás instrucciones para restablecer tu contraseña' };
+    }
+
+    // TODO: Generar token de restablecimiento y enviar email
+    // Por ahora, solo retornamos el mensaje
+    console.log(`Solicitud de restablecimiento para: ${email}`);
+
+    return { message: 'Si el correo existe, recibirás instrucciones para restablecer tu contraseña' };
   }
 }

@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Param, Query, ParseIntPipe, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, Query, ParseIntPipe, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery, ApiBearerAuth } from '@nestjs/swagger';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -43,7 +44,25 @@ export class UsersController {
   @ApiOperation({ summary: 'Obtener detalle de un usuario (Solo Admin)' })
   @ApiResponse({ status: 200, description: 'Detalle del usuario' })
   @ApiResponse({ status: 404, description: 'Usuario no encontrado' })
-  async findOne(@Param('id', ParseIntPipe) id: number) {
+  async findOne(@Param('id') id: string) {
     return this.service.findOne(id);
+  }
+
+  @Put(':id')
+  @Roles('ADMIN')
+  @ApiOperation({ summary: 'Actualizar un usuario (Solo Admin)' })
+  @ApiResponse({ status: 200, description: 'Usuario actualizado' })
+  @ApiResponse({ status: 404, description: 'Usuario no encontrado' })
+  async update(@Param('id') id: string, @Body() updateDto: UpdateUserDto) {
+    return this.service.update(id, updateDto);
+  }
+
+  @Delete(':id')
+  @Roles('ADMIN')
+  @ApiOperation({ summary: 'Eliminar un usuario (Solo Admin)' })
+  @ApiResponse({ status: 200, description: 'Usuario eliminado' })
+  @ApiResponse({ status: 404, description: 'Usuario no encontrado' })
+  async remove(@Param('id') id: string) {
+    return this.service.remove(id);
   }
 }

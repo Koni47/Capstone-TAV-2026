@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Query, ParseIntPipe, UseGuards, Patch } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, Query, ParseIntPipe, UseGuards, Patch } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery, ApiBearerAuth } from '@nestjs/swagger';
 import { CompaniesService } from './companies.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
@@ -55,5 +55,14 @@ export class CompaniesController {
   @ApiResponse({ status: 404, description: 'Empresa no encontrada' })
   async update(@Param('id') id: string, @Body() updateCompanyDto: UpdateCompanyDto) {
     return this.companiesService.update(id, updateCompanyDto);
+  }
+
+  @Delete(':id')
+  @Roles('ADMIN')
+  @ApiOperation({ summary: 'Eliminar una empresa (Solo Admin)' })
+  @ApiResponse({ status: 200, description: 'Empresa eliminada' })
+  @ApiResponse({ status: 404, description: 'Empresa no encontrada' })
+  async remove(@Param('id') id: string) {
+    return this.companiesService.remove(id);
   }
 }

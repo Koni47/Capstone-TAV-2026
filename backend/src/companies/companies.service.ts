@@ -95,4 +95,16 @@ export class CompaniesService {
       billedTripsMonth: 245, // TODO: Implementar lógica real
     };
   }
+
+  async remove(id: string) {
+    const company = await this.prisma.company.findUnique({ where: { id } });
+    if (!company) {
+      throw new NotFoundException('Empresa no encontrada');
+    }
+
+    // Hard delete
+    return this.prisma.company.delete({
+      where: { id },
+    });
+  }
 }
