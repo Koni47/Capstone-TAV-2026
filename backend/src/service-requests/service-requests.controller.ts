@@ -35,12 +35,16 @@ export class ServiceRequestsController {
     @CurrentUser() user?: any,
   ) {
     console.log('findAll called with user:', JSON.stringify(user, null, 2));
-    
-    // TEMPORAL: Forzar filtro por cliente específico para debug
-    const clientId = '240861a9-0708-4e13-bf5f-f676caec7994'; // ID del usuario Gerente Minera
-    
-    console.log('Using hardcoded clientId for testing:', clientId);
-    
+
+    // Determinar si filtrar por cliente
+    let clientId: string | undefined;
+    if (user?.role?.nombre === 'CLIENTE' || user?.role === 'CLIENTE') {
+      clientId = user.id;
+      console.log('Filtering by clientId:', clientId);
+    } else {
+      console.log('Admin user - showing all requests');
+    }
+
     return this.service.findAll(Number(page) || 1, Number(limit) || 10, clientId);
   }
 
