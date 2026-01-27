@@ -14,6 +14,7 @@ model User {
   password        String
   fullName        String
   role            Role             @default(CLIENTE)
+  status          UserStatus       @default(ACTIVO)
   phone           String?
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
@@ -79,6 +80,7 @@ model Trip {
   endTime          DateTime?
   rating           Int?
   comment          String?
+  evidenceUrl      String?
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @updatedAt
   serviceRequestId String         @unique
@@ -95,6 +97,12 @@ enum Role {
   ADMIN
   CHOFER
   CLIENTE
+}
+
+enum UserStatus {
+  ACTIVO
+  INACTIVO
+  SUSPENDIDO
 }
 
 enum VehicleStatus {

@@ -47,5 +47,7 @@ async function bootstrap() {
   const formattedUrl = url.replace('[::1]', 'localhost');
   console.log(`Application is running on: ${formattedUrl}`);
   console.log(`Swagger docs available at: ${formattedUrl}/docs`);
+  console.log(`Swagger JSON available at: ${formattedUrl}/docs-json`);
+  console.log(`Health check available at: ${formattedUrl}/api/v1/health`);
 }
 bootstrap();
