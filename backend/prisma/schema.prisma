@@ -8,6 +8,11 @@ generator erd {
   output   = "../ERD.svg"
 }
 
+generator docs {
+  provider = "node node_modules/prisma-docs-generator"
+  output   = "../prisma-docs"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
@@ -40,7 +45,6 @@ model Company {
   contactEmail    String?
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
-  serviceRequests ServiceRequest[]
   users           User[]
 
   @@map("companies")
@@ -70,9 +74,7 @@ model ServiceRequest {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
   clientId       String
-  companyId      String?
   client         User     @relation("ClientRequests", fields: [clientId], references: [id])
-  company        Company? @relation(fields: [companyId], references: [id])
   trip           Trip?
 
   @@map("service_requests")

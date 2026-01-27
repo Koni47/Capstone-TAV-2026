@@ -449,6 +449,57 @@
         </div>
     </div>
 
+    <div class="module-section">
+        <div class="module-title">8. Pagos (Webpay Plus)</div>
+
+        <div class="endpoint-card">
+            <div class="card-header">
+                <div><span class="method post">POST</span> <span class="path">/payments/webpay/init</span></div>
+                <span class="desc">Iniciar Transacción</span>
+            </div>
+            <div class="card-body">
+                <span class="badge">Autenticado</span>
+                <p>Inicia flujo Webpay. Retorna token y URL de redirección.</p>
+                <pre>{ "tripId": "uuid-viaje" }</pre>
+            </div>
+        </div>
+
+        <div class="endpoint-card">
+            <div class="card-header">
+                <div><span class="method post">POST</span> <span class="path">/payments/webpay/commit</span></div>
+                <span class="desc">Confirmar Transacción</span>
+            </div>
+            <div class="card-body">
+                <span class="badge">Público (Callback)</span>
+                <p>Confirma pago exitoso con Transbank y actualiza estado del viaje.</p>
+                <pre>{ "token_ws": "token-recibido-tbk" }</pre>
+            </div>
+        </div>
+
+        <div class="endpoint-card">
+            <div class="card-header">
+                <div><span class="method get">GET</span> <span class="path">/payments/webpay/status/:token</span></div>
+                <span class="desc">Consultar Estado</span>
+            </div>
+            <div class="card-body">
+                <span class="badge">Admin</span>
+                <p>Consulta estado real en Transbank y sincroniza BD local.</p>
+            </div>
+        </div>
+
+        <div class="endpoint-card">
+            <div class="card-header">
+                <div><span class="method post">POST</span> <span class="path">/payments/webpay/refund</span></div>
+                <span class="desc">Reembolsar (Anular)</span>
+            </div>
+            <div class="card-body">
+                <span class="badge">Admin</span>
+                <p>Anula una transacción autorizada (Total o parcial).</p>
+                <pre>{ "tripId": "uuid", "amount": 5000 }</pre>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 </body>
