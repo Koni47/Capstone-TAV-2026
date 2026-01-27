@@ -9,6 +9,7 @@ import { TripsModule } from './trips/trips.module';
 import { ReportsModule } from './reports/reports.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
+import { HealthModule } from './health/health.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { UsersModule } from './users/users.module';
     ServiceRequestsModule,
     TripsModule,
     ReportsModule,
+    HealthModule,
   ],
   controllers: [],
   providers: [],
