@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultado del Pago</title>
+    <style>
+        body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #f4f4f4; flex-direction: column; }
+        .card { background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); max-width: 500px; width: 100%; text-align: center; }
+        .success { color: green; }
+        .error { color: red; }
+        pre { text-align: left; background: #eee; padding: 1rem; border-radius: 4px; overflow-x: auto; }
+        button { margin-top: 1rem; padding: 0.5rem 1rem; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>Procesando Resultado...</h2>
+        <p id="status">Confirmando transacción con el servidor...</p>
+        <div id="details"></div>
+    </div>
+
+    <script>
+        async function commitTransaction() {
+            // Obtenemos el token de la URL
+            const urlParams = new URLSearchParams(window.location.search);
+            // Webpay puede mandar el token por GET (token_ws) o POST (en el body, más complejo en estático) 
+            // En integración suele ser GET.
+            const token = urlParams.get('token_ws');
+
+            // Si fue una anulación del usuario
+            const tbkToken = urlParams.get('TBK_TOKEN');
+            const tbkOrdenCompra = urlParams.get('TBK_ORDEN_COMPRA');
+            const tbkIdSesion = urlParams.get('TBK_ID_SESION');
+
+            if (tbkToken && !token) {
+                document.querySelector('h2').innerText = "Pago Anulado por Usuario";
+                document.getElementById('status').innerText = "Has cancelado la operación en el formulario de pago.";
+                document.getElementById('status').className = "error";
+                return;
+            }
+
+            if (!token) {
+                document.getElementById('status').innerText = "Error: No se recibió token de Webpay";
+                document.getElementById('status').className = "error";
+                return;
+            }
+
+            try {
+                // Llamamos a nuestro backend para confirmar (commit)
+                // Ajusta el puerto 3000 si tu backend corre en otro puerto
+                const response = await fetch('http://localhost:3000/api/v1/payments/webpay/commit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token_ws: token })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    if (data.status === 'AUTHORIZED') {
+                         document.querySelector('h2').innerText = "¡Pago Exitoso!";
+                         document.querySelector('h2').className = "success";
+                         document.getElementById('status').innerText = "Tu viaje ha sido asignado correctamente.";
+                    } else {
+                         document.querySelector('h2').innerText = "Pago Rechazado";
+                         document.querySelector('h2').className = "error";
+                         document.getElementById('status').innerText = "Transbank ha rechazado la transacción.";
+                    }
+                } else {
+                    document.querySelector('h2').innerText = "Error en Confirmación";
+                    document.querySelector('h2').className = "error";
+                    document.getElementById('status').innerText = data.message || "Error desconocido del servidor";
+                }
+
+                // Mostrar detalles técnicos
+                document.getElementById('details').innerHTML = `
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                    <button onclick="window.location.href='/test_webpay.html'">Volver a Probar</button>
+                `;
+
+            } catch (error) {
+                console.error(error);
+                document.getElementById('status').innerText = "Error de conexión con el Backend";
+                document.getElementById('status').className = "error";
+            }
+        }
+
+        commitTransaction();
+    </script>
+</body>
+</html>

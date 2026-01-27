@@ -3,6 +3,11 @@ generator client {
   binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
 }
 
+generator erd {
+  provider = "prisma-erd-generator"
+  output   = "../ERD.svg"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
@@ -14,11 +19,11 @@ model User {
   password        String
   fullName        String
   role            Role             @default(CLIENTE)
-  status          UserStatus       @default(ACTIVO)
   phone           String?
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
   companyId       String?
+  status          UserStatus       @default(ACTIVO)
   serviceRequests ServiceRequest[] @relation("ClientRequests")
   tripsAsDriver   Trip[]           @relation("DriverTrips")
   company         Company?         @relation(fields: [companyId], references: [id])
@@ -80,17 +85,53 @@ model Trip {
   endTime          DateTime?
   rating           Int?
   comment          String?
-  evidenceUrl      String?
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @updatedAt
   serviceRequestId String         @unique
   driverId         String?
   vehicleId        String?
+  evidenceUrl      String?
+  fare             Int?
+  transactions     Transaction[]
   driver           User?          @relation("DriverTrips", fields: [driverId], references: [id])
   serviceRequest   ServiceRequest @relation(fields: [serviceRequestId], references: [id])
   vehicle          Vehicle?       @relation(fields: [vehicleId], references: [id])
 
   @@map("trips")
+}
+
+model Transaction {
+  id                 String            @id @default(uuid())
+  buyOrder           String            @unique
+  sessionId          String
+  amount             Int
+  status             TransactionStatus @default(INITIALIZED)
+  token              String?           @unique
+  transbankStatus    String?
+  responseCode       Int?
+  authorizationCode  String?
+  paymentTypeCode    String?
+  installmentsAmount Int?
+  installmentsNumber Int?
+  cardLast4Digits    String?
+  accountingDate     String?
+  transactionDate    DateTime?
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+  tripId             String
+  trip               Trip              @relation(fields: [tripId], references: [id])
+
+  @@map("transactions")
+}
+
+enum TransactionStatus {
+  INITIALIZED
+  AUTHORIZED
+  REJECTED
+  FAILED
+  ERROR_COMMIT
+  REFUNDED
+  EXPIRED
 }
 
 enum Role {
