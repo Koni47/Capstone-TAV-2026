@@ -41,18 +41,11 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);
 
-  // Exponer JSON de Swagger explícitamente
-  app.getHttpAdapter().get('/api/v1/swagger-json', (req, res) => {
-    res.json(document);
-  });
-
   const port = process.env.PORT || 3001;
   await app.listen(port);
   const url = await app.getUrl();
   const formattedUrl = url.replace('[::1]', 'localhost');
   console.log(`Application is running on: ${formattedUrl}`);
   console.log(`Swagger docs available at: ${formattedUrl}/docs`);
-  console.log(`Swagger JSON available at: ${formattedUrl}/api/v1/swagger-json`);
-  console.log(`Health check available at: ${formattedUrl}/api/v1/health`);
 }
 bootstrap();
