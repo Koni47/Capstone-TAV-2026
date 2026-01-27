@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import Map from '../components/Map'
 import { GeocodingService } from '../services/geocoding'
+import Header from '../components/Header'
 
 export default function ServiceRequestCreate() {
   const [origin, setOrigin] = useState('')
@@ -129,41 +130,7 @@ export default function ServiceRequestCreate() {
 
   return (
     <div className="bg-surface font-sans text-gray-800 flex flex-col min-h-screen">
-      <nav className="bg-primary text-white shadow-xl sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-8">
-              <Link to="/" className="flex-shrink-0 flex items-center gap-2 font-bold text-xl cursor-pointer hover:opacity-90 transition-opacity">
-                <span className="material-icons text-secondary text-lg">local_shipping</span>
-                <span>EL LOA</span>
-              </Link>
-              <div className="hidden md:flex items-center space-x-1">
-                <a href="#" onClick={(e) => { e.preventDefault(); window.location.href = '/AdminDashboard'; }} className="text-blue-100 hover:bg-white/10 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Dashboard</a>
-                <Link to="/service-request" className="bg-secondary text-white px-3 py-2 rounded-md text-sm font-medium shadow-md transform scale-105">Solicitudes</Link>
-                <Link to="/users" className="text-blue-100 hover:bg-white/10 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Usuarios</Link>
-                <Link to="/companies" className="text-blue-100 hover:bg-white/10 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Clientes</Link>
-                <Link to="/vehicles" className="text-blue-100 hover:bg-white/10 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Flota</Link>
-              </div>
-            </div>
-            <div className="flex items-center gap-4">
-              <button className="relative p-2 rounded-full hover:bg-white/10 transition group">
-                <span className="material-icons text-blue-200 group-hover:text-white">notifications</span>
-                <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border border-primary"></span>
-              </button>
-              <div className="flex items-center gap-3 pl-4 border-l border-white/20">
-                <div className="text-right hidden sm:block">
-                  <p className="text-sm font-bold leading-none user-name">Usuario</p>
-                  <p className="text-xs text-blue-300 user-role uppercase tracking-wider">Perfil</p>
-                </div>
-                <div className="h-9 w-9 rounded-full bg-secondary flex items-center justify-center text-white text-sm font-bold ring-2 ring-white/20 shadow-lg user-initials">US</div>
-                <Link to="/logout" className="ml-2 text-gray-300 hover:text-white transition" title="Salir">
-                  <span className="material-icons">logout</span>
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <Header />
 
       <main className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
         {/* Header Section */}

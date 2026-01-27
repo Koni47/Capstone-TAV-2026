@@ -1,40 +1,10 @@
 import React from 'react'
+import Header from '../components/Header'
 
 export default function WorkWithUs() {
   return (
     <div className="font-sans bg-gray-50 text-gray-800 flex flex-col min-h-screen">
-      <nav className="bg-primary text-white shadow-lg sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-20 items-center">
-            <div className="flex items-center gap-3 cursor-pointer">
-              <div className="w-10 h-10 bg-white rounded-md flex items-center justify-center text-primary font-bold text-xl">EL</div>
-              <span className="font-bold text-xl tracking-wide">Servicios El Loa</span>
-            </div>
-
-            <div className="hidden md:flex space-x-6">
-              <a href="/" className="hover:text-gray-300 transition px-1 pb-1">Inicio</a>
-              <a href="/service-request" className="hover:text-gray-300 transition px-1 pb-1">Solicitudes</a>
-              <a href="/trips" className="hover:text-gray-300 transition px-1 pb-1">Viajes</a>
-              <a href="/vehicles" className="hover:text-gray-300 transition px-1 pb-1">Flota</a>
-              <a href="/companies" className="hover:text-gray-300 transition px-1 pb-1">Clientes</a>
-              <a href="/trabaja-nosotros" className="text-secondary font-bold border-b-2 border-secondary px-1 pb-1">Trabaja con Nosotros</a>
-            </div>
-
-            <div className="hidden md:flex items-center gap-3">
-              <a href="/login" className="text-sm font-semibold hover:text-gray-300">Iniciar sesión</a>
-              <a href="/register" className="bg-secondary hover:bg-orange-600 text-white text-sm font-bold py-2 px-5 rounded-md transition shadow-md">
-                Registrarse
-              </a>
-            </div>
-
-            <div className="md:hidden">
-              <button className="text-white hover:text-secondary">
-                <span className="material-icons text-3xl">menu</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <Header />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex-grow">
         {/* Hero Header */}
