@@ -3,7 +3,12 @@ WORKDIR /app
 
 # Instala dependencias (intenta ci, si falla usa install)
 COPY package.json package-lock.json* ./
-RUN npm ci --legacy-peer-deps || npm install --legacy-peer-deps
+# Use npm ci when a lockfile exists, otherwise fall back to npm install
+RUN if [ -f package-lock.json ]; then \
+			npm ci --legacy-peer-deps; \
+		else \
+			npm install --legacy-peer-deps; \
+		fi
 
 # Copia el resto del proyecto y construye
 COPY . .

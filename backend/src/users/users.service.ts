@@ -1,110 +1,68 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, ConflictException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class UsersService {
   constructor(private prisma: PrismaService) {}
 
-  async create(createDto: CreateUserDto) {
-    const hashedPassword = await bcrypt.hash(createDto.password, 10);
-    
-    return this.prisma.user.create({
-      data: {
-        email: createDto.email,
-        password: hashedPassword,
-        fullName: createDto.name,
-        role: createDto.role.toUpperCase() as any,
-        phone: createDto.phone,
-        companyId: createDto.companyId?.toString(),
-      },
-      select: {
-        id: true,
-        fullName: true,
-        email: true,
-        role: true,
-        phone: true,
-        companyId: true,
-        createdAt: true,
-      },
-    });
-  }
-
-  async findAll(page = 1, limit = 10) {
-    const skip = (page - 1) * limit;
-    const [users, total] = await Promise.all([
-      this.prisma.user.findMany({
-        skip,
-        take: limit,
-        select: {
-          id: true,
-          fullName: true,
-          email: true,
-          role: true,
-          phone: true,
-          status: true,
-          lastLogin: true,
-          company: { select: { name: true } },
-          createdAt: true,
-        },
-        orderBy: { createdAt: 'desc' },
-      }),
-      this.prisma.user.count(),
-    ]);
-
-    return {
-      users: users.map(user => ({
-        ...user,
-        name: user.fullName, // Alias para frontend
-      })),
-      pagination: {
-        currentPage: page,
-        totalPages: Math.ceil(total / limit),
-        totalResults: total,
-      },
-    };
-  }
-
-  async findOne(id: number) {
-    const user = await this.prisma.user.findUnique({
-      where: { id: id.toString() },
-      select: {
-        id: true,
-        fullName: true,
-        email: true,
-        role: true,
-        phone: true,
-        status: true,
-        lastLogin: true,
-        company: { select: { name: true } },
-        createdAt: true,
-      },
+  async create(data: CreateUserDto): Promise<User> {
+    const existingUser = await this.prisma.user.findUnique({
+      where: { email: data.email },
     });
 
-    if (!user) {
-      throw new NotFoundException(`Usuario #${id} no encontrado`);
+    if (existingUser) {
+      throw new ConflictException('El correo ya está registrado');
     }
 
-    return {
-      ...user,
-      name: user.fullName, // Alias para frontend
-    };
+    const hashedPassword = await bcrypt.hash(data.password, 10);
+
+    return this.prisma.user.create({
+      data: {
+        ...data,
+        password: hashedPassword,
+        role: data.role as any,
+      },
+    });
   }
 
-  async getStats() {
-    const total = await this.prisma.user.count();
-    const active = await this.prisma.user.count({
-      where: { status: 'ACTIVO' },
-    });
-    const pending = await this.prisma.user.count({
-      where: { status: 'PENDIENTE' },
-    });
+  async findByEmail(email: string): Promise<User | null> {
+    return this.prisma.user.findUnique({ where: { email } });
+  }
 
-    return {
-      totalUsers: total,
-      activeUsers: active,
-      pendingUsers: pending,
-    };
+  async findOne(id: string): Promise<User | null> {
+    const user = await this.prisma.user.findUnique({ where: { id } });
+    if (!user) throw new NotFoundException('Usuario no encontrado');
+    return user;
+  }
+
+  async findAll(role?: string) {
+    const where = role ? { role: role as any } : {};
+    return this.prisma.user.findMany({ where });
+  }
+
+  async findAvailableDrivers(): Promise<User[]> {
+    return this.prisma.user.findMany({
+      where: {
+        role: 'CHOFER',
+      },
+    });
+  }
+
+  async update(id: string, data: Partial<CreateUserDto>): Promise<User> {
+    const user = await this.findOne(id);
+
+    // No permitir cambiar email, rol o contraseña desde este método genérico.
+    const { fullName, phone } = data;
+    const updateData: any = {};
+    if (fullName) updateData.fullName = fullName;
+    if (phone) updateData.phone = phone;
+
+    return this.prisma.user.update({
+      where: { id: user.id },
+      data: updateData,
+    });
   }
 }

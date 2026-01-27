@@ -1,39 +1,43 @@
-import { Controller, Get, Post, Body, Param, Query, ParseIntPipe } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
+import { Controller, Get, Post, Patch, Param, Body, Query, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
+import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 import { CreateUserDto } from './dto/create-user.dto';
+import { AuthGuard } from '@nestjs/passport';
 
-@ApiTags('Usuarios')
+@ApiTags('Users')
 @Controller('users')
 export class UsersController {
-  constructor(private readonly service: UsersService) {}
-
-  @Post()
-  @ApiOperation({ summary: 'Crear un nuevo usuario' })
-  @ApiResponse({ status: 201, description: 'Usuario creado' })
-  async create(@Body() createDto: CreateUserDto) {
-    return this.service.create(createDto);
-  }
+  constructor(private readonly usersService: UsersService) {}
 
   @Get()
-  @ApiOperation({ summary: 'Listar todos los usuarios' })
-  @ApiQuery({ name: 'page', required: false, example: 1 })
-  @ApiQuery({ name: 'limit', required: false, example: 10 })
-  async findAll(@Query('page') page?: string, @Query('limit') limit?: string) {
-    return this.service.findAll(Number(page) || 1, Number(limit) || 10);
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Listar Usuarios' })
+  @ApiResponse({ status: 200, description: 'Lista de usuarios.' })
+  findAll(@Query('role') role?: string) {
+    return this.usersService.findAll(role);
   }
 
-  @Get('stats')
-  @ApiOperation({ summary: 'Obtener estadísticas de usuarios' })
-  async getStats() {
-    return this.service.getStats();
+  @Post()
+  @ApiOperation({ summary: 'Crear Usuario (Registro)' })
+  @ApiResponse({ status: 201, description: 'Usuario creado.' })
+  @ApiResponse({ status: 400, description: 'Datos inválidos.' })
+  create(@Body() createUserDto: CreateUserDto) {
+    return this.usersService.create(createUserDto);
   }
 
-  @Get(':id')
-  @ApiOperation({ summary: 'Obtener detalle de un usuario' })
-  @ApiResponse({ status: 200, description: 'Detalle del usuario' })
-  @ApiResponse({ status: 404, description: 'Usuario no encontrado' })
-  async findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.service.findOne(id);
+  @Get('drivers/available')
+  @ApiOperation({ summary: 'Choferes Disponibles' })
+  @ApiResponse({ status: 200, description: 'Lista de choferes disponibles.' })
+  findAvailableDrivers() {
+    return this.usersService.findAvailableDrivers();
+  }
+
+  @Patch(':id')
+  @ApiOperation({ summary: 'Editar Usuario' })
+  @ApiResponse({ status: 200, description: 'Usuario actualizado.' })
+  @ApiResponse({ status: 404, description: 'Usuario no encontrado.' })
+  update(@Param('id') id: string, @Body() updateUserDto: any) {
+    return this.usersService.update(id, updateUserDto);
   }
 }
