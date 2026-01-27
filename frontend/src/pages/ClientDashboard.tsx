@@ -37,7 +37,7 @@ export default function ClientDashboard() {
   const fetchTrips = async () => {
     try {
       const token = localStorage.getItem('accessToken')
-      const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3002/api/v1'
+      const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api/v1'
       const response = await fetch(`${API_BASE_URL}/trips`, {
         headers: {
           Authorization: `Bearer ${token}`,
