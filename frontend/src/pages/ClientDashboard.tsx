@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Header from '../components/Header'
+import { API_BASE_URL } from '../services/api'
 import { Line, Doughnut } from 'react-chartjs-2'
 import {
   Chart as ChartJS,
@@ -37,7 +38,6 @@ export default function ClientDashboard() {
   const fetchTrips = async () => {
     try {
       const token = localStorage.getItem('accessToken')
-      const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3002/api/v1'
       const response = await fetch(`${API_BASE_URL}/trips`, {
         headers: {
           Authorization: `Bearer ${token}`,

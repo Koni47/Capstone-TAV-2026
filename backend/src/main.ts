@@ -10,9 +10,15 @@ async function bootstrap() {
 
   // Configuración de Seguridad
   app.use(helmet());
+  const corsOrigin = process.env.CORS_ORIGIN;
+  const allowedOrigins = corsOrigin
+    ? corsOrigin.split(',').map((origin) => origin.trim())
+    : ['http://localhost:5173'];
+  const allowCredentials = !allowedOrigins.includes('*');
+
   app.enableCors({
-    origin: process.env.CORS_ORIGIN || '*', // Ajustar en producción
-    credentials: true,
+    origin: allowCredentials ? allowedOrigins : true,
+    credentials: allowCredentials,
   });
   app.use(cookieParser());
 

@@ -236,7 +236,7 @@ export default function ServiceRequestCreate() {
         }
 
         console.log('Chofer seleccionado:', selectedDriver.name)
-        console.log('Vehículo seleccionado:', selectedVehicle.plateNumber)
+        console.log('Vehículo seleccionado:', selectedVehicle.licensePlate)
 
         // 3. Intentar crear el Trip con la asignación y el monto
         // Si falla, la solicitud ya se creó correctamente
@@ -246,8 +246,10 @@ export default function ServiceRequestCreate() {
             scheduledDate: requestedDateTime,
             origin: origin,
             destination: destination,
-            clientId: parseInt(currentUserId) || parseInt(selectedDriver.id),
-            driverId: parseInt(selectedDriver.id),
+            clientId: currentUserId || selectedDriver.id,
+            driverId: selectedDriver.id,
+            vehicleId: selectedVehicle?.id,
+            serviceRequestId: requestId,
             status: 'ASIGNADO', // Debe estar en mayúsculas según el enum
             distance: Math.round(distance * 100) / 100, // Distancia con 2 decimales
             fare: Math.round(cost.total) // Tarifa calculada
