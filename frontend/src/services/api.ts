@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api/v1';
+=======
+const API_BASE_URL = import.meta.env.VITE_API_URL || '/api/v1';
+>>>>>>> 5943737eb8d8a1590347f0fb6f15e9ac1b3d181c
 
 interface ApiResponse<T> {
   data: T;
