@@ -1,15 +1,4 @@
-.git
 node_modules
-dist
-coverage
-.env
-.env.local
-.DS_Store
-npm-debug.log
-yarn-error.log
-/.idea
-.vscode
-public/assets/js/auth-helper.jsnode_modules
 dist
 .env
 .vscode
