@@ -58,15 +58,31 @@ export class VehiclesService {
   }
 
   /* ...existing code... */
-  create(data: CreateVehicleDto) {
-    return data;
+  async create(data: CreateVehicleDto) {
+    return this.prisma.vehicle.create({
+      data: {
+        licensePlate: data.licensePlate,
+        model: data.model,
+        year: data.year,
+        technicalReviewDate: data.technicalReviewDate ? new Date(data.technicalReviewDate) : null,
+        status: VehicleStatus.DISPONIBLE,
+      },
+    });
   }
 
-  findAvailable(query: Record<string, string>) {
-    return [query];
+  async findAvailable() {
+    return this.prisma.vehicle.findMany({
+      where: {
+        status: VehicleStatus.DISPONIBLE,
+      },
+      orderBy: {
+        updatedAt: 'desc',
+      },
+    });
   }
 
   update(id: string, data: Partial<CreateVehicleDto>) {
+    // Implementación pendiente
     return { id, ...data };
   }
 
@@ -74,4 +90,3 @@ export class VehiclesService {
     return { id, deleted: true };
   }
 }
-

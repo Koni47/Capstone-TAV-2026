@@ -78,7 +78,7 @@ export default function ServiceRequestCreate() {
   }, [])
 
   // Debounced route update
-  const [routeUpdateTimeout, setRouteUpdateTimeout] = useState<NodeJS.Timeout | null>(null)
+  const [routeUpdateTimeout, setRouteUpdateTimeout] = useState<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
     if (routeUpdateTimeout) {

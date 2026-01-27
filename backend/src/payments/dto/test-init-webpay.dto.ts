@@ -22,7 +22,7 @@ export class TestInitWebpayDto {
   @ApiProperty({
     description: 'Orden de compra (opcional)',
     example: 'TEST-123456',
-    required: false
+    required: false,
   })
   @IsOptional()
   @IsString()
