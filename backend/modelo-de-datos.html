@@ -1,403 +1,115 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ERD - Base de Datos Servicios El Loa</title>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;600&family=Inter:wght@400;700&display=swap"
-        rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
-    <style>
-        /* --- ESTILOS GENERALES --- */
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f0f2f5;
-            margin: 0;
-            padding: 40px;
-            color: #333;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .card {
-            background: white;
-            border: 1px solid #d1d5db;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 1200px;
-            padding: 30px;
-            position: relative;
-        }
-
-        h1 {
-            color: #003366;
-            margin-top: 0;
-            font-size: 24px;
-            border-bottom: 3px solid #FF6600;
-            padding-bottom: 10px;
-            display: inline-block;
-        }
-
-        .description {
-            margin-bottom: 20px;
-            color: #4b5563;
-            line-height: 1.5;
-        }
-
-        /* --- CONTENEDOR DEL DIAGRAMA --- */
-        .mermaid-container {
-            position: relative;
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            padding: 20px;
-            background: #ffffff;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            min-height: 400px;
-        }
-
-        /* Botón de Ampliar */
-        .zoom-btn {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: #003366;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.2s, background 0.2s;
-            z-index: 10;
-        }
-
-        .zoom-btn:hover {
-            background: #002244;
-            transform: translateY(-2px);
-        }
-
-        /* --- MODAL PANTALLA COMPLETA --- */
-        #fullscreen-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(240, 242, 245, 0.98);
-            z-index: 9999;
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
-
-        #fullscreen-viewport {
-            width: 100vw;
-            height: 100vh;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: grab;
-        }
-
-        #fullscreen-viewport:active {
-            cursor: grabbing;
-        }
-
-        #fullscreen-content {
-            transform-origin: center center;
-            transition: transform 0.1s ease-out;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        #fullscreen-content svg {
-            max-width: none !important;
-            height: auto !important;
-        }
-
-        /* --- CONTROLES FLOTANTES --- */
-        #fullscreen-controls {
-            position: absolute;
-            bottom: 40px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 15px;
-            background: white;
-            padding: 12px 25px;
-            border-radius: 50px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-            z-index: 10000;
-            border: 1px solid #e5e7eb;
-        }
-
-        .control-btn {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            border: none;
-            background: #f3f4f6;
-            color: #374151;
-            font-size: 20px;
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-        }
-
-        .control-btn:hover {
-            background: #00AEEF;
-            color: white;
-            transform: scale(1.1);
-        }
-
-        #close-modal {
-            position: absolute;
-            top: 30px;
-            right: 40px;
-            background: #ef4444;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 50px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 14px;
-            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
-            z-index: 10001;
-            transition: transform 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        #close-modal:hover {
-            background: #dc2626;
-            transform: scale(1.05);
-        }
-    </style>
-</head>
-
-<body>
-
-    <div id="fullscreen-modal">
-        <button id="close-modal" onclick="closeFullscreen()">
-            <span class="material-icons">close</span> CERRAR
-        </button>
-
-        <div id="fullscreen-viewport" onmousedown="startDrag(event)" onmousemove="drag(event)" onmouseup="endDrag()"
-            onwheel="handleWheel(event)">
-            <div id="fullscreen-content">
-            </div>
-        </div>
-
-        <div id="fullscreen-controls">
-            <button class="control-btn" onclick="zoom(-0.2)" title="Reducir">
-                <span class="material-icons">remove</span>
-            </button>
-            <button class="control-btn" onclick="resetZoom()" title="Restaurar">
-                <span class="material-icons">restart_alt</span>
-            </button>
-            <button class="control-btn" onclick="zoom(0.2)" title="Aumentar">
-                <span class="material-icons">add</span>
-            </button>
-        </div>
-    </div>
-
-    <div class="card">
-        <h1>Diagrama Entidad-Relación (ERD)</h1>
-        <div class="description">
-            Modelo de datos relacional para el sistema de <strong>Transporte Privado de Personas</strong>. Incluye
-            gestión de usuarios, flotas, empresas cliente y el ciclo de vida del servicio (Solicitud -> Asignación ->
-            Ejecución).
-        </div>
-
-        <div class="mermaid-container" id="source-container">
-            <button class="zoom-btn" onclick="openFullscreen()">
-                <span class="material-icons" style="font-size:18px;">search</span> Zoom / Lupa
-            </button>
-
-            <div class="mermaid">
-                %%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#e3f2fd',
-                'edgeLabelBackground':'#ffffff', 'tertiaryColor': '#fff'}}}%%
-                erDiagram
-                %% RELACIONES PRINCIPALES
-                ROL ||--o{ USUARIO : define_permisos
-                EMPRESA_CLIENTE ||--o{ USUARIO : emplea_a
-                EMPRESA_CLIENTE ||--o{ SOLICITUD_SERVICIO : genera_requerimiento
-
-                SOLICITUD_SERVICIO ||--|| VIAJE_ASIGNADO : se_convierte_en
-
-                VEHICULO ||--o{ VIAJE_ASIGNADO : ejecuta
-                USUARIO ||--o{ VIAJE_ASIGNADO : conduce
-
-                %% ENTIDADES DETALLADAS
-                USUARIO {
-                uuid id PK
-                string rut "Identificador único"
-                string email
-                string password_hash
-                string nombre_completo
-                int rol_id FK "Admin/Chofer/Cliente"
-                uuid empresa_id FK "Opcional (si es cliente B2B)"
-                }
-
-                ROL {
-                int id PK
-                string nombre "Roles: ADMIN, CHOFER, CLIENTE"
-                json permisos "Accesos del sistema"
-                }
-
-                EMPRESA_CLIENTE {
-                uuid id PK
-                string razon_social
-                string rut_empresa
-                string centro_costo "Para facturación"
-                string contacto_comercial
-                }
-
-                VEHICULO {
-                uuid id PK
-                string patente "Unique"
-                string marca
-                string modelo
-                int capacidad_pax
-                string estado "DISPONIBLE/MANTENCION/EN_RUTA"
-                date vencimiento_rev_tec
-                }
-
-                SOLICITUD_SERVICIO {
-                uuid id PK
-                uuid empresa_id FK
-                timestamp fecha_creacion
-                timestamp fecha_hora_requerida
-                string origen_direccion
-                string destino_direccion
-                int cantidad_pasajeros
-                string nomina_pasajeros "Lista/Archivo"
-                string estado "PENDIENTE/AGENDADO/CANCELADO"
-                }
-
-                VIAJE_ASIGNADO {
-                uuid id PK
-                uuid solicitud_id FK
-                uuid chofer_id FK "Usuario tipo Chofer"
-                uuid vehiculo_id FK
-                timestamp hora_inicio_real "Check-in Chofer"
-                timestamp hora_fin_real "Check-out Chofer"
-                string estado_actual "EN_RUTA/FINALIZADO"
-                string observaciones
-                }
-            </div>
-        </div>
-    </div>
-
+    <title>ERD - Servicios El Loa (Normalizado 3FN)</title>
     <script type="module">
         import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
-        mermaid.initialize({ startOnLoad: true });
-    </script>
-
-    <script>
-        // Lógica de Zoom y Pan (Idéntica a la probada anteriormente)
-        const modal = document.getElementById('fullscreen-modal');
-        const modalContent = document.getElementById('fullscreen-content');
-        const viewport = document.getElementById('fullscreen-viewport');
-        const sourceContainer = document.getElementById('source-container');
-
-        let scale = 1;
-        let isDragging = false;
-        let startX, startY, translateX = 0, translateY = 0;
-
-        window.openFullscreen = function () {
-            const originalSvg = sourceContainer.querySelector('svg');
-            if (originalSvg) {
-                modalContent.innerHTML = '';
-                const clone = originalSvg.cloneNode(true);
-                clone.removeAttribute('height');
-                clone.removeAttribute('width');
-                clone.style.width = '100%';
-                clone.style.height = 'auto';
-                clone.style.maxWidth = 'none';
-                modalContent.appendChild(clone);
-                modal.style.display = 'flex';
-                resetZoom();
-            } else {
-                alert('El diagrama se está generando. Por favor espera un momento.');
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#e3f2fd',
+                edgeLabelBackground: '#ffffff',
+                tertiaryColor: '#fff'
             }
-        }
-
-        window.closeFullscreen = function () {
-            modal.style.display = 'none';
-        }
-
-        window.zoom = function (delta) {
-            scale += delta;
-            if (scale < 0.2) scale = 0.2;
-            if (scale > 5) scale = 5;
-            updateTransform();
-        }
-
-        window.resetZoom = function () {
-            scale = 1.0;
-            translateX = 0;
-            translateY = 0;
-            updateTransform();
-        }
-
-        window.handleWheel = function (e) {
-            e.preventDefault();
-            const delta = e.deltaY * -0.001;
-            const newScale = scale + delta;
-            if (newScale > 0.2 && newScale < 5) {
-                scale = newScale;
-                updateTransform();
-            }
-        }
-
-        window.startDrag = function (e) {
-            if (e.target.closest('button')) return;
-            isDragging = true;
-            startX = e.clientX - translateX;
-            startY = e.clientY - translateY;
-            viewport.style.cursor = 'grabbing';
-        }
-
-        window.drag = function (e) {
-            if (!isDragging) return;
-            e.preventDefault();
-            translateX = e.clientX - startX;
-            translateY = e.clientY - startY;
-            updateTransform();
-        }
-
-        window.endDrag = function () {
-            isDragging = false;
-            viewport.style.cursor = 'grab';
-        }
-
-        function updateTransform() {
-            modalContent.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
-        }
+        });
     </script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        .card { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 90%; max-width: 1200px; }
+        h1 { color: #1a237e; border-bottom: 2px solid #e3f2fd; padding-bottom: 10px; }
+        .status-badge { background-color: #4caf50; color: white; padding: 5px 10px; border-radius: 15px; font-size: 0.9rem; vertical-align: middle; }
+        .info-box { background-color: #e8f5e9; border-left: 5px solid #4caf50; padding: 15px; margin-bottom: 20px; border-radius: 4px; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h1>
+            Diagrama Entidad-Relación 
+            <span class="status-badge">✓ Cumple 3FN</span>
+        </h1>
+        
+        <div class="info-box">
+            <strong>Actualización de Normalización:</strong> Se ha optimizado la tabla <em>ServiceRequest</em> eliminando la redundancia de <code>companyId</code>. La relación ahora fluye lógicamente: <em>Solicitud -> Cliente -> Empresa</em>.
+        </div>
+
+        <div class="mermaid">
+            erDiagram
+                %% USUARIOS Y ROLES
+                User {
+                    UUID id PK
+                    String email UK "Unique"
+                    String password
+                    String fullName
+                    Enum role "ADMIN, CHOFER, CLIENTE"
+                    UUID companyId FK "Relación N:1"
+                }
+
+                %% EMPRESAS (Clientes Corporativos)
+                Company {
+                    UUID id PK
+                    String rut UK "Unique"
+                    String name
+                    String costCenter
+                }
+
+                %% FLOTA
+                Vehicle {
+                    UUID id PK
+                    String licensePlate UK
+                    String model
+                    Int year
+                    Enum status "DISPONIBLE, EN_RUTA, TALLER"
+                }
+
+                %% OPERACIÓN
+                ServiceRequest {
+                    UUID id PK
+                    String origin
+                    String destination
+                    Int passengerCount
+                    DateTime scheduledTime
+                    UUID clientId FK "El usuario que solicita"
+                }
+
+                Trip {
+                    UUID id PK
+                    Enum status "PENDIENTE, EN_CURSO, FINALIZADO"
+                    DateTime startTime
+                    DateTime endTime
+                    UUID serviceRequestId FK "Relación 1:1"
+                    UUID driverId FK "Chofer asignado"
+                    UUID vehicleId FK "Vehículo asignado"
+                }
+
+                %% FINANZAS
+                Transaction {
+                    UUID id PK
+                    String buyOrder UK "Orden de compra única"
+                    String sessionId "ID de sesión"
+                    Int amount "Monto ($)"
+                    Enum status "INITIALIZED, AUTHORIZED, REJECTED..."
+                    String token UK "Token Webpay"
+                    String authorizationCode "Cód. Autorización"
+                    Int responseCode "Cód. Respuesta (0=Exito)"
+                    String cardLast4Digits "Últimos 4 dígitos"
+                    Int installmentsNumber "Cuotas"
+                    DateTime transactionDate
+                    UUID tripId FK
+                }
+
+                %% RELACIONES
+                Company ||--o{ User : "emplea a"
+                User ||--o{ ServiceRequest : "realiza"
+                ServiceRequest |o--|| Trip : "genera"
+                User ||--o{ Trip : "conduce (rol Chofer)"
+                Vehicle ||--o{ Trip : "transporta"
+                Trip ||--o{ Transaction : "se paga en"
+        </div>
+    </div>
 
 </body>
-
 </html>

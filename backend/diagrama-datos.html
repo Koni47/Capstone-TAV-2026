@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modelo de Datos - Servicios El Loa</title>
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ startOnLoad: true, theme: 'default' });
+    </script>
+    <style>
+        body { font-family: sans-serif; padding: 20px; text-align: center; }
+        .merchant-container { max-width: 100%; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>Modelo de Datos - Servicios El Loa</h1>
+    <p>Generado automáticamente desde schema.prisma</p>
+    <div class="mermaid">
+    erDiagram
+        User {
+            String id PK
+            String email UK
+            String password
+            String fullName
+            Role role "Def: CLIENTE"
+            String phone
+            UserStatus status "Def: ACTIVO"
+            DateTime createdAt
+            DateTime updatedAt
+            String companyId FK
+        }
+        Company {
+            String id PK
+            String rut UK
+            String name
+            String costCenter
+            String address
+            String contactEmail
+            DateTime createdAt
+            DateTime updatedAt
+        }
+        Vehicle {
+            String id PK
+            String licensePlate UK
+            String model
+            Int year
+            VehicleStatus status "Def: DISPONIBLE"
+            DateTime technicalReviewDate
+            DateTime createdAt
+            DateTime updatedAt
+        }
+        ServiceRequest {
+            String id PK
+            String origin
+            String destination
+            Int passengerCount
+            DateTime requestedAt
+            String notes
+            DateTime createdAt
+            DateTime updatedAt
+            String clientId FK
+        }
+        Trip {
+            String id PK
+            TripStatus status "Def: PENDIENTE"
+            DateTime startTime
+            DateTime endTime
+            Int rating
+            String comment
+            String evidenceUrl
+            Int fare
+            DateTime createdAt
+            DateTime updatedAt
+            String serviceRequestId UK
+            String driverId FK
+            String vehicleId FK
+        }
+        Transaction {
+            String id PK
+            String buyOrder UK
+            String sessionId
+            Int amount
+            TransactionStatus status "Def: INITIALIZED"
+            String token UK
+            String transbankStatus
+            Int responseCode
+            String authorizationCode
+            String paymentTypeCode
+            Int installmentsAmount
+            Int installmentsNumber
+            String cardLast4Digits
+            String accountingDate
+            DateTime transactionDate
+            DateTime createdAt
+            DateTime updatedAt
+            String tripId FK
+        }
+
+        Company ||--o{ User : "tiene empleados"
+        User ||--o{ ServiceRequest : "solicita"
+        User ||--o{ Trip : "conduce (driver)"
+        Vehicle ||--o{ Trip : "realiza"
+        ServiceRequest ||--o| Trip : "genera"
+        Trip ||--o{ Transaction : "se paga con"
+    </div>
+</body>
+</html>
