@@ -1,7 +1,12 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { useTrips } from '../hooks/useTrips'
+import { useVehicles } from '../hooks/useVehicles'
+import { useAuth } from '../context/AuthContext'
+import reportService from '../services/report.service'
 import { useNavigate } from 'react-router-dom';
 import HtmlMockRenderer from '../components/HtmlMockRenderer';
 import { getHtmlMock } from '../services/mockApi';
+import Header from '../components/Header'
 
 // Declare Chart.js types
 declare global {
@@ -21,30 +26,41 @@ const DashboardWithCharts: React.FC<{ navigate: any }> = ({ navigate }) => {
   const chartServiciosRef = useRef<HTMLCanvasElement>(null);
   const chartViajesRef = useRef<HTMLCanvasElement>(null);
   const chartOcupacionRef = useRef<HTMLCanvasElement>(null);
+  // Chart instances refs to allow destroying before re-creating
+  const serviciosChartInstance = React.useRef<any | null>(null)
+  const viajesChartInstance = React.useRef<any | null>(null)
+  const ocupacionChartInstance = React.useRef<any | null>(null)
+
+  const { data: trips, loading: loadingTrips, totalTrips, tripsByMonth, recentTrips } = useTrips()
+  const { data: vehiclesRaw, loading: loadingVehicles } = useVehicles()
+  const vehicles = Array.isArray(vehiclesRaw) ? vehiclesRaw : []
+  const { user } = useAuth()
+  const [reportData, setReportData] = useState<any | null>(null)
 
   useEffect(() => {
     console.log('Loading Chart.js...');
 
-    // Load Chart.js dynamically
+    // Load Chart.js dynamically once (use a global promise to avoid double insertion)
     const loadChartJS = () => {
-      if (window.Chart) {
-        console.log('Chart.js already loaded, initializing charts...');
-        initCharts();
-        return;
+      const w = window as any
+      if (w.Chart) {
+        initCharts()
+        return
       }
-
-      console.log('Loading Chart.js from CDN...');
-      const script = document.createElement('script');
-      script.src = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js';
-      script.onload = () => {
-        console.log('Chart.js loaded successfully, initializing charts...');
-        initCharts();
-      };
-      script.onerror = (error) => {
-        console.error('Failed to load Chart.js:', error);
-      };
-      document.head.appendChild(script);
-    };
+      if (!w.__chartjsPromise) {
+        console.log('Loading Chart.js from CDN...');
+        w.__chartjsPromise = new Promise<void>((resolve, reject) => {
+          const script = document.createElement('script')
+          script.src = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js'
+          script.onload = () => resolve()
+          script.onerror = (e) => reject(e)
+          document.head.appendChild(script)
+        })
+      }
+      w.__chartjsPromise
+        .then(() => initCharts())
+        .catch((err: any) => console.error('Failed to load Chart.js:', err))
+    }
 
     const initCharts = () => {
       console.log('Initializing charts...');
@@ -52,13 +68,46 @@ const DashboardWithCharts: React.FC<{ navigate: any }> = ({ navigate }) => {
         // Chart: Ingresos por Tipo de Servicio
         if (chartServiciosRef.current) {
           console.log('Creating servicios chart...');
-          new window.Chart(chartServiciosRef.current, {
+          // destroy previous instance if exists
+          try {
+            if (serviciosChartInstance.current) {
+              serviciosChartInstance.current.destroy()
+              serviciosChartInstance.current = null
+            } else {
+              // also attempt Chart.getChart if present
+              const existing = (window as any).Chart?.getChart?.(chartServiciosRef.current as HTMLCanvasElement)
+              if (existing) {
+                existing.destroy()
+              }
+            }
+          } catch (e) {
+            // ignore destroy errors
+          }
+          // For now we derive revenues by grouping trips with fare by some category; fallback to mock if none
+          const revenueData = [0, 0, 0, 0]
+          // simple heuristic: distribute totals
+          const totalRevenue = trips.reduce((s, t) => s + (t.fare || 0), 0)
+          if (totalRevenue > 0) {
+            // split evenly as placeholder
+            const per = Math.floor(totalRevenue / 4)
+            revenueData[0] = per
+            revenueData[1] = per
+            revenueData[2] = per
+            revenueData[3] = totalRevenue - per * 3
+          } else {
+            revenueData[0] = 450000
+            revenueData[1] = 520000
+            revenueData[2] = 180000
+            revenueData[3] = 95000
+          }
+
+          serviciosChartInstance.current = new window.Chart(chartServiciosRef.current, {
             type: 'bar',
             data: {
               labels: ['Transporte Personal', 'Corporativo', 'Turismo', 'Otros'],
               datasets: [{
                 label: 'Ingresos ($)',
-                data: [450000, 520000, 180000, 95000],
+                data: revenueData,
                 backgroundColor: ['#003366', '#FF6600', '#0066CC', '#66BB6A'],
                 borderRadius: 8,
                 borderSkipped: false,
@@ -84,13 +133,26 @@ const DashboardWithCharts: React.FC<{ navigate: any }> = ({ navigate }) => {
         // Chart: Viajes por Mes
         if (chartViajesRef.current) {
           console.log('Creating viajes chart...');
-          new window.Chart(chartViajesRef.current, {
+          // destroy previous instance
+          try {
+            if (viajesChartInstance.current) {
+              viajesChartInstance.current.destroy()
+              viajesChartInstance.current = null
+            } else {
+              const existing = (window as any).Chart?.getChart?.(chartViajesRef.current as HTMLCanvasElement)
+              if (existing) existing.destroy()
+            }
+          } catch (e) {}
+
+          const labels = ['-5m', '-4m', '-3m', '-2m', '-1m', 'Ahora']
+          const dataPoints = tripsByMonth && tripsByMonth.length === 6 ? tripsByMonth : [180,195,210,225,235,245]
+          viajesChartInstance.current = new window.Chart(chartViajesRef.current, {
             type: 'line',
             data: {
-              labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio'],
+              labels,
               datasets: [{
                 label: 'Viajes Realizados',
-                data: [180, 195, 210, 225, 235, 245],
+                data: dataPoints,
                 borderColor: '#003366',
                 backgroundColor: 'rgba(0, 51, 102, 0.1)',
                 borderWidth: 3,
@@ -111,12 +173,27 @@ const DashboardWithCharts: React.FC<{ navigate: any }> = ({ navigate }) => {
         // Chart: Ocupación de Vehículos
         if (chartOcupacionRef.current) {
           console.log('Creating ocupacion chart...');
-          new window.Chart(chartOcupacionRef.current, {
+          try {
+            if (ocupacionChartInstance.current) {
+              ocupacionChartInstance.current.destroy()
+              ocupacionChartInstance.current = null
+            } else {
+              const existing = (window as any).Chart?.getChart?.(chartOcupacionRef.current as HTMLCanvasElement)
+              if (existing) existing.destroy()
+            }
+          } catch (e) {}
+
+          // derive occupancy from vehicles
+          const occupied = vehicles?.filter((v: any) => v.status === 'EN_RUTA').length ?? 12
+          const available = vehicles ? Math.max(0, vehicles.length - occupied) : 6
+          const maintenance = vehicles?.filter((v: any) => v.status === 'MANTENCION').length ?? 2
+
+          ocupacionChartInstance.current = new window.Chart(chartOcupacionRef.current, {
             type: 'doughnut',
             data: {
               labels: ['Ocupados', 'Disponibles', 'Mantenimiento'],
               datasets: [{
-                data: [12, 6, 2],
+                data: [occupied, Math.max(0, available), maintenance],
                 backgroundColor: ['#66BB6A', '#FFA726', '#EF5350'],
                 borderColor: '#fff',
                 borderWidth: 2
@@ -159,44 +236,43 @@ const DashboardWithCharts: React.FC<{ navigate: any }> = ({ navigate }) => {
     };
 
     // Load Chart.js after a short delay to ensure DOM is ready
-    setTimeout(loadChartJS, 100);
+    const t = setTimeout(loadChartJS, 100)
+
+    return () => {
+      clearTimeout(t)
+      // cleanup chart instances on unmount
+      try {
+        if (serviciosChartInstance.current) {
+          serviciosChartInstance.current.destroy()
+          serviciosChartInstance.current = null
+        }
+        if (viajesChartInstance.current) {
+          viajesChartInstance.current.destroy()
+          viajesChartInstance.current = null
+        }
+        if (ocupacionChartInstance.current) {
+          ocupacionChartInstance.current.destroy()
+          ocupacionChartInstance.current = null
+        }
+      } catch (e) {
+        // ignore
+      }
+    }
   }, []);
 
-  return (
+  // Fetch report data for ADMIN to populate charts/kpis
+  useEffect(() => {
+    if (user?.role === 'ADMIN') {
+      ;(async () => {
+        const d = await reportService.getDashboard()
+        setReportData(d)
+      })()
+    }
+  }, [user])
+
+    return (
     <div className="bg-surface font-sans text-gray-800 min-h-screen">
-      {/* Navigation */}
-      <nav className="bg-primary text-white shadow-lg sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-20">
-            <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/')}>
-              <span className="material-icons text-secondary">local_shipping</span>
-              <span className="font-bold text-xl tracking-wide">Dashboard Administrador</span>
-            </div>
-
-            <div className="hidden md:flex space-x-6">
-              <a onClick={() => navigate('/dashboard/admin')} className="text-secondary font-bold border-b-2 border-secondary px-1 pb-1 cursor-pointer">Dashboard</a>
-              <a onClick={() => navigate('/trips')} className="hover:text-gray-300 transition px-1 pb-1 cursor-pointer">Viajes</a>
-              <a onClick={() => navigate('/vehicles')} className="hover:text-gray-300 transition px-1 pb-1 cursor-pointer">Vehículos</a>
-              <a onClick={() => navigate('/users')} className="hover:text-gray-300 transition px-1 pb-1 cursor-pointer">Usuarios</a>
-              <a onClick={() => navigate('/companies')} className="hover:text-gray-300 transition px-1 pb-1 cursor-pointer">Clientes</a>
-            </div>
-
-            <div className="hidden md:flex items-center gap-3">
-              <button className="bg-primary p-1 rounded-full text-gray-400 hover:text-white transition">
-                <span className="material-icons">notifications</span>
-              </button>
-              <div className="flex items-center gap-3 pl-4 border-l border-blue-800">
-                <div className="text-right hidden sm:block">
-                  <p className="text-sm font-bold leading-none">Usuario</p>
-                  <p className="text-xs text-blue-300">Admin</p>
-                </div>
-                <div className="h-8 w-8 rounded-full bg-secondary flex items-center justify-center text-white text-xs font-bold ring-2 ring-blue-900">US</div>
-                <a onClick={() => navigate('/logout')} className="ml-2 text-sm font-semibold hover:text-gray-300 cursor-pointer">Salir</a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <Header />
 
       {/* Main Content */}
       <main className="flex-1 py-10 px-4 sm:px-6 lg:px-8 bg-gray-50/50">
@@ -232,7 +308,7 @@ const DashboardWithCharts: React.FC<{ navigate: any }> = ({ navigate }) => {
                   <span className="text-sm font-semibold text-gray-600">Total Viajes</span>
                 </div>
                 <div className="flex items-baseline gap-2">
-                  <h3 className="text-3xl font-bold text-gray-900">245</h3>
+                  <h3 className="text-3xl font-bold text-gray-900">{totalTrips ?? 0}</h3>
                   <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">+12%</span>
                 </div>
                 <p className="text-xs text-gray-500 mt-2">Mes actual</p>
@@ -252,7 +328,10 @@ const DashboardWithCharts: React.FC<{ navigate: any }> = ({ navigate }) => {
                   <span className="text-sm font-semibold text-gray-600">Ingresos Totales</span>
                 </div>
                 <div className="flex items-baseline gap-2">
-                  <h3 className="text-3xl font-bold text-gray-900">$1.2M</h3>
+                  <h3 className="text-3xl font-bold text-gray-900">{(() => {
+                    const totalRevenue = trips.reduce((s, t) => s + (t.fare || 0), 0)
+                    return totalRevenue > 0 ? `$${(totalRevenue).toLocaleString()}` : '$1.2M'
+                  })()}</h3>
                   <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">+18%</span>
                 </div>
                 <p className="text-xs text-gray-500 mt-2">Mes actual</p>
@@ -272,7 +351,7 @@ const DashboardWithCharts: React.FC<{ navigate: any }> = ({ navigate }) => {
                   <span className="text-sm font-semibold text-gray-600">Pendientes</span>
                 </div>
                 <div className="flex items-baseline gap-2">
-                  <h3 className="text-3xl font-bold text-gray-900">23</h3>
+                  <h3 className="text-3xl font-bold text-gray-900">{trips.filter(t => t.status === 'PENDIENTE').length ?? 0}</h3>
                 </div>
                 <p className="text-xs text-orange-600 font-medium mt-2 flex items-center gap-1">
                   <span className="material-icons text-xs">priority_high</span> Requieren atención
@@ -293,8 +372,8 @@ const DashboardWithCharts: React.FC<{ navigate: any }> = ({ navigate }) => {
                   <span className="text-sm font-semibold text-gray-600">Flota Activa</span>
                 </div>
                 <div className="flex items-baseline gap-2">
-                  <h3 className="text-3xl font-bold text-gray-900">90%</h3>
-                  <span className="text-sm text-gray-500 font-medium">18/20</span>
+                  <h3 className="text-3xl font-bold text-gray-900">{vehicles && vehicles.length > 0 ? `${Math.round(((vehicles.length - (vehicles.filter(v=>v.status!=='DISPONIBLE').length))/vehicles.length)*100) || 0}%` : '90%'}</h3>
+                  <span className="text-sm text-gray-500 font-medium">{vehicles ? `${vehicles.filter(v=>v.status==='DISPONIBLE').length}/${vehicles.length}` : '18/20'}</span>
                 </div>
                 <p className="text-xs text-green-600 font-medium mt-2 flex items-center gap-1">
                   <span className="material-icons text-xs">check_circle</span> Operatividad óptima

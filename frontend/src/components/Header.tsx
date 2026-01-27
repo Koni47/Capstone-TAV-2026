@@ -1,19 +1,38 @@
 import React, { useEffect, useState } from 'react'
 import { site } from '../mocks/data'
 import { Link, useNavigate } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
+import userService from '../services/user.service'
 
 export default function Header() {
   const navigate = useNavigate()
+  const { user, isAuthenticated } = useAuth()
   const [userEmail, setUserEmail] = useState<string | null>(null)
   const [userRole, setUserRole] = useState<string | null>(null)
   const [notifications, setNotifications] = useState<number>(0)
 
   useEffect(() => {
-    setUserEmail(localStorage.getItem('userEmail'))
-    setUserRole(localStorage.getItem('userRole'))
+    // prefer user from auth context
+    if (isAuthenticated && user) {
+      setUserEmail(user.email)
+      setUserRole(user.role as string)
+      // optionally fetch more profile details
+      ;(async () => {
+        try {
+          const profile = await userService.getProfile()
+          setUserEmail(profile.email || user.email)
+          setUserRole(profile.role || user.role)
+        } catch (err) {
+          // ignore - keep using auth user
+        }
+      })()
+    } else {
+      setUserEmail(localStorage.getItem('userEmail'))
+      setUserRole(localStorage.getItem('userRole'))
+    }
     const n = parseInt(localStorage.getItem('notifications') || '0', 10)
     setNotifications(isNaN(n) ? 0 : n)
-  }, [])
+  }, [isAuthenticated, user])
 
   const handleLogout = () => {
     localStorage.removeItem('userRole')
@@ -34,7 +53,7 @@ export default function Header() {
 
   // Define navigation based on user role
   const getNavigation = () => {
-    if (userRole === 'admin') {
+    if ((userRole || '').toUpperCase() === 'ADMIN' || (userRole || '').toUpperCase() === 'admin') {
       return [
         { label: 'Dashboard', href: '/dashboard/admin' },
         { label: 'Solicitudes', href: '/service-request' },

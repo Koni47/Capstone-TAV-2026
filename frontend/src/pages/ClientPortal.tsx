@@ -1,6 +1,7 @@
 import { site, getHtmlMock } from '../services/mockApi';
 import HtmlMockRenderer from '../components/HtmlMockRenderer'
 import { useNavigate } from 'react-router-dom';
+import Header from '../components/Header'
 
 export default function ClientPortal() {
   const navigate = useNavigate();
@@ -18,45 +19,7 @@ export default function ClientPortal() {
 
   return (
     <div className="font-sans bg-gray-50 text-gray-800 min-h-screen">
-      {/* Navigation */}
-      <nav className="bg-primary text-white shadow-lg w-full sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center">
-              <a href="/" className="flex-shrink-0 text-white flex items-center gap-2 font-bold text-xl cursor-pointer">
-                <span className="material-icons text-secondary">local_shipping</span> EL LOA
-              </a>
-              <div className="hidden md:block">
-                <div className="ml-10 flex items-baseline space-x-4">
-                  <a onClick={redirectToDashboard} className="text-gray-300 hover:bg-primary-light hover:text-white px-3 py-2 rounded-md text-sm font-medium transition cursor-pointer">Dashboard</a>
-                  <a href="/service-request" className="text-gray-300 hover:bg-primary-light hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Solicitudes</a>
-                  
-                  <a href="/users" className="bg-primary-dark text-white px-3 py-2 rounded-md text-sm font-medium border-b-4 border-secondary h-16 flex items-center pt-1">
-                    Usuarios
-                  </a>
-                  
-                  <a href="/companies" className="text-gray-300 hover:bg-primary-light hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Clientes</a>
-                  <a href="/vehicles" className="text-gray-300 hover:bg-primary-light hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Flota</a>
-                </div>
-              </div>
-            </div>
-            <div className="flex items-center gap-4">
-              <button className="bg-primary p-1 rounded-full text-gray-400 hover:text-white transition">
-                <span className="material-icons">notifications</span>
-              </button>
-              <div className="flex items-center gap-3 pl-4 border-l border-primary-light">
-                <div className="text-right hidden sm:block">
-                  <p className="text-sm font-bold leading-none user-name text-white">{site.clientPortalMockData.company.name}</p>
-                  <p className="text-xs text-secondary user-role">Admin</p>
-                </div>
-                <div className="h-8 w-8 rounded-full bg-secondary flex items-center justify-center text-white text-xs font-bold ring-2 ring-primary-dark user-initials">{site.clientPortalMockData.company.initials}</div>
-                <a href="/logout" className="ml-2 text-sm font-semibold hover:text-secondary transition-colors">Salir</a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </nav>
-
+      <Header />
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}

@@ -24,6 +24,10 @@ import VehicleEdit from './pages/VehicleEdit'
 import VehicleDetail from './pages/VehicleDetail'
 import VehicleAdd from './pages/VehicleAdd'
 import Reports from './pages/Reports'
+import ReportsDashboard from './pages/ReportsDashboard'
+import VehicleStats from './pages/VehicleStats'
+import PaymentsAdmin from './pages/PaymentsAdmin'
+import ServiceRequestsList from './pages/ServiceRequestsList'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import Logout from './pages/Logout'
@@ -81,6 +85,11 @@ export default function App() {
       <Route path="/payment" element={<Payment />} />
 
       <Route path="/reports" element={<Reports />} />
+      <Route path="/reports/dashboard" element={<ReportsDashboard />} />
+      <Route path="/reports/billing" element={<ReportsDashboard />} />
+      <Route path="/vehicles/stats" element={<VehicleStats />} />
+      <Route path="/payments/admin" element={<PaymentsAdmin />} />
+      <Route path="/service-requests/list" element={<ServiceRequestsList />} />
       <Route path="/complaints" element={<Complaints />} />
 
       <Route path="/contact" element={<ClientPortal />} />
