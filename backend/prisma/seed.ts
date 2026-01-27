@@ -103,6 +103,34 @@ async function main() {
   });
 
   console.log('✅ Usuarios creados');
+
+  // 5. Crear Solicitud y Viaje de Prueba (Para probar pagos)
+  const clientUser = await prisma.user.findUnique({ where: { email: 'contacto@minera.cl' } });
+  
+  if (clientUser) {
+      const request = await prisma.serviceRequest.create({
+        data: {
+            origin: 'Aeropuerto Calama',
+            destination: 'Minera Escondida',
+            passengerCount: 3,
+            clientId: clientUser.id,
+            companyId: minera.id,
+            notes: 'Viaje urgente de prueba de pagos'
+        }
+      });
+
+      const trip = await prisma.trip.create({
+          data: {
+              serviceRequestId: request.id,
+              status: 'PENDIENTE',
+              fare: 50000 // Monto de prueba para transbank
+          }
+      });
+      
+      console.log('✅ Viaje de Prueba creado con ID:', trip.id);
+      console.log('   -> Usa este ID para probar el endpoint: POST /api/v1/payments/webpay/init');
+  }
+
   console.log('🚀 Poblamiento finalizado correctamente.');
 }
 
