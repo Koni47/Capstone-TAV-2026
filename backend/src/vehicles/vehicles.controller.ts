@@ -1,4 +1,15 @@
-import { Controller, Get, Post, Patch, Delete, Param, Body, Query, ParseIntPipe, DefaultValuePipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Delete,
+  Param,
+  Body,
+  Query,
+  ParseIntPipe,
+  DefaultValuePipe,
+} from '@nestjs/common';
 import { VehiclesService } from './vehicles.service';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
@@ -36,8 +47,8 @@ export class VehiclesController {
   @Get('available')
   @ApiOperation({ summary: 'Vehículos Disponibles' })
   @ApiResponse({ status: 200, description: 'Lista de vehículos disponibles.' })
-  findAvailable(@Query() query: any) {
-    return this.vehiclesService.findAvailable(query);
+  findAvailable() {
+    return this.vehiclesService.findAvailable();
   }
 
   @Get(':id')

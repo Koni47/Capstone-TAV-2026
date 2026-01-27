@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Usuarios de Prueba - Servicios El Loa</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        .card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            padding: 20px;
+        }
+        .card h2 {
+            margin-top: 0;
+            color: #2980b9;
+            border-bottom: 2px solid #f0f2f5;
+            padding-bottom: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f8f9fa;
+            color: #555;
+        }
+        .highlight {
+            font-weight: bold;
+            color: #e74c3c;
+        }
+        .note {
+            background-color: #e8f6f3;
+            border-left: 5px solid #1abc9c;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        code {
+            background: #eee;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Credenciales de Acceso (Entorno Pruebas)</h1>
+    <p style="text-align: center;">Usuarios generados automáticamente por el seed de la base de datos.</p>
+
+    <!-- ADMINISTRADORES -->
+    <div class="card">
+        <h2>🛡️ Administradores</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Email</th>
+                    <th>Password</th>
+                    <th>Nombre</th>
+                    <th>Detalles</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>admin@serviciosloa.cl</code></td>
+                    <td><code>123456</code></td>
+                    <td>Roberto Administrador</td>
+                    <td>Admin General</td>
+                </tr>
+                <tr>
+                    <td><code>za.konig@duocuc.cl</code></td>
+                    <td><code class="highlight">duuocuc</code></td>
+                    <td>Za Konig</td>
+                    <td>Admin Personalizado</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- CHOFERES -->
+    <div class="card">
+        <h2>🚍 Choferes</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Email</th>
+                    <th>Password</th>
+                    <th>Nombre</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>juan.chofer@serviciosloa.cl</code></td>
+                    <td><code>123456</code></td>
+                    <td>Juan Pérez</td>
+                    <td>Activo</td>
+                </tr>
+                <tr>
+                    <td><code>luis.chofer@serviciosloa.cl</code></td>
+                    <td><code>123456</code></td>
+                    <td>Luis González</td>
+                    <td>Activo</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- CLIENTES -->
+    <div class="card">
+        <h2>🏢 Clientes (Empresas & Particular)</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Email</th>
+                    <th>Password</th>
+                    <th>Empresa</th>
+                    <th>Rol</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>contacto@minera.cl</code></td>
+                    <td><code>123456</code></td>
+                    <td>Minera Escondida</td>
+                    <td>CLIENTE</td>
+                </tr>
+                <tr>
+                    <td><code>logistica@hotel.cl</code></td>
+                    <td><code>123456</code></td>
+                    <td>Hotel Calama Inn</td>
+                    <td>CLIENTE</td>
+                </tr>
+                <tr>
+                    <td><code>particular@gmail.com</code></td>
+                    <td><code>123456</code></td>
+                    <td>- (Particular)</td>
+                    <td>CLIENTE</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- VIAJE DE PRUEBA -->
+    <div class="note">
+        <h3>🚀 Datos de Prueba Adicionales</h3>
+        <p>Se ha generado un viaje de prueba asociado a <strong>Minera Escondida</strong> listo para probar el pago.</p>
+        <p><strong>ID del Viaje (Variable):</strong> Revisa la consola al ejecutar <code>npm run db:seed</code> para obtener el UUID exacto.</p>
+        <p><strong>Monto:</strong> $50.000 CLP</p>
+    </div>
+
+</body>
+</html>
