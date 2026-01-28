@@ -2,15 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-:root{
-  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+@layer base {
+  body {
+    @apply bg-gray-50 text-gray-900;
+  }
 }
-
-html,body,#root{height:100%;}
-body{
-  font-family: var(--font-sans);
-  -webkit-font-smoothing:antialiased;
-  -moz-osx-font-smoothing:grayscale;
-}
-
-/* Lienzo limpio: puedes añadir utilidades globales aquí */

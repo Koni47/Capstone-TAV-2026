@@ -1,97 +1,86 @@
-import React, { createContext, useContext, useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import * as authService from '../services/auth.service'
-import api from '../lib/axios'
+import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { UserPayload, LoginCredentials, RegisterDTO } from "../types/auth.types";
+import { authService } from "../services/auth.service";
 
-type User = {
-  id: string
-  fullName: string
-  role: string
-  email: string
+interface AuthContextType {
+  user: UserPayload | null;
+  isAuthenticated: boolean;
+  isLoading: boolean;
+  login: (credentials: LoginCredentials) => Promise<void>;
+  register: (data: RegisterDTO) => Promise<void>;
+  logout: () => void;
 }
 
-type AuthContextValue = {
-  user: User | null
-  token: string | null
-  isAuthenticated: boolean
-  isLoading: boolean
-  login: (credentials: { email: string; password: string }) => Promise<void>
-  logout: () => void
-}
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const AuthContext = createContext<AuthContextValue | undefined>(undefined)
-
-export const AuthProvider: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null)
-  const [token, setToken] = useState<string | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
-  const navigate = useNavigate()
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
+  const [user, setUser] = useState<UserPayload | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    const init = async () => {
-      setIsLoading(true)
-      try {
-        const stored = localStorage.getItem('token')
-        if (stored) {
-          setToken(stored)
-          // try to validate / fetch profile; if endpoint not available, this will fail and we clear
-          try {
-            const profile = await authService.fetchProfile()
-            setUser(profile)
-          } catch (err) {
-            // silently clear invalid token
-            localStorage.removeItem('token')
-            setToken(null)
-            setUser(null)
-          }
+    const initializeAuth = async () => {
+      const token = localStorage.getItem("token");
+      if (token) {
+        try {
+          const userData = await authService.getProfile();
+          setUser(userData);
+          setIsAuthenticated(true);
+        } catch (error) {
+          console.error("Auth initialization failed", error);
+          localStorage.removeItem("token");
+          setUser(null);
+          setIsAuthenticated(false);
         }
-      } finally {
-        setIsLoading(false)
       }
-    }
-    init()
-  }, [])
+      setIsLoading(false);
+    };
 
-  const login = async (credentials: { email: string; password: string }) => {
-    setIsLoading(true)
+    initializeAuth();
+  }, []);
+
+  const login = async (credentials: LoginCredentials) => {
     try {
-      const resp = await authService.login(credentials)
-      localStorage.setItem('token', resp.token)
-      setToken(resp.token)
-      setUser(resp.user)
-      // ensure axios will include token (interceptor reads localStorage), but set default header too
-      api.defaults.headers.common.Authorization = `Bearer ${resp.token}`
-      // redirect based on role
-      if (resp.user.role === 'ADMIN') navigate('/dashboard')
-      else if (resp.user.role === 'DRIVER') navigate('/dashboard')
-      else navigate('/')
-    } finally {
-      setIsLoading(false)
+      const { user, token } = await authService.login(credentials);
+      localStorage.setItem("token", token);
+      setUser(user);
+      setIsAuthenticated(true);
+    } catch (error) {
+      throw error; // Re-throw to be handled by the UI
     }
-  }
+  };
+
+  const register = async (data: RegisterDTO) => {
+    try {
+      await authService.register(data);
+      // Opcional: Auto-login luego del registro si el backend devolviera token
+      // O simplemente no hacer nada y dejar que el UI redirija al login
+      // En este caso, para ser consistentes con el authService que no devuelve token:
+      await login({ email: data.email, password: data.password }); 
+    } catch (error) {
+      throw error;
+    }
+  };
 
   const logout = () => {
-    localStorage.removeItem('token')
-    setToken(null)
-    setUser(null)
-    delete api.defaults.headers.common.Authorization
-    navigate('/login')
+    localStorage.removeItem("token");
+    setUser(null);
+    setIsAuthenticated(false);
+    // Force reload/redirect could be handled here or in UI
+    window.location.href = "/login";
+  };
+
+  return (
+    <AuthContext.Provider value={{ user, isAuthenticated, isLoading, login, register, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error("useAuth must be used within an AuthProvider");
   }
-
-  const value: AuthContextValue = {
-    user,
-    token,
-    isAuthenticated: !!user || !!token,
-    isLoading,
-    login,
-    logout,
-  }
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
-}
-
-export function useAuth() {
-  const ctx = useContext(AuthContext)
-  if (!ctx) throw new Error('useAuth must be used within AuthProvider')
-  return ctx
-}
+  return context;
+};

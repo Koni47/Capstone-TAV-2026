@@ -1,25 +1,56 @@
-import axios from 'axios'
-
-const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
+import axios from "axios";
 
 const api = axios.create({
-  baseURL,
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:3000/api/v1",
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
-})
+});
 
-// Request interceptor: attach token from localStorage if present
-api.interceptors.request.use((config) => {
-  try {
-    const token = localStorage.getItem('token')
-    if (token && config.headers) {
-      config.headers.Authorization = `Bearer ${token}`
+api.interceptors.request.use(
+  (config) => {
+    // DEBUG: Imprimir la URL completa de la solicitud
+    console.log(`[Axios Request] ${config.method?.toUpperCase()} ${config.baseURL}${config.url}`);
+    
+    const token = localStorage.getItem("token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
     }
-  } catch (err) {
-    // ignore
+    return config;
+  },
+  (error) => {
+    console.error("[Axios Request Error]", error);
+    return Promise.reject(error);
   }
-  return config
-})
+);
 
-export default api
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    console.error("[Axios Response Error]", {
+      url: error.config?.url,
+      method: error.config?.method,
+      status: error.response?.status,
+      data: error.response?.data
+    });
+    return Promise.reject(error);
+  }
+);
+
+api.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      localStorage.removeItem("token");
+      // Optional: Redirect to login only if not already there to avoid loops
+      if (window.location.pathname !== "/login") {
+        window.location.href = "/login";
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
+export default api;

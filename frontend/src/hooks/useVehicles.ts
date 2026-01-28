@@ -1,43 +1,33 @@
-import { useCallback, useEffect, useState } from 'react'
-import { Vehicle } from '../types/vehicle.type'
-import * as vehicleService from '../services/vehicle.service'
-import { useAuth } from '../context/AuthContext'
+import { useState, useEffect } from "react";
+import { vehicleService } from "../services/vehicle.service";
+import { Vehicle } from "../types/vehicle.types";
 
-export function useVehicles() {
-  const { user } = useAuth()
-  const [data, setData] = useState<Vehicle[]>([])
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-
-  const load = useCallback(async () => {
-    setLoading(true)
-    setError(null)
-    try {
-      let vehicles: Vehicle[] = []
-      // role-based endpoint selection
-      if (user?.role === 'CHOFER') {
-        // prefer `my` endpoint if available
-        try {
-          vehicles = await vehicleService.getMyVehicles()
-        } catch (err) {
-          // fallback to driver id endpoint
-          vehicles = await vehicleService.getByDriver(user.id)
-        }
-      } else {
-        vehicles = await vehicleService.getAll()
-      }
-      setData(vehicles)
-    } catch (err: any) {
-      setError(err?.message || 'Error cargando vehículos')
-    } finally {
-      setLoading(false)
-    }
-  }, [user])
+export const useVehicles = (page = 1, limit = 10) => {
+  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalCount, setTotalCount] = useState(0);
 
   useEffect(() => {
-    // load when auth is available
-    load()
-  }, [load])
+    const fetchVehicles = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await vehicleService.getAll(page, limit);
+        setVehicles(response.data);
+        setTotalPages(response.totalPages);
+        setTotalCount(response.total);
+      } catch (err) {
+        setError("Error al cargar vehículos.");
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  return { data, loading, error, refresh: load }
-}
+    fetchVehicles();
+  }, [page, limit]);
+
+  return { vehicles, loading, error, totalPages, totalCount };
+};
