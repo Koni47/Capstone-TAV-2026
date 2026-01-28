@@ -63,6 +63,7 @@ export const AppRouter = () => {
           <Route path="/client/request" element={<ClientRequest />} />
           <Route path="/client/payment" element={<PaymentPage />} />
           <Route path="/client/payment/commit" element={<PaymentResultPage />} />
+          <Route path="/payment-result" element={<PaymentResultPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/logout" element={<LogoutPage />} />
@@ -109,7 +110,7 @@ export const AppRouter = () => {
             {/* Client Routes */}
             <Route path="/client/dashboard" element={<ClientDashboard />} />
             {/* Request moved to public */}
-            <Route path="/client/history" element={<ServiceHistoryPage />} />
+            <Route path="/client/trips" element={<ServiceHistoryPage />} />
 
             {/* Shared Routes */}
             <Route path="/profile" element={<ProfilePage />} />

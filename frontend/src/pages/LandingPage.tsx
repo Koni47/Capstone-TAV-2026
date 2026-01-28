@@ -1,7 +1,8 @@
-// import React from "react";
+import React, { useState } from "react";
 import PublicNavbar from '../components/layout/PublicNavbar';
 import PublicFooter from '../components/layout/PublicFooter';
 import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import {
   ShieldCheck,
   Crosshair,
@@ -15,17 +16,82 @@ import {
   CalendarCheck,
   CreditCard,
   Circle,
+  Calculator,
+  User,
+  Lock,
+  Clock // Added Clock
 } from 'lucide-react';
 
 /**
- * Landing Page - Identical to mockups/index.html
+ * Landing Page
  */
 const LandingPage = () => {
   const navigate = useNavigate();
+  const { user, login, isAuthenticated } = useAuth();
+  
+  // Tabs State
+  const [activeTab, setActiveTab] = useState<'quote' | 'request'>('quote');
 
-  const handleSearch = (e: React.FormEvent) => {
+  // Quote State
+  const [quoteInput, setQuoteInput] = useState({ origin: '', destination: '' });
+  const [quoteResult, setQuoteResult] = useState<{ amount: number; distance: string, time: string } | null>(null);
+
+  // Login State (for Request Tab)
+  const [loginData, setLoginData] = useState({ email: '', password: '' });
+  const [loginError, setLoginError] = useState('');
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+
+  // --- Handlers ---
+
+  const handleQuote = (e: React.FormEvent) => {
     e.preventDefault();
-    navigate('/client/request');
+    // Lógica Dummy de Cotización
+    const origin = quoteInput.origin.toLowerCase();
+    const dest = quoteInput.destination.toLowerCase();
+    
+    let basePrice = 15000;
+    let distance = "15 km";
+    let time = "25 min";
+
+    // Simulación simple: Santiago Centro <-> Norte
+    if ((origin.includes('santiago') || origin.includes('centro')) && 
+        (dest.includes('norte') || dest.includes('antofagasta') || dest.includes('calama') || dest.includes('serena'))) {
+      basePrice = 450000;
+      distance = "1,350 km";
+      time = "14 hrs";
+    } else if (origin.includes('aeropuerto') || dest.includes('aeropuerto')) {
+       basePrice = 25000;
+       distance = "25 km";
+       time = "45 min";
+    }
+
+    setQuoteResult({
+      amount: basePrice,
+      distance,
+      time
+    });
+  };
+
+  const handleLoginAndRequest = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoginError('');
+    setIsLoggingIn(true);
+    try {
+      await login(loginData);
+      navigate('/client/request');
+    } catch (err) {
+      setLoginError('Credenciales incorrectas');
+    } finally {
+      setIsLoggingIn(false);
+    }
+  };
+
+  const handleRequestClick = () => {
+    if (isAuthenticated) {
+      navigate('/client/request');
+    } else {
+      setActiveTab('request');
+    }
   };
 
   return (
@@ -33,7 +99,7 @@ const LandingPage = () => {
       <PublicNavbar />
 
       {/* --- HERO SECTION --- */}
-      <section className="relative min-h-[650px] flex items-center pt-20 pb-20">
+      <section className="relative min-h-[700px] flex items-center pt-24 pb-20">
         <img
           src="/assets/img/hero.jpg"
           alt="Vista Pasajero Carretera"
@@ -78,67 +144,193 @@ const LandingPage = () => {
             </div>
           </div>
 
-          {/* Right Form Card */}
-          <div className="bg-white rounded-2xl shadow-2xl p-6 md:p-8 transform lg:translate-y-8 border-t-8 border-secondary">
-            <h3 className="text-primary font-bold text-xl mb-6 flex items-center gap-2">
-              <Car className="text-primary" size={24} />
-              Cotiza tu traslado ahora
-            </h3>
-
-            <div className="flex bg-gray-100 p-1 rounded-lg mb-6">
-              <button className="flex-1 py-2 px-4 rounded-md bg-white text-primary font-bold shadow-sm transition">
-                Persona Natural
+          {/* Right Form Card (COTIZADOR / LOGIN) */}
+          <div className="bg-white rounded-2xl shadow-2xl overflow-hidden transform lg:translate-y-8 border-t-8 border-secondary">
+            
+            {/* Tabs Header */}
+            <div className="flex text-sm font-bold border-b border-gray-100">
+              <button 
+                onClick={() => setActiveTab('quote')}
+                className={`flex-1 py-4 flex items-center justify-center gap-2 transition-colors ${
+                  activeTab === 'quote' 
+                    ? 'bg-white text-primary border-b-2 border-primary' 
+                    : 'bg-gray-50 text-gray-400 hover:text-gray-600'
+                }`}
+              >
+                <Calculator size={18} />
+                Cotizar Rápido
               </button>
-              <button className="flex-1 py-2 px-4 rounded-md text-gray-500 hover:text-primary font-medium transition">
-                Empresa / Convenio
+              <button 
+                onClick={handleRequestClick}
+                className={`flex-1 py-4 flex items-center justify-center gap-2 transition-colors ${
+                  activeTab === 'request' 
+                    ? 'bg-white text-secondary border-b-2 border-secondary' 
+                    : 'bg-gray-50 text-gray-400 hover:text-gray-600'
+                }`}
+              >
+                <Car size={18} />
+                Agendar Viaje
               </button>
             </div>
 
-            <form className="space-y-4" onSubmit={handleSearch}>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="relative">
-                  <label className="text-xs font-bold text-gray-500 uppercase ml-1">Origen</label>
-                  <div className="relative mt-1">
-                    <Circle size={16} className="absolute left-3 top-2.5 text-gray-400" />
-                    <input
-                      type="text"
-                      placeholder="Aeropuerto, Casa..."
-                      className="w-full pl-9 pr-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-secondary outline-none"
-                    />
-                  </div>
+            <div className="p-6 md:p-8">
+              
+              {/* --- TAB 1: COTIZADOR --- */}
+              {activeTab === 'quote' && (
+                <div className="animate-fade-in">
+                  <h3 className="text-primary font-bold text-xl mb-4">
+                    Estima tu tarifa al instante
+                  </h3>
+                  
+                  <form onSubmit={handleQuote} className="space-y-4">
+                    <div className="space-y-3">
+                      <div className="relative">
+                        <label className="text-xs font-bold text-gray-500 uppercase ml-1">Origen</label>
+                        <div className="relative mt-1">
+                          <Circle size={16} className="absolute left-3 top-3 text-green-500" />
+                          <input
+                            type="text"
+                            placeholder="Ej: Santiago Centro, Aeropuerto..."
+                            className="w-full pl-9 pr-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-secondary outline-none transition"
+                            value={quoteInput.origin}
+                            onChange={(e) => setQuoteInput({...quoteInput, origin: e.target.value})}
+                            required
+                          />
+                        </div>
+                      </div>
+                      <div className="relative">
+                        <label className="text-xs font-bold text-gray-500 uppercase ml-1">Destino</label>
+                        <div className="relative mt-1">
+                          <MapPin size={18} className="absolute left-3 top-2.5 text-red-500" />
+                          <input
+                            type="text"
+                            placeholder="Ej: Antofagasta, Calama, Norte..."
+                            className="w-full pl-9 pr-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-secondary outline-none transition"
+                            value={quoteInput.destination}
+                            onChange={(e) => setQuoteInput({...quoteInput, destination: e.target.value})}
+                            required
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {!quoteResult ? (
+                      <button type="submit" className="w-full mt-2 bg-primary hover:bg-[#002244] text-white font-bold py-3 rounded-lg shadow-lg flex justify-center items-center gap-2 transition group">
+                        Calcular Tarifa Estimada
+                      </button>
+                    ) : (
+                      <div className="mt-4 bg-blue-50 border border-blue-100 rounded-xl p-4 text-center animate-fade-in-up">
+                        <p className="text-xs text-gray-500 uppercase font-bold mb-1">Tarifa Estimada</p>
+                        <div className="text-3xl font-extrabold text-primary mb-1">
+                          ${quoteResult.amount.toLocaleString('es-CL')}
+                        </div>
+                        <div className="flex justify-center gap-4 text-xs text-gray-500 mt-2">
+                           <span className="flex items-center gap-1"><Car size={12}/> {quoteResult.distance}</span>
+                           <span className="flex items-center gap-1"><Clock size={12}/> {quoteResult.time}</span>
+                        </div>
+                        <div className="mt-4 flex gap-2">
+                           <button 
+                             type="button" 
+                             onClick={() => setQuoteResult(null)}
+                             className="flex-1 py-2 text-sm text-gray-600 hover:bg-gray-200 rounded-lg transition"
+                           >
+                             Recalcular
+                           </button>
+                           <button 
+                             type="button" 
+                             onClick={() => setActiveTab('request')}
+                             className="flex-1 py-2 text-sm bg-secondary text-white font-bold rounded-lg hover:bg-orange-600 transition shadow-sm"
+                           >
+                             Reservar Ahora
+                           </button>
+                        </div>
+                      </div>
+                    )}
+                  </form>
                 </div>
-                <div className="relative">
-                  <label className="text-xs font-bold text-gray-500 uppercase ml-1">Destino</label>
-                  <div className="relative mt-1">
-                    <MapPin size={18} className="absolute left-3 top-2.5 text-gray-400" />
-                    <input
-                      type="text"
-                      placeholder="Hotel, Faena..."
-                      className="w-full pl-9 pr-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-secondary outline-none"
-                    />
-                  </div>
+              )}
+
+              {/* --- TAB 2: SOLICITAR (LOGIN) --- */}
+              {activeTab === 'request' && (
+                <div className="animate-fade-in">
+                  {isAuthenticated ? (
+                    <div className="text-center py-8">
+                       <ShieldCheck className="mx-auto text-green-500 mb-4" size={48} />
+                       <h3 className="text-xl font-bold text-gray-800 mb-2">Bienvenido de nuevo</h3>
+                       <p className="text-gray-500 mb-6">Ya estás identificado como {user?.fullName}</p>
+                       <button 
+                         onClick={() => navigate('/client/request')}
+                         className="w-full bg-secondary hover:bg-orange-600 text-white font-bold py-3 rounded-lg shadow-lg transition"
+                       >
+                         Continuar a Reserva
+                       </button>
+                    </div>
+                  ) : (
+                    <>
+                      <h3 className="text-primary font-bold text-xl mb-2">
+                        Acceso Clientes
+                      </h3>
+                      <p className="text-gray-500 text-sm mb-4">
+                        Ingresa para gestionar y reservar tus viajes de forma rápida.
+                      </p>
+
+                      <form onSubmit={handleLoginAndRequest} className="space-y-4">
+                        <div>
+                          <label className="text-xs font-bold text-gray-500 uppercase ml-1">Email</label>
+                          <div className="relative mt-1">
+                            <User size={18} className="absolute left-3 top-2.5 text-gray-400" />
+                            <input
+                              type="email"
+                              className="w-full pl-9 pr-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-secondary outline-none transition"
+                              placeholder="tu@email.com"
+                              value={loginData.email}
+                              onChange={(e) => setLoginData({...loginData, email: e.target.value})}
+                              required
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <label className="text-xs font-bold text-gray-500 uppercase ml-1">Contraseña</label>
+                          <div className="relative mt-1">
+                            <Lock size={18} className="absolute left-3 top-2.5 text-gray-400" />
+                            <input
+                              type="password"
+                              className="w-full pl-9 pr-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-secondary outline-none transition"
+                              placeholder="••••••••"
+                              value={loginData.password}
+                              onChange={(e) => setLoginData({...loginData, password: e.target.value})}
+                              required
+                            />
+                          </div>
+                        </div>
+
+                        {loginError && (
+                          <div className="text-red-500 text-xs bg-red-50 p-2 rounded border border-red-100">
+                            {loginError}
+                          </div>
+                        )}
+
+                        <button 
+                          type="submit" 
+                          disabled={isLoggingIn}
+                          className="w-full bg-primary hover:bg-[#002244] text-white font-bold py-3 rounded-lg shadow-lg flex justify-center items-center gap-2 transition disabled:opacity-70"
+                        >
+                          {isLoggingIn ? 'Ingresando...' : 'Ingresar y Reservar'}
+                          {!isLoggingIn && <ArrowRight size={20} />}
+                        </button>
+                        
+                        <div className="text-center mt-3">
+                          <Link to="/register" className="text-xs text-secondary hover:underline font-medium">
+                            ¿No tienes cuenta? Regístrate aquí
+                          </Link>
+                        </div>
+                      </form>
+                    </>
+                  )}
                 </div>
-              </div>
+              )}
 
-              <div>
-                <label className="text-xs font-bold text-gray-500 uppercase ml-1">
-                  Fecha y Hora
-                </label>
-                <input
-                  type="datetime-local"
-                  className="w-full mt-1 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-secondary outline-none text-gray-600"
-                />
-              </div>
-
-              <button className="w-full bg-primary hover:bg-[#002244] text-white font-bold py-3 rounded-lg shadow-lg flex justify-center items-center gap-2 transition group">
-                Ver Precios y Disponibilidad
-                <ArrowRight className="group-hover:translate-x-1 transition-transform" size={20} />
-              </button>
-
-              <p className="text-center text-xs text-gray-400 mt-2">
-                Pago seguro con WebPay y Transferencia
-              </p>
-            </form>
+            </div>
           </div>
         </div>
       </section>

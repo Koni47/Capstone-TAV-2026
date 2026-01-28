@@ -1,191 +1,210 @@
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { MapPin, Calendar, Clock, ArrowRight, Download, Search, Filter } from 'lucide-react';
+import { MapPin, Calendar, Clock, ArrowRight, Search, Filter, AlertCircle, Loader2 } from 'lucide-react';
+import { tripService } from '../../services/trip.service';
+import { Trip, TripStatus } from '../../types/trip.types';
+import { Badge } from '../../components/ui/Badge';
+import { Button } from '../../components/ui/Button';
+import { Card } from '../../components/ui/Card';
 
 /**
  * ServiceHistoryPage
  * Historial de servicios (trips) para el cliente.
- * Basado en trips.html pero adaptado a la vista de cliente.
  */
 const ServiceHistoryPage = () => {
-  // Mock Data
-  const trips = [
-    {
-      id: 'TR-8842',
-      date: '27 Ene 2026',
-      time: '14:30',
-      origin: 'Aeropuerto CJC',
-      destination: 'Hotel Diego de Almagro',
-      status: 'PENDING',
-      price: '$53.550',
-      driver: 'Pendiente',
-    },
-    {
-      id: 'TR-8801',
-      date: '15 Ene 2026',
-      time: '09:00',
-      origin: 'Centro Calama',
-      destination: 'Mina Chuquicamata',
-      status: 'COMPLETED',
-      price: '$35.000',
-      driver: 'Juan Pérez',
-    },
-    {
-      id: 'TR-8750',
-      date: '10 Dic 2025',
-      time: '18:45',
-      origin: 'Mall Plaza',
-      destination: 'Aeropuerto CJC',
-      status: 'COMPLETED',
-      price: '$22.000',
-      driver: 'Pedro Díaz',
-    },
-    {
-      id: 'TR-8720',
-      date: '05 Dic 2025',
-      time: '21:00',
-      origin: 'Hotel Geotel',
-      destination: 'Restaurante Adobe',
-      status: 'CANCELLED',
-      price: '$0',
-      driver: '-',
-    },
-  ];
+  const [trips, setTrips] = useState<Trip[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState<string>('ALL');
 
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'COMPLETED':
-        return (
-          <span className="px-2 py-1 rounded-full bg-green-100 text-green-700 text-xs font-bold">
-            COMPLETADO
-          </span>
-        );
-      case 'PENDING':
-        return (
-          <span className="px-2 py-1 rounded-full bg-yellow-100 text-yellow-700 text-xs font-bold">
-            PROGRAMADO
-          </span>
-        );
-      case 'CANCELLED':
-        return (
-          <span className="px-2 py-1 rounded-full bg-red-100 text-red-700 text-xs font-bold">
-            CANCELADO
-          </span>
-        );
-      default:
-        return (
-          <span className="px-2 py-1 rounded-full bg-gray-100 text-gray-700 text-xs font-bold">
-            {status}
-          </span>
-        );
+  useEffect(() => {
+    fetchTrips();
+  }, []);
+
+  const fetchTrips = async () => {
+    try {
+      setLoading(true);
+      const data = await tripService.getMyTrips();
+      // Ordenar por fecha de creación descendente (más recientes primero)
+      const sorted = data.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      setTrips(sorted);
+    } catch (err) {
+      console.error('Error fetching trips:', err);
+      setError('No se pudieron cargar los viajes. Intente nuevamente.');
+    } finally {
+      setLoading(false);
     }
   };
 
+  const getStatusBadgeVariant = (status: TripStatus) => {
+    switch (status) {
+      case TripStatus.COMPLETED:
+        return 'success';
+      case TripStatus.CANCELLED:
+        return 'error';
+      case TripStatus.IN_PROGRESS:
+      case TripStatus.ON_WAY:
+        return 'warning';
+      default:
+        return 'info';
+    }
+  };
+
+  const getStatusLabel = (status: TripStatus) => {
+    switch (status) {
+      case TripStatus.REQUESTED: return 'Solicitado';
+      case TripStatus.ASSIGNED: return 'Conductor Asignado';
+      case TripStatus.ON_WAY: return 'En Camino';
+      case TripStatus.IN_PROGRESS: return 'En Viaje';
+      case TripStatus.COMPLETED: return 'Completado';
+      case TripStatus.CANCELLED: return 'Cancelado';
+      default: return status;
+    }
+  };
+
+  const filteredTrips = trips.filter(trip => {
+    const matchesSearch = 
+      trip.destination.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      trip.origin.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      trip.id.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesStatus = statusFilter === 'ALL' || trip.status === statusFilter;
+
+    return matchesSearch && matchesStatus;
+  });
+
   return (
     <div className="space-y-6">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Historial de Servicios</h1>
-          <p className="text-gray-500">Revisa el estado y detalle de tus traslados.</p>
+          <h1 className="text-2xl font-bold text-gray-800">Mis Viajes</h1>
+          <p className="text-gray-500">Historial de solicitudes y traslados realizados.</p>
         </div>
-        <Link
-          to="/client/request"
-          className="bg-secondary text-white px-5 py-2.5 rounded-lg font-bold shadow-md hover:bg-orange-600 transition flex items-center gap-2"
-        >
-          Nuevo Servicio <ArrowRight size={18} />
+        <Link to="/client/request">
+          <Button variant="primary" className="bg-secondary hover:bg-orange-600">
+            Nuevo Viaje
+          </Button>
         </Link>
       </div>
 
-      {/* Filter Bar */}
-      <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200 flex flex-col md:flex-row gap-4">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-2.5 text-gray-400" size={20} />
-          <input
-            type="text"
-            placeholder="Buscar por destino o ID..."
-            className="pl-10 w-full border border-gray-300 rounded-lg py-2 focus:ring-primary focus:border-primary"
-          />
-        </div>
-        <div className="flex gap-2">
-          <button className="px-4 py-2 border border-gray-300 rounded-lg flex items-center gap-2 hover:bg-gray-50 text-gray-700 font-medium">
-            <Filter size={18} /> Filtrar
-          </button>
-          <select className="border border-gray-300 rounded-lg px-4 py-2 text-gray-700 cursor-pointer focus:ring-primary focus:border-primary">
-            <option>Todos los estados</option>
-            <option>Completados</option>
-            <option>Pendientes</option>
-          </select>
-        </div>
-      </div>
-
-      {/* List */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead className="bg-gray-50 text-gray-600 uppercase text-xs tracking-wider font-semibold border-b border-gray-200">
-              <tr>
-                <th className="px-6 py-4">ID Servicio</th>
-                <th className="px-6 py-4">Fecha / Hora</th>
-                <th className="px-6 py-4">Ruta</th>
-                <th className="px-6 py-4">Conductor</th>
-                <th className="px-6 py-4">Pago</th>
-                <th className="px-6 py-4">Estado</th>
-                <th className="px-6 py-4">Acciones</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100 text-sm">
-              {trips.map((trip) => (
-                <tr key={trip.id} className="hover:bg-gray-50 transition">
-                  <td className="px-6 py-4 font-bold text-primary">{trip.id}</td>
-                  <td className="px-6 py-4">
-                    <div className="flex flex-col">
-                      <span className="font-medium text-gray-900 flex items-center gap-1">
-                        <Calendar size={12} /> {trip.date}
-                      </span>
-                      <span className="text-gray-500 flex items-center gap-1">
-                        <Clock size={12} /> {trip.time}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex flex-col gap-1">
-                      <span className="flex items-center gap-1 text-xs text-gray-500">
-                        <MapPin size={10} className="text-green-600" /> {trip.origin}
-                      </span>
-                      <span className="flex items-center gap-1 text-xs text-gray-500">
-                        <MapPin size={10} className="text-red-500" /> {trip.destination}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 text-gray-700">{trip.driver}</td>
-                  <td className="px-6 py-4 font-bold">{trip.price}</td>
-                  <td className="px-6 py-4">{getStatusBadge(trip.status)}</td>
-                  <td className="px-6 py-4">
-                    <button
-                      className="text-gray-400 hover:text-primary transition p-2"
-                      title="Descargar Boleta"
-                    >
-                      <Download size={18} />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        {/* Pagination (Visual) */}
-        <div className="px-6 py-4 border-t border-gray-100 flex justify-between items-center text-sm text-gray-500">
-          <span>Mostrando 4 de 12 registros</span>
-          <div className="flex gap-2">
-            <button
-              className="px-3 py-1 border rounded hover:bg-gray-50 disabled:opacity-50"
-              disabled
+      {/* Filters */}
+      <Card className="bg-white p-4">
+        <div className="flex flex-col md:flex-row gap-4">
+          <div className="relative flex-grow">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+            <input
+              type="text"
+              placeholder="Buscar por destino, origen o ID..."
+              className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+          <div className="flex items-center gap-2">
+            <Filter size={18} className="text-gray-400" />
+            <select
+              className="border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary/20"
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
             >
-              Anterior
-            </button>
-            <button className="px-3 py-1 border rounded hover:bg-gray-50">Siguiente</button>
+              <option value="ALL">Todos los estados</option>
+              <option value="COMPLETED">Completados</option>
+              <option value="PENDING">Pendientes</option>
+              <option value="CANCELLED">Cancelados</option>
+            </select>
           </div>
         </div>
-      </div>
+      </Card>
+
+      {/* Content */}
+      {loading ? (
+        <div className="flex justify-center items-center py-20">
+          <Loader2 className="animate-spin text-primary" size={40} />
+        </div>
+      ) : error ? (
+        <div className="text-center py-10 bg-red-50 rounded-lg border border-red-100">
+          <AlertCircle className="mx-auto text-red-500 mb-2" size={32} />
+          <p className="text-red-700">{error}</p>
+          <Button variant="outline" onClick={fetchTrips} className="mt-4">Reintentar</Button>
+        </div>
+      ) : filteredTrips.length === 0 ? (
+        <div className="text-center py-16 bg-white rounded-lg border border-dashed border-gray-300">
+          <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <MapPin className="text-gray-400" size={32} />
+          </div>
+          <h3 className="text-lg font-medium text-gray-800">No tienes viajes registrados</h3>
+          <p className="text-gray-500 mb-6 max-w-sm mx-auto">
+            {searchTerm || statusFilter !== 'ALL' 
+              ? 'No se encontraron resultados con los filtros actuales.'
+              : '¿Necesitas un traslado? Solicita tu primer viaje ahora.'}
+          </p>
+          {(searchTerm || statusFilter !== 'ALL') ? (
+            <Button variant="outline" onClick={() => { setSearchTerm(''); setStatusFilter('ALL'); }}>
+              Limpiar Filtros
+            </Button>
+          ) : (
+            <Link to="/client/request">
+              <Button variant="primary">Solicitar Servicio</Button>
+            </Link>
+          )}
+        </div>
+      ) : (
+        <div className="grid gap-4">
+          {filteredTrips.map((trip) => (
+            <div 
+              key={trip.id} 
+              className="bg-white p-5 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow flex flex-col md:flex-row md:items-center justify-between gap-4"
+            >
+              <div className="flex items-start gap-4">
+                <div className={`w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 ${
+                   trip.status === TripStatus.COMPLETED ? 'bg-green-100 text-green-600' : 
+                   trip.status === TripStatus.CANCELLED ? 'bg-red-100 text-red-600' :
+                   'bg-blue-100 text-blue-600'
+                }`}>
+                   <MapPin size={24} />
+                </div>
+                
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="font-bold text-gray-800 text-lg">
+                      {trip.destination}
+                    </span>
+                    <Badge variant={getStatusBadgeVariant(trip.status)}>
+                      {getStatusLabel(trip.status)}
+                    </Badge>
+                  </div>
+                  
+                  <div className="text-sm text-gray-500 flex flex-wrap gap-x-4 gap-y-1">
+                    <span className="flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-gray-400"></span>
+                      De: {trip.origin}
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Calendar size={14} />
+                      {new Date(trip.createdAt).toLocaleDateString()}
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Clock size={14} />
+                      {new Date(trip.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-4 text-right pl-4 border-l border-gray-100 md:w-auto w-full justify-between md:justify-end">
+                <div>
+                   <p className="text-sm text-gray-400 font-medium uppercase">Tarifa</p>
+                   <p className="text-xl font-bold text-gray-900">
+                     ${trip.fare ? trip.fare.toLocaleString('es-CL') : '0'}
+                   </p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

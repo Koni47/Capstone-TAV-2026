@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import PublicNavbar from '../../components/layout/PublicNavbar';
 import PublicFooter from '../../components/layout/PublicFooter';
@@ -7,6 +7,9 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 // Fix for default marker icon in some build setups
 import L from 'leaflet';
+import { useAuth } from '../../context/AuthContext';
+import { tripService } from '../../services/trip.service';
+import { toast } from 'sonner'; // Asumiendo que usas sonner o similar, sino usa alert o console
 
 // Fix icons
 import icon from 'leaflet/dist/images/marker-icon.png';
@@ -25,6 +28,9 @@ import { MapPin, Calendar, Clock, Users, Briefcase, ArrowRight, Map } from 'luci
 
 const ClientRequest = () => {
   const navigate = useNavigate();
+  const { user, isAuthenticated } = useAuth();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const [formData, setFormData] = useState({
     clientType: 'persona',
     origin: '',
@@ -34,6 +40,47 @@ const ClientRequest = () => {
     passengers: 1,
     vehicleType: 'sedan',
   });
+  
+  // State for dynamic pricing estimate
+  const [estimate, setEstimate] = useState({ price: 15000, distance: '15 km', duration: '20 min' });
+
+  // Update estimate when details change
+  useEffect(() => {
+    const origin = formData.origin.toLowerCase();
+    const dest = formData.destination.toLowerCase();
+    
+    let basePrice = 15000;
+    let distance = "12 km";
+    let duration = "25 min";
+
+    // Simulación simple: Santiago Centro <-> Norte
+    // Detect keywords to change the price dramatically
+    if ((origin.includes('santiago') || origin.includes('centro')) && 
+        (dest.includes('norte') || dest.includes('antofagasta') || dest.includes('calama') || dest.includes('serena'))) {
+      basePrice = 450000;
+      distance = "1,350 km";
+      duration = "14 hrs";
+    } else if (origin.includes('aeropuerto') || dest.includes('aeropuerto')) {
+       basePrice = 25000;
+       distance = "25 km";
+       duration = "45 min";
+    } else if (origin.length > 2 && dest.length > 2 && origin !== dest) {
+       // Variation for other valid inputs ensuring it's not default if user types something else
+       // Just a slight random variation to make it feel alive or use length
+       basePrice = 15000 + (origin.length + dest.length) * 100;
+    }
+
+    // Adjust by vehicle
+    if (formData.vehicleType === 'suv') basePrice = basePrice * 1.30; // +30%
+    if (formData.vehicleType === 'van') basePrice = basePrice * 1.60; // +60%
+
+    setEstimate({
+      price: Math.round(basePrice / 100) * 100, // Round to nearest 100
+      distance,
+      duration
+    });
+
+  }, [formData.origin, formData.destination, formData.vehicleType]);
 
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [activeField, setActiveField] = useState<'origin' | 'destination' | null>(null);
@@ -79,11 +126,51 @@ const ClientRequest = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Here we would normally save the request state
-    // For public flow, maybe redirect to logic or payment
-    navigate('/client/payment');
+
+    // Verificación simple de Auth para el demo
+    // En producción, podrías redirigir a Login o permitir crear usuario invitado
+    if (!isAuthenticated || !user) {
+      alert("Debes iniciar sesión para cotizar y reservar."); 
+      // Opcional: navigate('/login');
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      
+      // Calcular tarifa estimada (desde el estado dinámico)
+      const estimatedFare = estimate.price;
+
+      const newTrip = await tripService.createTrip({
+        origin: formData.origin,
+        destination: formData.destination,
+        clientId: user.id,
+        fare: estimatedFare 
+      });
+
+      // Redirigir al pago con el ID real
+      navigate('/client/payment', { 
+        state: { 
+          tripId: newTrip.id,
+          tripDetails: {
+            amount: newTrip.fare || estimatedFare,
+            origin: newTrip.origin,
+            destination: newTrip.destination,
+            date: formData.date || new Date().toLocaleDateString(),
+            vehicle: formData.vehicleType === 'sedan' ? 'Sedán Ejecutivo' : 
+                     formData.vehicleType === 'suv' ? 'SUV Premium' : 'Van Grupal'
+          }
+        } 
+      });
+
+    } catch (error) {
+      console.error('Failed to create trip:', error);
+      alert('Error al crear la solicitud. Intente nuevamente.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -320,12 +407,30 @@ const ClientRequest = () => {
                     </div>
                   </div>
 
+                  {/* Resumen de Cotización Automática */}
+                  <div className="bg-gray-100 p-4 rounded-xl border border-gray-200 animate-fade-in-up">
+                    <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Estimación de Viaje</h3>
+                    <div className="flex justify-between items-end">
+                      <div>
+                        <div className="flex items-center gap-4 text-xs text-gray-600 mb-1">
+                          <span className="flex items-center gap-1"><Map size={14}/> {estimate.distance}</span>
+                          <span className="flex items-center gap-1"><Clock size={14}/> {estimate.duration}</span>
+                        </div>
+                        <div className="text-2xl font-extrabold text-primary">
+                          ${estimate.price.toLocaleString('es-CL')}
+                        </div>
+                        <p className="text-[10px] text-gray-400 mt-1">* Tarifa referencial sujeta a confirmación final.</p>
+                      </div>
+                    </div>
+                  </div>
+
                   <div className="pt-4 mt-auto">
                     <button
                       type="submit"
-                      className="w-full bg-secondary hover:bg-orange-700 text-white font-bold py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5 flex items-center justify-center gap-2"
+                      disabled={isSubmitting}
+                      className="w-full bg-secondary hover:bg-orange-700 text-white font-bold py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      <span>Cotizar y Continuar</span>
+                      <span>{isSubmitting ? 'Procesando...' : 'Cotizar y Pagar'}</span>
                       <ArrowRight size={20} />
                     </button>
                   </div>

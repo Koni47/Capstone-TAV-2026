@@ -1,167 +1,162 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import PublicNavbar from '../../components/layout/PublicNavbar';
 import PublicFooter from '../../components/layout/PublicFooter';
-import { CreditCard, Loader2 } from 'lucide-react';
+import WebpayButton from '../../components/payments/WebpayButton';
+import { Card } from '../../components/ui/Card';
+import { Button } from '../../components/ui/Button';
+import { ShieldCheck, Lock, MapPin, Calendar, Car } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import { tripService } from '../../services/trip.service';
 
-/**
- * PaymentPage - Simulates the payment process (e.g. WebPay, PayPal)
- */
 const PaymentPage = () => {
+  const location = useLocation();
   const navigate = useNavigate();
-  const [selectedMethod, setSelectedMethod] = useState<string | null>(null);
-  const [acceptedTerms, setAcceptedTerms] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { user } = useAuth(); // Necesitamos el usuario para crear un viaje de prueba
+  
+  // Estado local para manejar el viaje si no viene del router
+  const [tripState, setTripState] = React.useState<{tripId: string, details: any} | null>( 
+    location.state ? { tripId: location.state.tripId, details: location.state.tripDetails } : null
+  );
 
-  const handlePayment = (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-
-    let hasError = false;
-    if (!selectedMethod) {
-      setError('Debes seleccionar un método de pago.');
-      hasError = true;
+  // Si entramos directo (sin state), intentamos crear un viaje "draft" para que el botón funcione
+  // Solo si el usuario está logueado.
+  useEffect(() => {
+    if (!tripState && user) {
+      const createDraftTrip = async () => {
+        try {
+          const newTrip = await tripService.createTrip({
+             origin: 'Test Origin (Auto-generated)',
+             destination: 'Test Destination',
+             clientId: user.id,
+             fare: 15000
+          });
+          setTripState({
+            tripId: newTrip.id,
+            details: {
+              amount: 15000,
+              origin: newTrip.origin,
+              destination: newTrip.destination,
+              date: new Date().toLocaleDateString(),
+              vehicle: 'Demo Vehicle'
+            }
+          });
+        } catch (e) {
+          console.error("Error creating draft trip for testing", e);
+        }
+      };
+      createDraftTrip();
     }
-    if (!acceptedTerms) {
-      // Just for local validation logic, showing error only if method selected to match mockup behavior roughly
-      // or just set a general error
-      if (!hasError) setError('Debes aceptar los términos para continuar.');
-      hasError = true;
-    }
+  }, [tripState, user]);
 
-    if (hasError) return;
+  // Si no hay viaje y no estamos logueados, mostramos un estado vacío o loading
+  if (!tripState) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
+        <PublicNavbar />
+        <div className="text-center py-20">
+             <ShieldCheck className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+             <h2 className="text-xl font-bold text-gray-700">No hay viaje seleccionado</h2>
+             <p className="text-gray-500 mb-6">Para pagar, primero debes cotizar un servicio.</p>
+             <Button onClick={() => navigate('/client/request')}>Ir a Cotizar</Button>
+        </div>
+        <PublicFooter />
+      </div>
+    );
+  }
 
-    setLoading(true);
-
-    // Simulate Payment Processing
-    setTimeout(() => {
-      setLoading(false);
-      // Redirigir a la página de retorno (simulando que venimos de Webpay con un token)
-      navigate('/client/payment/commit?token_ws=TEST_TOKEN_12345&status=AUTHORIZED');
-    }, 2000);
-  };
+  const { tripId, details: tripDetails } = tripState;
 
   return (
     <div className="font-sans flex flex-col min-h-screen bg-gray-50">
       <PublicNavbar />
 
-      <main className="flex-grow max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
-        <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-8">
-          <h1 className="text-2xl font-bold text-primary mb-6 flex items-center gap-2">
-            <span className="material-icons text-secondary">payments</span>
-            <CreditCard className="text-secondary" />
-            Pago del servicio
-          </h1>
+      <main className="flex-grow max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
+        <div className="flex flex-col md:flex-row gap-8">
+          
+          {/* Columna Izquierda: Resumen del Viaje */}
+          <div className="w-full md:w-1/2 space-y-4">
+            <h1 className="text-2xl font-bold text-gray-800">Resumen del Servicio</h1>
+            
+            <Card className="bg-white border-0 shadow-lg">
+               <div className="space-y-4">
+                  <div className="flex items-start gap-3">
+                    <MapPin className="text-blue-600 mt-1" size={20} />
+                    <div>
+                      <p className="text-xs font-bold text-gray-500 uppercase">Origen</p>
+                      <p className="text-gray-800 font-medium">{tripDetails.origin}</p>
+                    </div>
+                  </div>
 
-          <form onSubmit={handlePayment} className="space-y-6">
-            {/* Payment Methods */}
-            <div>
-              <label className="block text-sm font-semibold mb-2 text-gray-700">
-                Selecciona un método de pago:
-              </label>
-              <div className="flex flex-col gap-3">
-                {/* PayPal */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSelectedMethod('paypal');
-                    setError(null);
-                  }}
-                  className={`flex items-center gap-2 border rounded px-4 py-3 transition text-left
-                    ${selectedMethod === 'paypal' ? 'border-primary ring-2 ring-primary bg-blue-50' : 'border-gray-300 hover:border-primary'}
-                  `}
-                >
-                  <img
-                    src="https://www.paypalobjects.com/webstatic/icon/pp258.png"
-                    alt="PayPal"
-                    className="w-6 h-6 object-contain"
-                  />
-                  <span className="font-medium text-gray-700">PayPal</span>
-                </button>
+                  <div className="flex items-start gap-3">
+                    <MapPin className="text-green-600 mt-1" size={20} />
+                    <div>
+                      <p className="text-xs font-bold text-gray-500 uppercase">Destino</p>
+                      <p className="text-gray-800 font-medium">{tripDetails.destination}</p>
+                    </div>
+                  </div>
 
-                {/* WebPay */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSelectedMethod('webpay');
-                    setError(null);
-                  }}
-                  className={`flex items-center gap-2 border rounded px-4 py-3 transition text-left
-                    ${selectedMethod === 'webpay' ? 'border-primary ring-2 ring-primary bg-blue-50' : 'border-gray-300 hover:border-primary'}
-                  `}
-                >
-                  <img
-                    src="https://upload.wikimedia.org/wikipedia/commons/8/8a/Webpay_logo.png"
-                    alt="WebPay"
-                    className="w-6 h-6 object-contain"
-                  />
-                  <span className="font-medium text-gray-700">WebPay</span>
-                </button>
+                  <div className="grid grid-cols-2 gap-4 pt-2 border-t border-gray-100">
+                    <div className="flex items-center gap-2">
+                       <Calendar size={16} className="text-gray-400"/>
+                       <span className="text-sm text-gray-600">{tripDetails.date}</span>
+                    </div>
+                     <div className="flex items-center gap-2">
+                       <Car size={16} className="text-gray-400"/>
+                       <span className="text-sm text-gray-600">{tripDetails.vehicle}</span>
+                    </div>
+                  </div>
+               </div>
+            </Card>
 
-                {/* Mercado Pago */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSelectedMethod('mercadopago');
-                    setError(null);
-                  }}
-                  className={`flex items-center gap-2 border rounded px-4 py-3 transition text-left
-                    ${selectedMethod === 'mercadopago' ? 'border-primary ring-2 ring-primary bg-blue-50' : 'border-gray-300 hover:border-primary'}
-                  `}
-                >
-                  <img
-                    src="https://http2.mlstatic.com/frontend-assets/ml-web-navigation/ui-navigation/6.4.1/mercadopago/logo__large_plus.png"
-                    alt="Mercado Pago"
-                    className="w-6 h-6 object-contain"
-                  />
-                  <span className="font-medium text-gray-700">Mercado Pago</span>
-                </button>
-              </div>
-              {error && <p className="text-xs text-red-600 mt-2">{error}</p>}
+            <div className="flex items-center gap-2 text-green-700 bg-green-50 p-3 rounded-lg text-sm">
+                <ShieldCheck size={18} />
+                <span>Pago 100% Seguro y Encriptado</span>
             </div>
+          </div>
 
-            {/* Terms and conditions */}
-            <div className="flex items-center gap-2">
-              <input
-                id="terms"
-                type="checkbox"
-                className="h-4 w-4 border-gray-300 rounded text-secondary focus:ring-secondary cursor-pointer"
-                checked={acceptedTerms}
-                onChange={(e) => setAcceptedTerms(e.target.checked)}
-              />
-              <label htmlFor="terms" className="text-xs text-gray-700 select-none cursor-pointer">
-                Estoy de acuerdo con los{' '}
-                <Link
-                  to="/terms"
-                  target="_blank"
-                  className="text-secondary underline hover:text-primary transition"
-                >
-                  términos del servicio
-                </Link>{' '}
-                y acepto la solicitud y forma de pago.
-              </label>
-            </div>
+          {/* Columna Derecha: Pago */}
+          <div className="w-full md:w-1/2">
+             <h2 className="text-2xl font-bold text-gray-800 mb-4">Realizar Pago</h2>
+             
+             <Card className="bg-white border-0 shadow-lg p-6">
+                <div className="mb-6 pb-6 border-b border-gray-100">
+                   <div className="flex justify-between items-end mb-1">
+                      <span className="text-gray-600">Total a pagar</span>
+                      <span className="text-3xl font-bold text-blue-900">
+                        ${tripDetails.amount.toLocaleString('es-CL')}
+                      </span>
+                   </div>
+                   <p className="text-xs text-right text-gray-400">IVA Incluido</p>
+                </div>
 
-            {/* Submit */}
-            <button
-              type="submit"
-              disabled={loading}
-              className={`w-full bg-secondary hover:bg-orange-700 text-white font-bold py-3 px-4 rounded shadow-md transition text-lg flex items-center justify-center gap-2
-                ${loading ? 'opacity-75 cursor-not-allowed' : ''}
-              `}
-            >
-              {loading ? (
-                <>
-                  <Loader2 className="animate-spin" size={20} /> Procesando...
-                </>
-              ) : (
-                <>
-                  <CreditCard size={20} /> Pagar
-                </>
-              )}
-            </button>
-          </form>
+                <div className="space-y-4">
+                    <div className="flex flex-col gap-3">
+                        <label className="text-sm font-semibold text-gray-700">Seleccione medio de pago</label>
+                        
+                        <div className="border rounded-lg p-4 flex items-center justify-between border-blue-500 bg-blue-50 ring-1 ring-blue-500">
+                            <div className="flex items-center gap-3">
+                                {/* Webpay Logo Placeholder */}
+                                <div className="font-bold text-gray-800 text-lg flex items-center gap-2">
+                                    <span className="text-orange-600">Web</span>pay Plus
+                                </div>
+                            </div>
+                            <div className="h-4 w-4 rounded-full border-4 border-blue-600 bg-white"></div>
+                        </div>
+                    </div>
+
+                    <div className="pt-4">
+                        <WebpayButton tripId={tripId} />
+                    </div>
+
+                    <div className="flex justify-center items-center gap-1 text-gray-400 text-xs mt-2">
+                        <Lock size={12} />
+                        Pagos procesados por Transbank
+                    </div>
+                </div>
+             </Card>
+          </div>
+
         </div>
       </main>
       <PublicFooter />

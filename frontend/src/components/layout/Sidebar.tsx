@@ -50,7 +50,7 @@ const Sidebar = ({ role = 'ADMIN', isOpen, onClose }: SidebarProps) => {
   const clientLinks = [
     { href: '/client/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { href: '/client/request', label: 'Solicitar Servicio', icon: MapPin },
-    { href: '/client/history', label: 'Historial', icon: History },
+    { href: '/client/trips', label: 'Mis Viajes', icon: History },
     { href: '/complaints', label: 'Denuncias', icon: AlertTriangle },
   ];
 
