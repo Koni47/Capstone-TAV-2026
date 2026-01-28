@@ -1,48 +1,24 @@
-import api from '../lib/axios'
-import { Trip, CreateTripDto } from '../types/trip.type'
+import api from "../lib/axios";
+import { Trip, CreateTripDTO } from "../types/trip.types";
 
-export async function getAll(): Promise<Trip[]> {
-  // The API exposes only `/my-trips` for listing trips.
-  try {
-    const resp = await api.get('/api/v1/trips/my-trips')
-    const d = resp.data
-    if (Array.isArray(d)) return d as Trip[]
-    if (d && Array.isArray(d.data)) return d.data as Trip[]
-    if (d && Array.isArray(d.trips)) return d.trips as Trip[]
-    return []
-  } catch (err: any) {
-    console.warn('[trip.service] getAll (my-trips) error', err?.message || err)
-    return []
-  }
-}
+export const tripService = {
+  getMyTrips: async (): Promise<Trip[]> => {
+    const response = await api.get<Trip[]>("/api/v1/trips/my-trips");
+    return response.data;
+  },
 
-export async function getById(id: string): Promise<Trip> {
-  const resp = await api.get(`/api/v1/trips/${id}`)
-  return (resp.data?.data ?? resp.data) as Trip
-}
+  createTrip: async (data: CreateTripDTO): Promise<Trip> => {
+    const response = await api.post<Trip>("/api/v1/trips", data);
+    return response.data;
+  },
 
-export async function create(data: CreateTripDto): Promise<Trip> {
-  const resp = await api.post('/api/v1/trips', data)
-  return resp.data as Trip
-}
+  startTrip: async (id: string): Promise<Trip> => {
+    const response = await api.patch<Trip>(`/api/v1/trips/${id}/start`);
+    return response.data;
+  },
 
-export async function update(id: string, data: Partial<CreateTripDto>): Promise<Trip> {
-  const resp = await api.patch(`/api/v1/trips/${id}`, data)
-  return resp.data as Trip
-}
-
-export async function remove(id: string): Promise<void> {
-  await api.delete(`/api/v1/trips/${id}`)
-}
-
-export async function getMyTrips(): Promise<Trip[]> {
-  // alias to the same endpoint
-  return getAll()
-}
-
-export async function getAllTrips(): Promise<Trip[]> {
-  // alias for clarity
-  return getAll()
-}
-
-export default { getAll, getById, create, update, remove, getMyTrips, getAllTrips }
+  finishTrip: async (id: string): Promise<Trip> => {
+    const response = await api.patch<Trip>(`/api/v1/trips/${id}/finish`);
+    return response.data;
+  },
+};

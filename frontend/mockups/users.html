@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gestión de Usuarios | Servicios de Transporte El Loa</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { theme: { extend: { colors: { primary: '#003366', secondary: '#FF6600' }, fontFamily: { sans: ['Inter','sans-serif'] } } } }
+    </script>
+    <link rel="stylesheet" href="assets/css/tailwind.css" />
+    <link rel="stylesheet" href="assets/css/custom.css" />
+    <script src="assets/js/auth-helper.js"></script>
+
+    <!-- Vista base para migrar a React + TypeScript -->
+</head>
+<body class="bg-surface font-sans text-gray-800">
+    <script>
+        // Proteger esta página - redirigir al login si no está autenticado
+        protectPage();
+    </script>
+
+   <nav class="bg-primary text-white shadow-lg w-full sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <a href="index.html" class="flex-shrink-0 text-white flex items-center gap-2 font-bold text-xl cursor-pointer">
+                        <span class="material-icons text-secondary">local_shipping</span> EL LOA
+                    </a>
+                    <div class="hidden md:block">
+                        <div class="ml-10 flex items-baseline space-x-4">
+                            <a id="dashboardLink" href="#" onclick="redirectToDashboard(event)" class="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Dashboard</a>
+                            <a href="service-request.html" class="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Solicitudes</a>
+                            
+                            <a href="users.html" class="bg-blue-900 text-white px-3 py-2 rounded-md text-sm font-medium border-b-4 border-secondary h-16 flex items-center pt-1">
+                                Usuarios
+                            </a>
+                            
+                            <a href="companies.html" class="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Clientes</a>
+                            <a href="vehicles.html" class="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Flota</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <button class="bg-primary p-1 rounded-full text-gray-400 hover:text-white transition">
+                        <span class="material-icons">notifications</span>
+                    </button>
+                    <div class="flex items-center gap-3 pl-4 border-l border-blue-800">
+                        <div class="text-right hidden sm:block">
+                            <p class="text-sm font-bold leading-none user-name">Usuario</p>
+                            <p class="text-xs text-blue-300 user-role">Admin</p>
+                        </div>
+                        <div class="h-8 w-8 rounded-full bg-secondary flex items-center justify-center text-white text-xs font-bold ring-2 ring-blue-900 user-initials">US</div>
+                        <a href="logout.html" class="ml-2 text-sm font-semibold hover:text-gray-300">Salir</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 min-h-[calc(100vh-200px)]">
+        
+        <!-- Breadcrumb & Header -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div>
+                 <nav class="flex text-sm text-gray-500 mb-2" aria-label="Breadcrumb">
+                    <ol class="flex items-center space-x-2">
+                        <li><a href="index.html" class="hover:text-primary transition">Inicio</a></li>
+                        <li><span class="material-icons text-[10px] text-gray-400">arrow_forward_ios</span></li>
+                        <li class="text-secondary font-medium">Gestión de Usuarios</li>
+                    </ol>
+                </nav>
+                <h2 class="text-3xl font-bold text-gray-900 tracking-tight flex items-center gap-3">
+                    <span class="bg-blue-100 text-primary p-2 rounded-lg material-icons">people</span>
+                    Directorio de Usuarios
+                </h2>
+                <p class="mt-2 text-gray-500 max-w-2xl">Administre el acceso al sistema para clientes corporativos, choferes y personal administrativo.</p>
+            </div>
+            
+            <a href="#" data-navigate="/register" class="group bg-secondary hover:bg-orange-700 text-white px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition transform hover:-translate-y-0.5 flex items-center gap-2 font-bold no-underline">
+                <span class="material-icons group-hover:rotate-90 transition transform">add</span>
+                Nuevo Usuario
+            </a>
+        </div>
+
+        <!-- KPI Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+             <div class="bg-white p-6 rounded-2xl shadow-xl border border-gray-100 relative overflow-hidden group">
+                <div class="absolute right-0 top-0 h-full w-1 bg-gradient-to-b from-blue-400 to-blue-600"></div>
+                <div class="flex items-center justify-between relative z-10">
+                     <div>
+                        <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Choferes Activos</p>
+                        <h3 class="text-4xl font-extrabold text-gray-900">15</h3>
+                        <p class="text-xs text-green-600 mt-2 font-medium flex items-center gap-1">
+                            <span class="material-icons text-[10px]">arrow_upward</span> +2 este mes
+                        </p>
+                    </div>
+                     <div class="bg-blue-50 p-3 rounded-xl text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors shadow-sm">
+                        <span class="material-icons text-3xl">local_shipping</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl shadow-xl border border-gray-100 relative overflow-hidden group">
+                <div class="absolute right-0 top-0 h-full w-1 bg-gradient-to-b from-green-400 to-green-600"></div>
+                <div class="flex items-center justify-between relative z-10">
+                     <div>
+                        <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Clientes Corp.</p>
+                        <h3 class="text-4xl font-extrabold text-gray-900">8</h3>
+                         <p class="text-xs text-gray-400 mt-2 font-medium">Empresas asociadas</p>
+                    </div>
+                     <div class="bg-green-50 p-3 rounded-xl text-green-600 group-hover:bg-green-600 group-hover:text-white transition-colors shadow-sm">
+                        <span class="material-icons text-3xl">business</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl shadow-xl border border-gray-100 relative overflow-hidden group">
+                <div class="absolute right-0 top-0 h-full w-1 bg-gradient-to-b from-purple-400 to-purple-600"></div>
+                <div class="flex items-center justify-between relative z-10">
+                     <div>
+                        <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Total Usuarios</p>
+                        <h3 class="text-4xl font-extrabold text-gray-900">26</h3>
+                         <p class="text-xs text-blue-400 mt-2 font-medium">3 Administradores</p>
+                    </div>
+                     <div class="bg-purple-50 p-3 rounded-xl text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-colors shadow-sm">
+                        <span class="material-icons text-3xl">people_alt</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filters & Actions -->
+        <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
+            <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
+                <!-- Search -->
+                <div class="relative w-full md:w-96 group">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <span class="material-icons text-gray-400 group-focus-within:text-primary transition">search</span>
+                    </div>
+                    <input type="text" class="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl leading-5 bg-gray-50 placeholder-gray-400 focus:outline-none focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary transition sm:text-sm" placeholder="Buscar por nombre, RUT o email...">
+                </div>
+
+                <!-- Right Actions -->
+                <div class="flex flex-wrap gap-3 w-full md:w-auto">
+                    <div class="relative">
+                        <select class="appearance-none bg-white border border-gray-200 text-gray-700 py-3 pl-4 pr-10 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary cursor-pointer hover:border-gray-300 transition text-sm font-medium shadow-sm">
+                            <option value="">Todos los Roles</option>
+                            <option value="ADMIN">Administrador</option>
+                            <option value="DRIVER">Chofer</option>
+                            <option value="CLIENT">Cliente</option>
+                        </select>
+                         <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
+                            <span class="material-icons text-sm">expand_more</span>
+                        </div>
+                    </div>
+
+                    <button class="flex items-center gap-2 px-5 py-3 border border-gray-200 shadow-sm text-sm font-bold rounded-xl text-gray-700 bg-white hover:bg-gray-50 hover:text-primary transition">
+                        <span class="material-icons text-gray-400 text-xl">filter_list</span> Filtros
+                    </button>
+                    
+                    <button class="flex items-center gap-2 px-5 py-3 border border-gray-200 shadow-sm text-sm font-bold rounded-xl text-gray-700 bg-white hover:bg-gray-50 hover:text-primary transition">
+                        <span class="material-icons text-gray-400 text-xl">file_download</span> Exportar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Table Card -->
+        <div class="bg-white shadow-xl rounded-2xl border border-gray-100 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-100">
+                    <thead class="bg-gray-50/50">
+                        <tr>
+                            <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Usuario</th>
+                            <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Rol Asignado</th>
+                            <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Estado</th>
+                            <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider hidden sm:table-cell">Último Acceso</th>
+                            <th scope="col" class="relative px-6 py-4"><span class="sr-only">Acciones</span></th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-100">
+                        
+                        <!-- Row 1 -->
+                        <tr class="hover:bg-blue-50/30 transition duration-200 group">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center">
+                                    <div class="flex-shrink-0 h-11 w-11 bg-gradient-to-br from-purple-100 to-purple-200 rounded-xl flex items-center justify-center text-purple-700 font-bold border border-purple-200 shadow-sm">
+                                        ZK
+                                    </div>
+                                    <div class="ml-4">
+                                        <div class="text-sm font-bold text-gray-900 group-hover:text-primary transition-colors">Zaida König</div>
+                                        <div class="text-xs text-gray-500">zaida@elloa.cl</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-purple-100 text-purple-800 border border-purple-200">
+                                    ADMINISTRADOR
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center gap-1.5">
+                                    <span class="h-2.5 w-2.5 rounded-full bg-green-500"></span>
+                                    <span class="text-sm text-gray-700 font-medium">Activo</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden sm:table-cell">
+                                Hace 5 mins
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <a href="user-detail.html" class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gray-50 text-gray-400 hover:bg-primary hover:text-white transition">
+                                    <span class="material-icons text-lg">chevron_right</span>
+                                </a>
+                            </td>
+                        </tr>
+
+                        <!-- Row 2 -->
+                        <tr class="hover:bg-blue-50/30 transition duration-200 group">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center">
+                                    <div class="flex-shrink-0 h-11 w-11 bg-gradient-to-br from-blue-100 to-blue-200 rounded-xl flex items-center justify-center text-primary font-bold border border-blue-200 shadow-sm">
+                                        JP
+                                    </div>
+                                    <div class="ml-4">
+                                        <div class="text-sm font-bold text-gray-900 group-hover:text-primary transition-colors">Juan Pérez</div>
+                                        <div class="text-xs text-gray-500">juan.perez@elloa.cl</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex flex-col">
+                                    <span class="px-3 py-1 inline-flex w-min text-xs leading-5 font-bold rounded-full bg-blue-100 text-blue-800 border border-blue-200">
+                                        CHOFER
+                                    </span>
+                                    <span class="text-[10px] text-gray-400 mt-1 pl-1">Licencia A3</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center gap-1.5">
+                                    <span class="h-2.5 w-2.5 rounded-full bg-green-500"></span>
+                                    <span class="text-sm text-gray-700 font-medium">Activo</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden sm:table-cell">
+                                Ayer
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <a href="user-detail.html" class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gray-50 text-gray-400 hover:bg-primary hover:text-white transition">
+                                    <span class="material-icons text-lg">chevron_right</span>
+                                </a>
+                            </td>
+                        </tr>
+
+                        <!-- Row 3 -->
+                        <tr class="hover:bg-blue-50/30 transition duration-200 group">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center">
+                                    <div class="flex-shrink-0 h-11 w-11 bg-gradient-to-br from-green-100 to-green-200 rounded-xl flex items-center justify-center text-green-700 font-bold border border-green-200 shadow-sm">
+                                        RD
+                                    </div>
+                                    <div class="ml-4">
+                                        <div class="text-sm font-bold text-gray-900 group-hover:text-primary transition-colors">Roberto Díaz</div>
+                                        <div class="text-xs text-gray-500">contacto@minera.cl</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex flex-col">
+                                    <span class="px-3 py-1 inline-flex w-min text-xs leading-5 font-bold rounded-full bg-green-100 text-green-800 border border-green-200">
+                                        CLIENTE
+                                    </span>
+                                    <span class="text-[10px] text-gray-400 mt-1 pl-1">Minera Escondida</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center gap-1.5">
+                                    <span class="h-2.5 w-2.5 rounded-full bg-gray-300"></span>
+                                    <span class="text-sm text-gray-500 font-medium">Inactivo</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden sm:table-cell">
+                                Hace 1 semana
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <a href="user-detail.html" class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gray-50 text-gray-400 hover:bg-primary hover:text-white transition">
+                                    <span class="material-icons text-lg">chevron_right</span>
+                                </a>
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Pagination -->
+            <div class="bg-gray-50 px-6 py-4 flex items-center justify-between border-t border-gray-200">
+                <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                    <div>
+                        <p class="text-sm text-gray-500">
+                            Mostrando <span class="font-bold text-gray-900">1</span> a <span class="font-bold text-gray-900">3</span> de <span class="font-bold text-gray-900">26</span> resultados
+                        </p>
+                    </div>
+                    <div>
+                        <nav class="relative z-0 inline-flex rounded-xl shadow-sm -space-x-px" aria-label="Pagination">
+                            <a href="#" class="relative inline-flex items-center px-3 py-2 rounded-l-xl border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                <span class="material-icons text-sm">chevron_left</span>
+                            </a>
+                            <a href="#" aria-current="page" class="z-10 bg-primary border-primary text-white relative inline-flex items-center px-4 py-2 border text-sm font-bold">1</a>
+                            <a href="#" class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium">2</a>
+                            <a href="#" class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium">3</a>
+                            <span class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">...</span>
+                            <a href="#" class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium">8</a>
+                            <a href="#" class="relative inline-flex items-center px-3 py-2 rounded-r-xl border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                <span class="material-icons text-sm">chevron_right</span>
+                            </a>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="userModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" onclick="toggleModal('userModal')"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+            <div class="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
+                
+                <div class="flex justify-between items-start mb-4">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">Registrar / Editar Usuario</h3>
+                    <button onclick="toggleModal('userModal')" class="text-gray-400 hover:text-gray-500"><span class="material-icons">close</span></button>
+                </div>
+
+                <form class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Nombre Completo</label>
+                        <input type="text" name="name" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Correo Electrónico</label>
+                        <input type="email" name="email" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Contraseña Temporal</label>
+                        <input type="password" name="password" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Rol</label>
+                            <select name="role" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm">
+                                <option value="CLIENT">Cliente</option>
+                                <option value="DRIVER">Chofer</option>
+                                <option value="ADMIN">Administrador</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Estado</label>
+                            <select name="status" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm">
+                                <option value="ACTIVE">Activo</option>
+                                <option value="INACTIVE">Inactivo</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mt-5 sm:mt-6 sm:grid sm:grid-cols-2 sm:gap-3 sm:grid-flow-row-dense">
+                        <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary text-base font-medium text-white hover:bg-blue-800 focus:outline-none sm:col-start-2 sm:text-sm">
+                            Guardar Usuario
+                        </button>
+                        <button type="button" onclick="toggleModal('userModal')" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:col-start-1 sm:text-sm">
+                            Cancelar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleModal(modalID) {
+            document.getElementById(modalID).classList.toggle("hidden");
+        }
+
+        // Redirección dinámica al Dashboard según el rol del usuario
+        function redirectToDashboard(event) {
+            event.preventDefault();
+            
+            // Obtener el rol del usuario del localStorage o sessionStorage
+            const userRole = localStorage.getItem('userRole') || sessionStorage.getItem('userRole') || 'cliente';
+            
+            let dashboardUrl = 'dashboard.html'; // URL por defecto
+            
+            switch(userRole.toLowerCase()) {
+                case 'admin':
+                case 'administrador':
+                    dashboardUrl = 'dashboard_adm.html';
+                    break;
+                case 'cliente':
+                    dashboardUrl = 'dashboard-cli.html';
+                    break;
+                case 'chofer':
+                    dashboardUrl = 'dashboard-chof.html';
+                    break;
+                default:
+                    dashboardUrl = 'dashboard.html';
+            }
+            
+            // Redirigir a la URL correspondiente
+            window.location.href = dashboardUrl;
+        }
+    </script>
+<footer class="bg-[#002244] text-gray-300 border-t-4 border-secondary mt-auto">
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                
+                <div class="space-y-4">
+                    <div class="flex items-center gap-2 text-white">
+                        <span class="material-icons text-secondary text-3xl">local_shipping</span>
+                        <span class="font-bold text-xl tracking-wide">Servicios El Loa</span>
+                    </div>
+                    <p class="text-sm leading-relaxed text-gray-400">
+                        Líderes en transporte corporativo y privado en la región de Antofagasta. Seguridad, puntualidad y tecnología al servicio de la minería.
+                    </p>
+                    <div class="flex gap-4 pt-2">
+                        <a href="https://facebook.com" target="_blank" class="w-8 h-8 rounded-full bg-blue-900 flex items-center justify-center hover:bg-secondary transition text-white">
+                            <span class="material-icons text-sm">facebook</span>
+                        </a>
+                        <a href="https://elloa.cl" target="_blank" class="w-8 h-8 rounded-full bg-blue-900 flex items-center justify-center hover:bg-secondary transition text-white">
+                            <span class="material-icons text-sm">public</span> </a>
+                        <a href="https://instagram.com" target="_blank" class="w-8 h-8 rounded-full bg-blue-900 flex items-center justify-center hover:bg-secondary transition text-white">
+                            <span class="material-icons text-sm">photo_camera</span> </a>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-white font-bold uppercase tracking-wider text-sm mb-4 border-b border-blue-800 pb-2 inline-block">Navegación</h3>
+                    <ul class="space-y-3 text-sm">
+                        <li><a href="index.html" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Inicio</a></li>
+                        <li><a href="service-request.html" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Solicitudes</a></li>
+                        <li><a href="companies.html" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Clientes</a></li>
+                        <li><a href="portal-choferes.html" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Portal Choferes</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-white font-bold uppercase tracking-wider text-sm mb-4 border-b border-blue-800 pb-2 inline-block">Contacto Central</h3>
+                    <ul class="space-y-4 text-sm">
+                        <li class="flex items-start gap-3">
+                            <span class="material-icons text-secondary text-sm mt-1">location_on</span>
+                            <span>Av. Granaderos 2550, Of. 304<br>Calama, Región de Antofagasta</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <span class="material-icons text-secondary text-sm">phone</span>
+                            <span>+56 55 234 5678</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <span class="material-icons text-secondary text-sm">email</span>
+                            <span>operaciones@elloa.cl</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <span class="material-icons text-secondary text-sm">access_time</span>
+                            <span>24/7 Soporte en Ruta</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-white font-bold uppercase tracking-wider text-sm mb-4 border-b border-blue-800 pb-2 inline-block">Descarga la App</h3>
+                    <p class="text-xs text-gray-400 mb-4">Gestiona tus viajes y monitorea la ruta en tiempo real.</p>
+                    
+                    <div class="space-y-3">
+                        <button class="w-full bg-gray-800 hover:bg-gray-700 border border-gray-600 rounded-lg p-2 flex items-center gap-3 transition">
+                            <span class="material-icons text-3xl">apple</span>
+                            <div class="text-left">
+                                <div class="text-[10px] uppercase">Disponible en</div>
+                                <div class="font-bold text-sm text-white">App Store</div>
+                            </div>
+                        </button>
+                        <button class="w-full bg-gray-800 hover:bg-gray-700 border border-gray-600 rounded-lg p-2 flex items-center gap-3 transition">
+                            <span class="material-icons text-3xl">android</span>
+                            <div class="text-left">
+                                <div class="text-[10px] uppercase">Disponible en</div>
+                                <div class="font-bold text-sm text-white">Google Play</div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="bg-[#001a33] py-6 border-t border-blue-900/50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="text-xs text-gray-500 text-center md:text-left">
+                    &copy; 2026 Servicios de Transporte El Loa SpA. Todos los derechos reservados.
+                </div>
+                <div class="flex gap-6 text-xs text-gray-400 font-medium">
+                    <a href="terms.html" class="hover:text-white transition">Términos y Condiciones</a>
+                    <a href="privacy.html" class="hover:text-white transition">Política de Privacidad</a>
+                    <a href="complaints.html" class="hover:text-white transition">Portal de Denuncias</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

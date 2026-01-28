@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <title>Agregar Nuevo Vehículo | Servicios de Transporte El Loa</title>
+
+    <!-- Responsive -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { theme: { extend: { colors: { primary: '#003366', secondary: '#FF6600' }, fontFamily: { sans: ['Inter','sans-serif'] } } } }
+    </script>
+    <link rel="stylesheet" href="assets/css/tailwind.css" />
+    <link rel="stylesheet" href="assets/css/custom.css" />
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#003366',    /* Azul Corporativo */
+                        secondary: '#FF6600',  /* Naranja Acción */
+                        surface: '#F3F4F6',
+                        success: '#10B981',
+                        warning: '#F59E0B',
+                        danger: '#EF4444',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <script src="assets/js/auth-helper.js"></script>
+</head>
+<body class="bg-surface font-sans text-gray-800">
+    <script>
+        // Proteger esta página - redirigir al login si no está autenticado
+        protectPage();
+    </script>
+
+   <nav class="bg-primary text-white shadow-lg w-full sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <a href="index.html" class="flex-shrink-0 text-white flex items-center gap-2 font-bold text-xl cursor-pointer">
+                        <span class="material-icons text-secondary">local_shipping</span> EL LOA
+                    </a>
+                    <div class="hidden md:block">
+                        <div class="ml-10 flex items-baseline space-x-4">
+                            <a id="dashboardLink" href="#" onclick="redirectToDashboard(event)" class="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Dashboard</a>
+                            <a href="service-request.html" class="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Solicitudes</a>
+
+                            <a href="users.html" class="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">
+                                Usuarios
+                            </a>
+
+                            <a href="companies.html" class="text-gray-300 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Clientes</a>
+                            <a href="vehicles.html" class="bg-blue-900 text-white px-3 py-2 rounded-md text-sm font-medium border-b-4 border-secondary h-16 flex items-center pt-1">Flota</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <button class="bg-primary p-1 rounded-full text-gray-400 hover:text-white transition">
+                        <span class="material-icons">notifications</span>
+                    </button>
+                    <div class="flex items-center gap-3 pl-4 border-l border-blue-800">
+                        <div class="text-right hidden sm:block">
+                            <p class="text-sm font-bold leading-none user-name">Usuario</p>
+                            <p class="text-xs text-blue-300 user-role">Admin</p>
+                        </div>
+                        <div class="h-8 w-8 rounded-full bg-secondary flex items-center justify-center text-white text-xs font-bold ring-2 ring-blue-900 user-initials">US</div>
+                        <a href="logout.html" class="ml-2 text-sm font-semibold hover:text-gray-300">Salir</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Breadcrumb -->
+        <nav class="flex text-sm text-gray-500 mb-6" aria-label="Breadcrumb">
+            <ol class="flex items-center space-x-2">
+                <li><a href="index.html" class="hover:text-primary transition">Inicio</a></li>
+                <li><span class="text-gray-400">/</span></li>
+                <li><a href="vehicles.html" class="hover:text-primary transition">Flota</a></li>
+                <li><span class="text-gray-400">/</span></li>
+                <li class="text-gray-800 font-medium">Agregar Vehículo</li>
+            </ol>
+        </nav>
+
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold leading-7 text-primary flex items-center gap-3">
+                <span class="material-icons text-4xl">add_circle</span>
+                Agregar Nuevo Vehículo
+            </h1>
+            <p class="mt-2 text-lg text-gray-600">Complete la información del nuevo vehículo para agregarlo a la flota.</p>
+        </div>
+
+        <!-- Form Card -->
+        <div class="bg-white shadow-xl rounded-xl border border-gray-100 overflow-hidden">
+            <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
+                <h2 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                    <span class="material-icons text-primary">directions_car</span>
+                    Información del Vehículo
+                </h2>
+            </div>
+
+            <form id="vehicleForm" class="p-6 space-y-6" onsubmit="handleSubmit(event)">
+                <!-- Información Básica -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Patente *</label>
+                        <input
+                            type="text"
+                            id="patente"
+                            name="patente"
+                            placeholder="ABCD-12"
+                            class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm uppercase font-mono"
+                            required
+                            maxlength="8"
+                        >
+                        <p class="mt-1 text-xs text-gray-500">Formato: ABCD-12 o ABC-123</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Año *</label>
+                        <input
+                            type="number"
+                            id="anio"
+                            name="anio"
+                            placeholder="2024"
+                            min="1990"
+                            max="2026"
+                            class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
+                            required
+                        >
+                    </div>
+                </div>
+
+                <!-- Marca y Modelo -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Marca *</label>
+                        <select
+                            id="marca"
+                            name="marca"
+                            class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
+                            required
+                        >
+                            <option value="">Seleccionar marca</option>
+                            <option value="Mercedes-Benz">Mercedes-Benz</option>
+                            <option value="Toyota">Toyota</option>
+                            <option value="Hyundai">Hyundai</option>
+                            <option value="Volkswagen">Volkswagen</option>
+                            <option value="Chevrolet">Chevrolet</option>
+                            <option value="Ford">Ford</option>
+                            <option value="Nissan">Nissan</option>
+                            <option value="Mitsubishi">Mitsubishi</option>
+                            <option value="Iveco">Iveco</option>
+                            <option value="Scania">Scania</option>
+                            <option value="Otra">Otra</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Modelo *</label>
+                        <input
+                            type="text"
+                            id="modelo"
+                            name="modelo"
+                            placeholder="Ej: Sprinter 515 CDI"
+                            class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
+                            required
+                        >
+                    </div>
+                </div>
+
+                <!-- Tipo y Capacidad -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Tipo de Vehículo *</label>
+                        <select
+                            id="tipo"
+                            name="tipo"
+                            class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
+                            required
+                        >
+                            <option value="">Seleccionar tipo</option>
+                            <option value="Van Pasajeros">Van Pasajeros (Sprinter/H1)</option>
+                            <option value="Camioneta">Camioneta (Pickup)</option>
+                            <option value="SUV">SUV / Auto</option>
+                            <option value="Bus">Bus</option>
+                            <option value="Camión">Camión</option>
+                            <option value="Otro">Otro</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Capacidad (Pasajeros)</label>
+                        <input
+                            type="number"
+                            id="capacidad"
+                            name="capacidad"
+                            placeholder="19"
+                            min="1"
+                            max="50"
+                            class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
+                        >
+                    </div>
+                </div>
+
+                <!-- Información Técnica -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Color</label>
+                        <input
+                            type="text"
+                            id="color"
+                            name="color"
+                            placeholder="Blanco"
+                            class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
+                        >
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Kilometraje Actual</label>
+                        <input
+                            type="number"
+                            id="kilometraje"
+                            name="kilometraje"
+                            placeholder="0"
+                            min="0"
+                            class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
+                        >
+                        <p class="mt-1 text-xs text-gray-500">En kilómetros</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Combustible</label>
+                        <select
+                            id="combustible"
+                            name="combustible"
+                            class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
+                        >
+                            <option value="">Seleccionar</option>
+                            <option value="Diésel">Diésel</option>
+                            <option value="Gasolina">Gasolina</option>
+                            <option value="Eléctrico">Eléctrico</option>
+                            <option value="Híbrido">Híbrido</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Documentación -->
+                <div class="border-t border-gray-200 pt-6">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4 flex items-center gap-2">
+                        <span class="material-icons text-primary">description</span>
+                        Documentación
+                    </h3>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Fecha de Compra</label>
+                            <input
+                                type="date"
+                                id="fechaCompra"
+                                name="fechaCompra"
+                                class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
+                            >
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Fecha Vencimiento Revisión Técnica</label>
+                            <input
+                                type="date"
+                                id="fechaRevision"
+                                name="fechaRevision"
+                                class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
+                            >
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Observaciones</label>
+                        <textarea
+                            id="observaciones"
+                            name="observaciones"
+                            rows="3"
+                            placeholder="Información adicional sobre el vehículo..."
+                            class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
+                        ></textarea>
+                    </div>
+                </div>
+
+                <!-- Botones de Acción -->
+                <div class="flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-200">
+                    <button
+                        type="submit"
+                        class="inline-flex justify-center items-center px-6 py-3 border border-transparent rounded-lg shadow-sm text-base font-medium text-white bg-primary hover:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition duration-150"
+                    >
+                        <span class="material-icons mr-2">save</span>
+                        Registrar Vehículo
+                    </button>
+
+                    <a
+                        href="vehicles.html"
+                        class="inline-flex justify-center items-center px-6 py-3 border border-gray-300 rounded-lg shadow-sm text-base font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition duration-150"
+                    >
+                        <span class="material-icons mr-2">arrow_back</span>
+                        Cancelar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="fixed inset-0 z-50 overflow-y-auto" style="display: none;" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+            <div class="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full sm:p-6">
+                <div class="text-center">
+                    <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100">
+                        <span class="material-icons text-green-600 text-2xl">check_circle</span>
+                    </div>
+                    <h3 class="text-lg leading-6 font-medium text-gray-900 mt-4" id="modal-title">¡Vehículo Registrado!</h3>
+                    <div class="mt-2">
+                        <p class="text-sm text-gray-500">
+                            El vehículo ha sido registrado correctamente en el sistema.
+                        </p>
+                        <div class="mt-3 p-3 bg-gray-50 rounded-lg">
+                            <p class="text-sm font-medium text-gray-900" id="vehicleInfo"></p>
+                        </div>
+                    </div>
+                    <div class="mt-5 sm:mt-6">
+                        <button
+                            type="button"
+                            onclick="closeSuccessModal()"
+                            class="inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary text-base font-medium text-white hover:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary sm:text-sm"
+                        >
+                            Aceptar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Validación de patente chilena
+        function validatePatente(patente) {
+            const pattern = /^[A-Z]{2,4}-[0-9]{1,3}$|^[A-Z]{3,4}[0-9]{3}$/;
+            return pattern.test(patente.toUpperCase());
+        }
+
+        // Formatear patente
+        function formatPatente(input) {
+            let value = input.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+            if (value.length <= 4) {
+                // Para patentes antiguas o nuevas sin guión
+                input.value = value;
+            } else if (value.length <= 7) {
+                // Insertar guión antes de los últimos 1-3 dígitos
+                const letters = value.slice(0, -3);
+                const numbers = value.slice(-3);
+                input.value = letters + '-' + numbers;
+            }
+        }
+
+        // Manejar envío del formulario
+        function handleSubmit(event) {
+            event.preventDefault();
+            console.log('handleSubmit called');
+
+            const form = event.target;
+            const formData = new FormData(form);
+
+            // Validar patente
+            const patente = formData.get('patente');
+            console.log('Patente:', patente);
+            if (!validatePatente(patente)) {
+                alert('Formato de patente inválido. Use formato ABCD-12 o ABC-123');
+                return;
+            }
+
+            // Validar campos requeridos
+            const requiredFields = ['patente', 'anio', 'marca', 'modelo', 'tipo'];
+            let isValid = true;
+
+            requiredFields.forEach(field => {
+                const element = document.getElementById(field);
+                if (!formData.get(field)) {
+                    element.classList.add('border-red-500');
+                    isValid = false;
+                } else {
+                    element.classList.remove('border-red-500');
+                }
+            });
+
+            if (!isValid) {
+                alert('Por favor complete todos los campos requeridos.');
+                return;
+            }
+
+            console.log('Form validation passed, showing modal');
+
+            // Simular registro (aquí iría la llamada a la API)
+            const vehicleData = {
+                patente: formData.get('patente').toUpperCase(),
+                anio: formData.get('anio'),
+                marca: formData.get('marca'),
+                modelo: formData.get('modelo'),
+                tipo: formData.get('tipo'),
+                capacidad: formData.get('capacidad') || 'N/A',
+                color: formData.get('color') || 'N/A',
+                kilometraje: formData.get('kilometraje') || '0',
+                combustible: formData.get('combustible') || 'N/A',
+                fechaCompra: formData.get('fechaCompra') || 'N/A',
+                fechaRevision: formData.get('fechaRevision') || 'N/A',
+                observaciones: formData.get('observaciones') || ''
+            };
+
+            // Mostrar modal de éxito
+            showSuccessModal(vehicleData);
+
+            // Limpiar formulario
+            form.reset();
+        }
+
+        // Mostrar modal de éxito
+        function showSuccessModal(vehicleData) {
+            console.log('showSuccessModal called with:', vehicleData);
+            const modal = document.getElementById('successModal');
+            const vehicleInfo = document.getElementById('vehicleInfo');
+
+            console.log('Modal element:', modal);
+            console.log('Vehicle info element:', vehicleInfo);
+
+            if (modal && vehicleInfo) {
+                vehicleInfo.textContent = `${vehicleData.marca} ${vehicleData.modelo} - Patente: ${vehicleData.patente}`;
+                modal.style.display = 'block';
+                console.log('Modal should now be visible');
+            } else {
+                console.error('Modal or vehicle info element not found');
+            }
+        }
+
+        // Cerrar modal de éxito
+        function closeSuccessModal() {
+            const modal = document.getElementById('successModal');
+            modal.style.display = 'none';
+
+            // Redirigir a la lista de vehículos
+            window.location.href = 'vehicles.html';
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            const patenteInput = document.getElementById('patente');
+            patenteInput.addEventListener('input', function() {
+                formatPatente(this);
+            });
+
+            // Auto-fill año actual si está vacío
+            const anioInput = document.getElementById('anio');
+            anioInput.addEventListener('focus', function() {
+                if (!this.value) {
+                    this.value = new Date().getFullYear();
+                }
+            });
+        });
+
+        // Redirección dinámica al Dashboard según el rol del usuario
+        function redirectToDashboard(event) {
+            event.preventDefault();
+
+            // Obtener el rol del usuario del localStorage o sessionStorage
+            const userRole = localStorage.getItem('userRole') || sessionStorage.getItem('userRole') || 'cliente';
+
+            let dashboardUrl = 'dashboard.html'; // URL por defecto
+
+            switch(userRole.toLowerCase()) {
+                case 'admin':
+                case 'administrador':
+                    dashboardUrl = 'dashboard_adm.html';
+                    break;
+                case 'cliente':
+                    dashboardUrl = 'dashboard-cli.html';
+                    break;
+                case 'chofer':
+                    dashboardUrl = 'dashboard-chof.html';
+                    break;
+                default:
+                    dashboardUrl = 'dashboard.html';
+            }
+
+            // Redirigir a la URL correspondiente
+            window.location.href = dashboardUrl;
+        }
+    </script>
+
+<footer class="bg-[#002244] text-gray-300 border-t-4 border-secondary mt-auto">
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+
+                <div class="space-y-4">
+                    <div class="flex items-center gap-2 text-white">
+                        <span class="material-icons text-secondary text-3xl">local_shipping</span>
+                        <span class="font-bold text-xl tracking-wide">Servicios El Loa</span>
+                    </div>
+                    <p class="text-sm leading-relaxed text-gray-400">
+                        Líderes en transporte corporativo y privado en la región de Antofagasta. Seguridad, puntualidad y tecnología al servicio de la minería.
+                    </p>
+                    <div class="flex gap-4 pt-2">
+                        <a href="https://facebook.com" target="_blank" class="w-8 h-8 rounded-full bg-blue-900 flex items-center justify-center hover:bg-secondary transition text-white">
+                            <span class="material-icons text-sm">facebook</span>
+                        </a>
+                        <a href="https://elloa.cl" target="_blank" class="w-8 h-8 rounded-full bg-blue-900 flex items-center justify-center hover:bg-secondary transition text-white">
+                            <span class="material-icons text-sm">public</span> </a>
+                        <a href="https://instagram.com" target="_blank" class="w-8 h-8 rounded-full bg-blue-900 flex items-center justify-center hover:bg-secondary transition text-white">
+                            <span class="material-icons text-sm">photo_camera</span> </a>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-white font-bold uppercase tracking-wider text-sm mb-4 border-b border-blue-800 pb-2 inline-block">Navegación</h3>
+                    <ul class="space-y-3 text-sm">
+                        <li><a href="index.html" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Inicio</a></li>
+                        <li><a href="service-request.html" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Solicitudes</a></li>
+                        <li><a href="companies.html" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Clientes</a></li>
+                        <li><a href="portal-choferes.html" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Portal Choferes</a></li>
+                        <li><a href="portal-choferes.html" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Contáctanos</a></li>
+                        <li><a href="portal-choferes.html" class="hover:text-secondary transition flex items-center gap-2"><span class="material-icons text-xs">chevron_right</span> Trabaja con Nosotoros</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-white font-bold uppercase tracking-wider text-sm mb-4 border-b border-blue-800 pb-2 inline-block">Contacto Central</h3>
+                    <ul class="space-y-4 text-sm">
+                        <li class="flex items-start gap-3">
+                            <span class="material-icons text-secondary text-sm mt-1">location_on</span>
+                            <span>Av. Granaderos 2550, Of. 304<br>Calama, Región de Antofagasta</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <span class="material-icons text-secondary text-sm">phone</span>
+                            <span>+56 55 234 5678</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <span class="material-icons text-secondary text-sm">email</span>
+                            <span>operaciones@elloa.cl</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <span class="material-icons text-secondary text-sm">access_time</span>
+                            <span>24/7 Soporte en Ruta</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-white font-bold uppercase tracking-wider text-sm mb-4 border-b border-blue-800 pb-2 inline-block">Descarga la App</h3>
+                    <p class="text-xs text-gray-400 mb-4">Gestiona tus viajes y monitorea la ruta en tiempo real.</p>
+                    <div class="space-y-3">
+                        <button class="w-full bg-gray-800 hover:bg-gray-700 border border-gray-600 rounded-lg p-2 flex items-center gap-3 transition">
+                            <span class="material-icons text-3xl">apple</span>
+                            <div class="text-left">
+                                <div class="text-[10px] uppercase">Disponible en</div>
+                                <div class="font-bold text-sm text-white">App Store</div>
+                            </div>
+                        </button>
+                        <button class="w-full bg-gray-800 hover:bg-gray-700 border border-gray-600 rounded-lg p-2 flex items-center gap-3 transition">
+                            <span class="material-icons text-3xl">android</span>
+                            <div class="text-left">
+                                <div class="text-[10px] uppercase">Disponible en</div>
+                                <div class="font-bold text-sm text-white">Google Play</div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="bg-[#001a33] py-6 border-t border-blue-900/50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="text-xs text-gray-500 text-center md:text-left">
+                    &copy; 2026 Servicios de Transporte El Loa SpA. Todos los derechos reservados.
+                </div>
+                <div class="flex gap-6 text-xs text-gray-400 font-medium">
+                    <a href="terms.html" class="hover:text-white transition">Términos y Condiciones</a>
+                    <a href="privacy.html" class="hover:text-white transition">Política de Privacidad</a>
+                    <a href="complaints.html" class="hover:text-white transition">Portal de Denuncias</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
