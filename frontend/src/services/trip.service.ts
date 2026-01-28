@@ -1,14 +1,14 @@
-import api from "../lib/axios";
-import { Trip, CreateTripDTO } from "../types/trip.types";
+import api from '../lib/axios';
+import { Trip, CreateTripDTO } from '../types/trip.types';
 
 export const tripService = {
   getMyTrips: async (): Promise<Trip[]> => {
-    const response = await api.get<Trip[]>("/api/v1/trips/my-trips");
+    const response = await api.get<Trip[]>('/api/v1/trips/my-trips');
     return response.data;
   },
 
   createTrip: async (data: CreateTripDTO): Promise<Trip> => {
-    const response = await api.post<Trip>("/api/v1/trips", data);
+    const response = await api.post<Trip>('/api/v1/trips', data);
     return response.data;
   },
 

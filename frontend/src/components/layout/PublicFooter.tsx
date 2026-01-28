@@ -1,25 +1,24 @@
 // import React from "react";
-import { Link } from "react-router-dom";
-import { 
-  Truck, 
-  Facebook, 
-  Globe, 
-  Instagram, 
-  ChevronRight, 
-  MapPin, 
-  Phone, 
-  Mail, 
+import { Link } from 'react-router-dom';
+import {
+  Truck,
+  Facebook,
+  Globe,
+  Instagram,
+  ChevronRight,
+  MapPin,
+  Phone,
+  Mail,
   Clock,
   Smartphone,
-  Apple
-} from "lucide-react";
+  Apple,
+} from 'lucide-react';
 
 const PublicFooter = () => {
   return (
     <footer className="bg-[#002244] text-gray-300 border-t-4 border-secondary mt-auto font-sans">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          
           {/* Column 1: Brand */}
           <div className="space-y-4">
             <div className="flex items-center gap-2 text-white">
@@ -27,16 +26,32 @@ const PublicFooter = () => {
               <span className="font-bold text-xl tracking-wide">Servicios El Loa</span>
             </div>
             <p className="text-sm leading-relaxed text-gray-400">
-              Líderes en transporte corporativo y privado en la región de Antofagasta. Seguridad, puntualidad y tecnología al servicio de la minería.
+              Líderes en transporte corporativo y privado en la región de Antofagasta. Seguridad,
+              puntualidad y tecnología al servicio de la minería.
             </p>
             <div className="flex gap-4 pt-2">
-              <a href="https://facebook.com" target="_blank" rel="noreferrer" className="w-8 h-8 rounded-full bg-blue-900 flex items-center justify-center hover:bg-secondary transition text-white">
+              <a
+                href="https://facebook.com"
+                target="_blank"
+                rel="noreferrer"
+                className="w-8 h-8 rounded-full bg-blue-900 flex items-center justify-center hover:bg-secondary transition text-white"
+              >
                 <Facebook size={16} />
               </a>
-              <a href="https://elloa.cl" target="_blank" rel="noreferrer" className="w-8 h-8 rounded-full bg-blue-900 flex items-center justify-center hover:bg-secondary transition text-white">
+              <a
+                href="https://elloa.cl"
+                target="_blank"
+                rel="noreferrer"
+                className="w-8 h-8 rounded-full bg-blue-900 flex items-center justify-center hover:bg-secondary transition text-white"
+              >
                 <Globe size={16} />
               </a>
-              <a href="https://instagram.com" target="_blank" rel="noreferrer" className="w-8 h-8 rounded-full bg-blue-900 flex items-center justify-center hover:bg-secondary transition text-white">
+              <a
+                href="https://instagram.com"
+                target="_blank"
+                rel="noreferrer"
+                className="w-8 h-8 rounded-full bg-blue-900 flex items-center justify-center hover:bg-secondary transition text-white"
+              >
                 <Instagram size={16} />
               </a>
             </div>
@@ -54,7 +69,10 @@ const PublicFooter = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/client/request" className="hover:text-secondary transition flex items-center gap-2">
+                <Link
+                  to="/client/request"
+                  className="hover:text-secondary transition flex items-center gap-2"
+                >
                   <ChevronRight size={14} /> Solicitudes
                 </Link>
               </li>
@@ -64,13 +82,27 @@ const PublicFooter = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/driver/trips" className="hover:text-secondary transition flex items-center gap-2">
+                <Link
+                  to="/driver/trips"
+                  className="hover:text-secondary transition flex items-center gap-2"
+                >
                   <ChevronRight size={14} /> Portal Choferes
                 </Link>
               </li>
               <li>
-                <Link to="#" className="hover:text-secondary transition flex items-center gap-2">
+                <Link
+                  to="/contact"
+                  className="hover:text-secondary transition flex items-center gap-2"
+                >
                   <ChevronRight size={14} /> Contáctanos
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/work-with-us"
+                  className="hover:text-secondary transition flex items-center gap-2"
+                >
+                  <ChevronRight size={14} /> Trabaja con Nosotros
                 </Link>
               </li>
             </ul>
@@ -84,7 +116,11 @@ const PublicFooter = () => {
             <ul className="space-y-4 text-sm">
               <li className="flex items-start gap-3">
                 <MapPin className="text-secondary w-4 h-4 mt-1" />
-                <span>Av. Granaderos 2550, Of. 304<br />Calama, Región de Antofagasta</span>
+                <span>
+                  Av. Granaderos 2550, Of. 304
+                  <br />
+                  Calama, Región de Antofagasta
+                </span>
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="text-secondary w-4 h-4" />
@@ -109,7 +145,7 @@ const PublicFooter = () => {
             <p className="text-xs text-gray-400 mb-4">
               Gestiona tus viajes y monitorea la ruta en tiempo real.
             </p>
-            
+
             <div className="space-y-3">
               <button className="w-full bg-gray-800 hover:bg-gray-700 border border-gray-600 rounded-lg p-2 flex items-center gap-3 transition">
                 <Apple size={28} className="text-white" />
@@ -127,7 +163,6 @@ const PublicFooter = () => {
               </button>
             </div>
           </div>
-
         </div>
       </div>
 
@@ -138,9 +173,15 @@ const PublicFooter = () => {
             &copy; 2026 Servicios de Transporte El Loa SpA. Todos los derechos reservados.
           </div>
           <div className="flex gap-6 text-xs text-gray-400 font-medium">
-            <Link to="#" className="hover:text-white transition">Términos y Condiciones</Link>
-            <Link to="/privacy" className="hover:text-white transition">Política de Privacidad</Link>
-            <Link to="/complaints" className="hover:text-white transition">Canal de Denuncias</Link>
+            <Link to="/terms" className="hover:text-white transition">
+              Términos y Condiciones
+            </Link>
+            <Link to="/privacy" className="hover:text-white transition">
+              Política de Privacidad
+            </Link>
+            <Link to="/complaints" className="hover:text-white transition">
+              Canal de Denuncias
+            </Link>
           </div>
         </div>
       </div>

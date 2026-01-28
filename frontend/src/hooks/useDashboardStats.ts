@@ -1,12 +1,12 @@
-import { useState, useEffect } from "react";
-import api from "../lib/axios";
-import { VehicleStats } from "../types/vehicle.types";
+import { useState, useEffect } from 'react';
+import api from '../lib/axios';
+import { VehicleStats } from '../types/vehicle.types';
 
 interface DashboardStats {
-    activeTrips: number;
-    completedTrips: number;
-    revenue: number;
-    vehicleStats: VehicleStats;
+  activeTrips: number;
+  completedTrips: number;
+  revenue: number;
+  vehicleStats: VehicleStats;
 }
 
 export const useDashboardStats = () => {
@@ -19,10 +19,10 @@ export const useDashboardStats = () => {
       setLoading(true);
       setError(null);
       try {
-        const response = await api.get<DashboardStats>("/api/v1/reports/dashboard");
+        const response = await api.get<DashboardStats>('/api/v1/reports/dashboard');
         setStats(response.data);
       } catch (err) {
-        setError("Error al cargar estadísticas del dashboard.");
+        setError('Error al cargar estadísticas del dashboard.');
         console.error(err);
       } finally {
         setLoading(false);

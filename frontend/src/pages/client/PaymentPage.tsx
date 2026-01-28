@@ -1,6 +1,8 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { CreditCard, ArrowLeft, Loader2, CheckCircle } from "lucide-react";
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import PublicNavbar from '../../components/layout/PublicNavbar';
+import PublicFooter from '../../components/layout/PublicFooter';
+import { CreditCard, Loader2 } from 'lucide-react';
 
 /**
  * PaymentPage - Simulates the payment process (e.g. WebPay, PayPal)
@@ -8,12 +10,27 @@ import { CreditCard, ArrowLeft, Loader2, CheckCircle } from "lucide-react";
 const PaymentPage = () => {
   const navigate = useNavigate();
   const [selectedMethod, setSelectedMethod] = useState<string | null>(null);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [paymentSuccess, setPaymentSuccess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handlePayment = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedMethod) return;
+    setError(null);
+
+    let hasError = false;
+    if (!selectedMethod) {
+      setError('Debes seleccionar un método de pago.');
+      hasError = true;
+    }
+    if (!acceptedTerms) {
+      // Just for local validation logic, showing error only if method selected to match mockup behavior roughly
+      // or just set a general error
+      if (!hasError) setError('Debes aceptar los términos para continuar.');
+      hasError = true;
+    }
+
+    if (hasError) return;
 
     setLoading(true);
 
@@ -24,102 +41,130 @@ const PaymentPage = () => {
       navigate('/client/payment/commit?token_ws=TEST_TOKEN_12345&status=AUTHORIZED');
     }, 2000);
   };
-/*
-  if (paymentSuccess) {
-      return ( ... ) // Removemos este bloque interno porque ahora redirigimos
-  } 
-*/
+
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-2xl mx-auto">
-        <Link to="/client/request" className="inline-flex items-center text-gray-500 hover:text-primary mb-6 transition">
-           <ArrowLeft size={16} className="mr-1" /> Volver a Solicitud
-        </Link>
-        
+    <div className="font-sans flex flex-col min-h-screen bg-gray-50">
+      <PublicNavbar />
+
+      <main className="flex-grow max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
         <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-8">
           <h1 className="text-2xl font-bold text-primary mb-6 flex items-center gap-2">
+            <span className="material-icons text-secondary">payments</span>
             <CreditCard className="text-secondary" />
             Pago del servicio
           </h1>
 
           <form onSubmit={handlePayment} className="space-y-6">
-            
             {/* Payment Methods */}
             <div>
-              <label className="block text-sm font-semibold mb-3 text-gray-700">Selecciona un método de pago:</label>
-              <div className="grid grid-cols-1 gap-3">
-                
-                {/* WebPay */}
-                <button
-                  type="button"
-                  onClick={() => setSelectedMethod('webpay')}
-                  className={`flex items-center gap-4 border rounded-lg px-4 py-3 transition text-left group
-                    ${selectedMethod === 'webpay' ? 'border-primary ring-2 ring-primary bg-blue-50' : 'border-gray-300 hover:border-primary hover:bg-gray-50'}
-                  `}
-                >
-                  <div className="w-12 h-8 bg-white border border-gray-200 rounded flex items-center justify-center overflow-hidden">
-                     {/* Placeholder Logo */}
-                     <div className="w-full h-full bg-contain bg-center bg-no-repeat" style={{ backgroundImage: "url('https://upload.wikimedia.org/wikipedia/commons/8/8a/Webpay_logo.png')" }}></div>
-                  </div>
-                  <span className="font-medium text-gray-800">WebPay Plus</span>
-                </button>
-
+              <label className="block text-sm font-semibold mb-2 text-gray-700">
+                Selecciona un método de pago:
+              </label>
+              <div className="flex flex-col gap-3">
                 {/* PayPal */}
                 <button
                   type="button"
-                  onClick={() => setSelectedMethod('paypal')}
-                  className={`flex items-center gap-4 border rounded-lg px-4 py-3 transition text-left group
-                    ${selectedMethod === 'paypal' ? 'border-primary ring-2 ring-primary bg-blue-50' : 'border-gray-300 hover:border-primary hover:bg-gray-50'}
+                  onClick={() => {
+                    setSelectedMethod('paypal');
+                    setError(null);
+                  }}
+                  className={`flex items-center gap-2 border rounded px-4 py-3 transition text-left
+                    ${selectedMethod === 'paypal' ? 'border-primary ring-2 ring-primary bg-blue-50' : 'border-gray-300 hover:border-primary'}
                   `}
                 >
-                   <div className="w-12 h-8 bg-white border border-gray-200 rounded flex items-center justify-center">
-                     <span className="font-bold text-blue-800 italic">PayPal</span>
-                  </div>
-                  <span className="font-medium text-gray-800">PayPal</span>
+                  <img
+                    src="https://www.paypalobjects.com/webstatic/icon/pp258.png"
+                    alt="PayPal"
+                    className="w-6 h-6 object-contain"
+                  />
+                  <span className="font-medium text-gray-700">PayPal</span>
                 </button>
-  
+
+                {/* WebPay */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedMethod('webpay');
+                    setError(null);
+                  }}
+                  className={`flex items-center gap-2 border rounded px-4 py-3 transition text-left
+                    ${selectedMethod === 'webpay' ? 'border-primary ring-2 ring-primary bg-blue-50' : 'border-gray-300 hover:border-primary'}
+                  `}
+                >
+                  <img
+                    src="https://upload.wikimedia.org/wikipedia/commons/8/8a/Webpay_logo.png"
+                    alt="WebPay"
+                    className="w-6 h-6 object-contain"
+                  />
+                  <span className="font-medium text-gray-700">WebPay</span>
+                </button>
+
+                {/* Mercado Pago */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedMethod('mercadopago');
+                    setError(null);
+                  }}
+                  className={`flex items-center gap-2 border rounded px-4 py-3 transition text-left
+                    ${selectedMethod === 'mercadopago' ? 'border-primary ring-2 ring-primary bg-blue-50' : 'border-gray-300 hover:border-primary'}
+                  `}
+                >
+                  <img
+                    src="https://http2.mlstatic.com/frontend-assets/ml-web-navigation/ui-navigation/6.4.1/mercadopago/logo__large_plus.png"
+                    alt="Mercado Pago"
+                    className="w-6 h-6 object-contain"
+                  />
+                  <span className="font-medium text-gray-700">Mercado Pago</span>
+                </button>
               </div>
-              {!selectedMethod && (
-                  <p className="text-xs text-gray-400 mt-2">Seleccione una opción para continuar</p>
-              )}
+              {error && <p className="text-xs text-red-600 mt-2">{error}</p>}
             </div>
 
-            {/* Summary */}
-            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                <h3 className="text-sm font-bold text-gray-900 mb-2">Resumen de Pago</h3>
-                <div className="flex justify-between text-sm mb-1">
-                    <span className="text-gray-600">Servicio de Transporte</span>
-                    <span className="font-medium">$45,000</span>
-                </div>
-                <div className="flex justify-between text-sm mb-3">
-                    <span className="text-gray-600">IVA (19%)</span>
-                    <span className="font-medium">$8,550</span>
-                </div>
-                <div className="border-t border-gray-300 pt-2 flex justify-between items-center">
-                    <span className="font-bold text-gray-900">Total a Pagar</span>
-                    <span className="text-xl font-bold text-secondary">$53,550</span>
-                </div>
+            {/* Terms and conditions */}
+            <div className="flex items-center gap-2">
+              <input
+                id="terms"
+                type="checkbox"
+                className="h-4 w-4 border-gray-300 rounded text-secondary focus:ring-secondary cursor-pointer"
+                checked={acceptedTerms}
+                onChange={(e) => setAcceptedTerms(e.target.checked)}
+              />
+              <label htmlFor="terms" className="text-xs text-gray-700 select-none cursor-pointer">
+                Estoy de acuerdo con los{' '}
+                <Link
+                  to="/terms"
+                  target="_blank"
+                  className="text-secondary underline hover:text-primary transition"
+                >
+                  términos del servicio
+                </Link>{' '}
+                y acepto la solicitud y forma de pago.
+              </label>
             </div>
 
             {/* Submit */}
             <button
               type="submit"
-              disabled={!selectedMethod || loading}
-              className={`w-full flex items-center justify-center gap-2 py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white 
-                ${!selectedMethod || loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-primary hover:bg-blue-800'}
-                transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary`}
+              disabled={loading}
+              className={`w-full bg-secondary hover:bg-orange-700 text-white font-bold py-3 px-4 rounded shadow-md transition text-lg flex items-center justify-center gap-2
+                ${loading ? 'opacity-75 cursor-not-allowed' : ''}
+              `}
             >
               {loading ? (
-                  <>
-                     <Loader2 className="animate-spin" size={18} /> Procesando...
-                  </>
+                <>
+                  <Loader2 className="animate-spin" size={20} /> Procesando...
+                </>
               ) : (
-                  <>Pagar Ahora</>
+                <>
+                  <CreditCard size={20} /> Pagar
+                </>
               )}
             </button>
           </form>
         </div>
-      </div>
+      </main>
+      <PublicFooter />
     </div>
   );
 };

@@ -1,16 +1,14 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import { Mail, Send, ArrowLeft } from "lucide-react";
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { Mail, Send, ArrowLeft } from 'lucide-react';
 
 const RecoverPasswordPage = () => {
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Recovering password for:", email);
-    alert(
-      "Si el correo existe en nuestro sistema, recibirás las instrucciones en breve."
-    );
+    console.log('Recovering password for:', email);
+    alert('Si el correo existe en nuestro sistema, recibirás las instrucciones en breve.');
   };
 
   return (
@@ -39,12 +37,10 @@ const RecoverPasswordPage = () => {
           <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-primary to-secondary"></div>
 
           <div className="text-center mb-8">
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">
-              Recuperar Acceso
-            </h1>
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">Recuperar Acceso</h1>
             <p className="text-gray-500 text-sm leading-relaxed">
-              Ingresa tu correo electrónico registrado y te enviaremos
-              instrucciones para restablecer tu contraseña.
+              Ingresa tu correo electrónico registrado y te enviaremos instrucciones para
+              restablecer tu contraseña.
             </p>
           </div>
 
@@ -83,10 +79,7 @@ const RecoverPasswordPage = () => {
               to="/login"
               className="inline-flex items-center gap-2 text-sm font-semibold text-gray-400 hover:text-primary transition-colors group"
             >
-              <ArrowLeft
-                size={16}
-                className="group-hover:-translate-x-1 transition-transform"
-              />
+              <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
               Volver al Inicio de Sesión
             </Link>
           </div>
