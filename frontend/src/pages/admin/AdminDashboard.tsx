@@ -1,5 +1,8 @@
+import React from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { Users, MapPin, Car, TrendingUp, DollarSign, Activity } from 'lucide-react';
+import { useDashboardStats } from '../../hooks/useDashboardStats';
+import { tripService } from '../../services/trip.service';
 import { Card, CardContent } from '../../components/ui/Card';
 import {
   Chart as ChartJS,
@@ -16,33 +19,50 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 
 const AdminDashboard = () => {
   const { user } = useAuth();
+  const { stats, loading: statsLoading, error: statsError } = useDashboardStats();
+  const [recentTrips, setRecentTrips] = React.useState<any[]>([]);
+  const [tripsLoading, setTripsLoading] = React.useState(true);
 
-  // Mock Data
-  const stats = [
+  React.useEffect(() => {
+    const load = async () => {
+      setTripsLoading(true);
+      try {
+        const trips = await tripService.getMyTrips();
+        setRecentTrips(trips.slice(0, 6));
+      } catch (e) {
+        console.error('Error cargando viajes recientes', e);
+      } finally {
+        setTripsLoading(false);
+      }
+    };
+    load();
+  }, []);
+
+  const cards = [
     {
       label: 'Total Viajes',
-      value: '1,234',
+      value: stats ? `${stats.activeTrips + stats.completedTrips}` : '—',
       icon: MapPin,
       color: 'text-blue-600',
       bg: 'bg-blue-100',
     },
     {
       label: 'Ingresos Totales',
-      value: '$4.5M',
+      value: stats ? `$${(stats.revenue / 1000).toLocaleString()}k` : '—',
       icon: DollarSign,
       color: 'text-green-600',
       bg: 'bg-green-100',
     },
     {
-      label: 'Viajes Pendientes',
-      value: '42',
+      label: 'Viajes Activos',
+      value: stats ? `${stats.activeTrips}` : '—',
       icon: Activity,
       color: 'text-orange-600',
       bg: 'bg-orange-100',
     },
     {
       label: 'Vehículos Activos',
-      value: '18/24',
+      value: stats ? `${stats.vehicleStats.available}/${stats.vehicleStats.total}` : '—',
       icon: Car,
       color: 'text-purple-600',
       bg: 'bg-purple-100',
@@ -92,7 +112,7 @@ const AdminDashboard = () => {
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {stats.map((stat, index) => (
+        {cards.map((stat, index) => (
           <Card
             key={index}
             className="overflow-hidden border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 group"
@@ -109,10 +129,10 @@ const AdminDashboard = () => {
                 >
                   <stat.icon size={24} />
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-1">{stat.value}</h3>
-                <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">
-                  {stat.label}
-                </p>
+                <h3 className="text-2xl font-bold text-gray-900 mb-1">
+                  {stat.label === 'Total Viajes' && stats ? stats.activeTrips + stats.completedTrips : stat.value}
+                </h3>
+                <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">{stat.label}</p>
               </div>
               <div className="absolute bottom-0 left-0 h-1 bg-primary w-0 group-hover:w-full transition-all duration-500"></div>
             </CardContent>
@@ -186,25 +206,33 @@ const AdminDashboard = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {[1, 2, 3, 4, 5].map((item) => (
-                <tr key={item} className="hover:bg-gray-50 transition">
-                  <td className="px-6 py-4 font-medium text-primary">#TR-202{item}</td>
-                  <td className="px-6 py-4">Empresa Minera {item}</td>
-                  <td className="px-6 py-4 text-gray-500">27 Ene 2026</td>
-                  <td className="px-6 py-4">
-                    <div className="flex flex-col">
-                      <span>Aeropuerto CJC</span>
-                      <span className="text-xs text-gray-400">Hotel Diego de Almagro</span>
-                    </div>
+              {recentTrips.length === 0 && !tripsLoading ? (
+                <tr>
+                  <td colSpan={6} className="px-6 py-8 text-center text-gray-500">
+                    No hay viajes recientes.
                   </td>
-                  <td className="px-6 py-4">
-                    <span className="px-2 py-1 text-xs font-bold text-green-700 bg-green-100 rounded-full">
-                      COMPLETADO
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 font-bold">$45.000</td>
                 </tr>
-              ))}
+              ) : (
+                recentTrips.map((t: any) => (
+                  <tr key={t.id} className="hover:bg-gray-50 transition">
+                    <td className="px-6 py-4 font-medium text-primary">{t.id}</td>
+                    <td className="px-6 py-4">{t.clientName || t.clientId}</td>
+                    <td className="px-6 py-4 text-gray-500">{new Date(t.createdAt).toLocaleString('es-CL')}</td>
+                    <td className="px-6 py-4">
+                      <div className="flex flex-col">
+                        <span>{t.origin}</span>
+                        <span className="text-xs text-gray-400">{t.destination}</span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className="px-2 py-1 text-xs font-bold text-green-700 bg-green-100 rounded-full">
+                        {t.status}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 font-bold">${(t.fare || 0).toLocaleString()}</td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

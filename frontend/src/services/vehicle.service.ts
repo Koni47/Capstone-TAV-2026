@@ -11,19 +11,19 @@ interface PaginatedResponse<T> {
 
 export const vehicleService = {
   getAll: async (page = 1, limit = 10): Promise<PaginatedResponse<Vehicle>> => {
-    const response = await api.get<PaginatedResponse<Vehicle>>('/api/v1/vehicles', {
+    const response = await api.get<PaginatedResponse<Vehicle>>('/vehicles', {
       params: { page, limit },
     });
     return response.data;
   },
 
   getStats: async (): Promise<VehicleStats> => {
-    const response = await api.get<VehicleStats>('/api/v1/vehicles/stats');
+    const response = await api.get<VehicleStats>('/vehicles/stats');
     return response.data;
   },
 
   getAvailable: async (): Promise<Vehicle[]> => {
-    const response = await api.get<Vehicle[]>('/api/v1/vehicles/available');
+    const response = await api.get<Vehicle[]>('/vehicles/available');
     return response.data;
   },
 };

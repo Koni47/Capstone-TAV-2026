@@ -6,7 +6,11 @@ export const authService = {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const response = await api.post<any>('/auth/login', credentials);
     // El backend devuelve { accessToken, refreshToken, user }
-    const { accessToken, user } = response.data;
+    const { accessToken, refreshToken, user } = response.data;
+    // Guardar refreshToken opcionalmente
+    if (refreshToken) {
+      localStorage.setItem('refreshToken', refreshToken);
+    }
     return { token: accessToken, user } as LoginResponse;
   },
 
