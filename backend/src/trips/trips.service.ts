@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
@@ -116,33 +116,45 @@ export class TripsService {
     // Si el usuario es CLIENTE, forzamos clientId = userId para mantener integridad
     const clientId = role === 'CLIENTE' ? userId : data.clientId;
 
-    const serviceRequest = await this.prisma.serviceRequest.create({
-      data: {
-        origin: data.origin,
-        destination: data.destination,
-        passengerCount: data.passengerCount || 1,
-        notes: data.notes || null,
-        clientId: clientId,
-      },
-    });
+    // Validación: para roles distintos a CLIENTE se debe proporcionar clientId
+    if (!clientId) {
+      throw new BadRequestException('clientId es requerido para crear un viaje en nombre de otro usuario');
+    }
 
-    const trip = await this.prisma.trip.create({
-      data: {
-        serviceRequestId: serviceRequest.id,
-        status: 'PENDIENTE',
-        fare: data.fare || 0,
-      },
-      include: { serviceRequest: true },
-    });
+    try {
+      const serviceRequest = await this.prisma.serviceRequest.create({
+        data: {
+          origin: data.origin,
+          destination: data.destination,
+          passengerCount: data.passengerCount || 1,
+          notes: data.notes || null,
+          clientId: clientId,
+        },
+      });
 
-    return {
-      id: trip.id,
-      status: trip.status,
-      origin: trip.serviceRequest.origin,
-      destination: trip.serviceRequest.destination,
-      fare: trip.fare,
-      clientId: trip.serviceRequest.clientId,
-      createdAt: trip.createdAt,
-    };
+      const trip = await this.prisma.trip.create({
+        data: {
+          serviceRequestId: serviceRequest.id,
+          status: 'PENDIENTE',
+          fare: data.fare || 0,
+        },
+        include: { serviceRequest: true },
+      });
+
+      return {
+        id: trip.id,
+        status: trip.status,
+        origin: trip.serviceRequest.origin,
+        destination: trip.serviceRequest.destination,
+        fare: trip.fare,
+        clientId: trip.serviceRequest.clientId,
+        createdAt: trip.createdAt?.toISOString(),
+      };
+    } catch (error) {
+      // Log detailed error for debugging
+      // eslint-disable-next-line no-console
+      console.error('createTrip error:', error?.message || error, error?.stack || 'no-stack');
+      throw error;
+    }
   }
 }

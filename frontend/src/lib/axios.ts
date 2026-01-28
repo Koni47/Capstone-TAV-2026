@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000/api/v1',
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000',
   headers: {
     'Content-Type': 'application/json',
   },
@@ -33,22 +33,14 @@ api.interceptors.response.use(
       status: error.response?.status,
       data: error.response?.data,
     });
-    return Promise.reject(error);
-  },
-);
 
-api.interceptors.response.use(
-  (response) => {
-    return response;
-  },
-  (error) => {
     if (error.response && error.response.status === 401) {
       localStorage.removeItem('token');
-      // Optional: Redirect to login only if not already there to avoid loops
       if (window.location.pathname !== '/login') {
         window.location.href = '/login';
       }
     }
+
     return Promise.reject(error);
   },
 );
