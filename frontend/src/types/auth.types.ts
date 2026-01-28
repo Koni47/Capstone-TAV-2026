@@ -1,7 +1,7 @@
 export enum UserRole {
-  ADMIN = "ADMIN",
-  DRIVER = "DRIVER",
-  CLIENT = "CLIENT",
+  ADMIN = 'ADMIN',
+  DRIVER = 'DRIVER',
+  CLIENT = 'CLIENT',
 }
 
 export interface UserPayload {

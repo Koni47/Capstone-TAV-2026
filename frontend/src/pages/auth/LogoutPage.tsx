@@ -1,7 +1,7 @@
-import React, { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { LogOut, Loader2 } from "lucide-react";
-import { useAuth } from "../../context/AuthContext";
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { LogOut, Loader2 } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 
 const LogoutPage = () => {
   const { logout } = useAuth();
@@ -13,7 +13,7 @@ const LogoutPage = () => {
 
     // Esperar 5 segundos antes de redirigir
     const timer = setTimeout(() => {
-      navigate("/login");
+      navigate('/login');
     }, 5000);
 
     return () => clearTimeout(timer);
@@ -29,7 +29,7 @@ const LogoutPage = () => {
         <p className="text-gray-600 mb-6">Tu sesión será cerrada en unos momentos...</p>
 
         <div className="inline-block animate-spin text-secondary">
-             <Loader2 size={48} />
+          <Loader2 size={48} />
         </div>
       </div>
     </div>

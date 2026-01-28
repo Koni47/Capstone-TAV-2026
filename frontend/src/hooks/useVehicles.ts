@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
-import { vehicleService } from "../services/vehicle.service";
-import { Vehicle } from "../types/vehicle.types";
+import { useState, useEffect } from 'react';
+import { vehicleService } from '../services/vehicle.service';
+import { Vehicle } from '../types/vehicle.types';
 
 export const useVehicles = (page = 1, limit = 10) => {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
@@ -19,7 +19,7 @@ export const useVehicles = (page = 1, limit = 10) => {
         setTotalPages(response.totalPages);
         setTotalCount(response.total);
       } catch (err) {
-        setError("Error al cargar vehículos.");
+        setError('Error al cargar vehículos.');
         console.error(err);
       } finally {
         setLoading(false);

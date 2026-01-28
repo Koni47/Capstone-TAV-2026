@@ -1,8 +1,8 @@
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
-import { UserRole } from "../types/auth.types";
-import { useEffect } from "react";
-import { Loader2 } from "lucide-react";
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { UserRole } from '../types/auth.types';
+import { useEffect } from 'react';
+import { Loader2 } from 'lucide-react';
 
 /**
  * Dashboard Redirector
@@ -15,20 +15,20 @@ const Dashboard = () => {
   useEffect(() => {
     if (!isLoading) {
       if (!isAuthenticated) {
-        navigate("/login");
+        navigate('/login');
       } else if (user) {
         switch (user.role) {
           case UserRole.ADMIN:
-            navigate("/admin/dashboard");
+            navigate('/admin/dashboard');
             break;
           case UserRole.DRIVER:
-            navigate("/driver/trips");
+            navigate('/driver/trips');
             break;
           case UserRole.CLIENT:
-            navigate("/client/request"); // O dashboard cliente
+            navigate('/client/request'); // O dashboard cliente
             break;
           default:
-            navigate("/");
+            navigate('/');
         }
       }
     }

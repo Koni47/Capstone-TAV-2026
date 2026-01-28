@@ -1,6 +1,6 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import { Menu, X } from "lucide-react";
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { Menu, X } from 'lucide-react';
 
 const PublicNavbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -9,7 +9,6 @@ const PublicNavbar = () => {
     <nav className="bg-primary text-white shadow-lg sticky top-0 z-50 font-sans">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-20 items-center">
-          
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3 cursor-pointer">
             <div className="w-10 h-10 bg-white rounded-md flex items-center justify-center text-primary font-bold text-xl">
@@ -35,6 +34,9 @@ const PublicNavbar = () => {
             <Link to="/complaints" className="hover:text-gray-300 transition px-1 pb-1">
               Denuncias
             </Link>
+            <Link to="/work-with-us" className="hover:text-gray-300 transition px-1 pb-1">
+              Trabaja con Nosotros
+            </Link>
             <Link to="/contact" className="hover:text-gray-300 transition px-1 pb-1">
               Contacto
             </Link>
@@ -45,8 +47,8 @@ const PublicNavbar = () => {
             <Link to="/login" className="text-sm font-semibold hover:text-gray-300">
               Iniciar sesión
             </Link>
-            <Link 
-              to="/register" 
+            <Link
+              to="/register"
               className="bg-secondary hover:bg-orange-600 text-white text-sm font-bold py-2 px-5 rounded-md transition shadow-md"
             >
               Registrarse
@@ -55,7 +57,7 @@ const PublicNavbar = () => {
 
           {/* Mobile Button */}
           <div className="md:hidden">
-            <button 
+            <button
               onClick={() => setIsOpen(!isOpen)}
               className="text-white hover:text-secondary focus:outline-none"
             >
@@ -68,15 +70,41 @@ const PublicNavbar = () => {
       {/* Mobile Menu */}
       {isOpen && (
         <div className="md:hidden bg-primary pb-4 px-2">
-            <div className="flex flex-col space-y-2">
-                <Link to="/" className="px-3 py-2 text-white hover:bg-blue-800 rounded-md">Inicio</Link>
-                <Link to="/client/request" className="px-3 py-2 text-white hover:bg-blue-800 rounded-md">Solicitudes</Link>
-                <Link to="/admin/vehicles" className="px-3 py-2 text-white hover:bg-blue-800 rounded-md">Vehículos</Link>
-                <Link to="/complaints" className="px-3 py-2 text-white hover:bg-blue-800 rounded-md">Denuncias</Link>
-                <Link to="/contact" className="px-3 py-2 text-white hover:bg-blue-800 rounded-md">Contacto</Link>
-                <Link to="/login" className="px-3 py-2 text-white hover:bg-blue-800 rounded-md font-bold">Iniciar Sesión</Link>
-                <Link to="/register" className="px-3 py-2 text-secondary font-bold">Registrarse</Link>
-            </div>
+          <div className="flex flex-col space-y-2">
+            <Link to="/" className="px-3 py-2 text-white hover:bg-blue-800 rounded-md">
+              Inicio
+            </Link>
+            <Link
+              to="/client/request"
+              className="px-3 py-2 text-white hover:bg-blue-800 rounded-md"
+            >
+              Solicitudes
+            </Link>
+            <Link
+              to="/admin/vehicles"
+              className="px-3 py-2 text-white hover:bg-blue-800 rounded-md"
+            >
+              Vehículos
+            </Link>
+            <Link to="/complaints" className="px-3 py-2 text-white hover:bg-blue-800 rounded-md">
+              Denuncias
+            </Link>
+            <Link to="/work-with-us" className="px-3 py-2 text-white hover:bg-blue-800 rounded-md">
+              Trabaja con Nosotros
+            </Link>
+            <Link to="/contact" className="px-3 py-2 text-white hover:bg-blue-800 rounded-md">
+              Contacto
+            </Link>
+            <Link
+              to="/login"
+              className="px-3 py-2 text-white hover:bg-blue-800 rounded-md font-bold"
+            >
+              Iniciar Sesión
+            </Link>
+            <Link to="/register" className="px-3 py-2 text-secondary font-bold">
+              Registrarse
+            </Link>
+          </div>
         </div>
       )}
     </nav>

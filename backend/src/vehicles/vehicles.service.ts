@@ -35,6 +35,9 @@ export class VehiclesService {
       orderBy: { updatedAt: 'desc' },
     });
 
+    const total = await this.prisma.vehicle.count();
+    const totalPages = Math.max(1, Math.ceil(total / limit));
+
     return {
       data: vehicles.map((v) => ({
         ...v,
@@ -42,12 +45,10 @@ export class VehiclesService {
           ? v.technicalReviewDate.toLocaleDateString('es-CL')
           : 'N/A',
       })),
-      meta: {
-        page,
-        limit,
-        total: await this.prisma.vehicle.count(),
-      },
-      status: 200,
+      total,
+      page,
+      limit,
+      totalPages,
     };
   }
 

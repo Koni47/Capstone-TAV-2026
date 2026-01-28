@@ -1,6 +1,6 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { UserPayload, LoginCredentials, RegisterDTO } from "../types/auth.types";
-import { authService } from "../services/auth.service";
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { UserPayload, LoginCredentials, RegisterDTO } from '../types/auth.types';
+import { authService } from '../services/auth.service';
 
 interface AuthContextType {
   user: UserPayload | null;
@@ -20,15 +20,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const initializeAuth = async () => {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem('token');
       if (token) {
         try {
           const userData = await authService.getProfile();
           setUser(userData);
           setIsAuthenticated(true);
         } catch (error) {
-          console.error("Auth initialization failed", error);
-          localStorage.removeItem("token");
+          console.error('Auth initialization failed', error);
+          localStorage.removeItem('token');
           setUser(null);
           setIsAuthenticated(false);
         }
@@ -40,34 +40,26 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const login = async (credentials: LoginCredentials) => {
-    try {
-      const { user, token } = await authService.login(credentials);
-      localStorage.setItem("token", token);
-      setUser(user);
-      setIsAuthenticated(true);
-    } catch (error) {
-      throw error; // Re-throw to be handled by the UI
-    }
+    const { user, token } = await authService.login(credentials);
+    localStorage.setItem('token', token);
+    setUser(user);
+    setIsAuthenticated(true);
   };
 
   const register = async (data: RegisterDTO) => {
-    try {
-      await authService.register(data);
-      // Opcional: Auto-login luego del registro si el backend devolviera token
-      // O simplemente no hacer nada y dejar que el UI redirija al login
-      // En este caso, para ser consistentes con el authService que no devuelve token:
-      await login({ email: data.email, password: data.password }); 
-    } catch (error) {
-      throw error;
-    }
+    await authService.register(data);
+    // Opcional: Auto-login luego del registro si el backend devolviera token
+    // O simplemente no hacer nada y dejar que el UI redirija al login
+    // En este caso, para ser consistentes con el authService que no devuelve token:
+    await login({ email: data.email, password: data.password });
   };
 
   const logout = () => {
-    localStorage.removeItem("token");
+    localStorage.removeItem('token');
     setUser(null);
     setIsAuthenticated(false);
     // Force reload/redirect could be handled here or in UI
-    window.location.href = "/login";
+    window.location.href = '/login';
   };
 
   return (
@@ -77,10 +69,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider");
+    throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
 };
